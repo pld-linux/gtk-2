@@ -21,7 +21,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 2.1.0
-BuildRequires:	gtk-doc >= 0.9-2
+BuildRequires:	gtk-doc >= 0.9-4
 BuildRequires:	libtool
 BuildRequires:	pango-devel >= 1.0.4
 BuildRequires:	libtiff-devel
@@ -131,7 +131,7 @@ aclocal
 %{__autoconf}
 %configure \
 	--enable-static \
-	--disable-gtkdoc \
+	--enable-gtkdoc \
 	--enable-shm \
 	--enable-xim \
 	--enable-fbmanager \
