@@ -7,13 +7,12 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.1.0
+Version:	2.1.1
 Release:	1
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gnome.org/pub/GNOME/sources/gtk+/2.1/gtk+-%{version}.tar.bz2
-Patch1:		%{name}-XftDrawPicture.patch
-Patch2:		%{name}-Xft2.patch
+Patch1:		%{name}-Xft2.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	atk-devel >= 1.0.3
@@ -34,7 +33,7 @@ Obsoletes:	gtk2
 
 %define		_prefix		/usr/X11R6
 %define		_mandir		%{_prefix}/man
-%define		_sysconfdir	%{_datadir}
+%define		_sysconfdir	/etc/X11
 %define		_gtkdocdir	%{_defaultdocdir}/gtk-doc/html
 
 %description
@@ -121,10 +120,10 @@ Biblioteki statyczne Gtk+
 
 %prep
 %setup -q -n gtk+-%{version}
-%patch1 -p0
-%patch2 -p1
+%patch1 -p1
 
 %build
+rm -f missing
 %{__libtoolize}
 glib-gettextize --copy --force
 %{__aclocal}
@@ -142,7 +141,7 @@ glib-gettextize --copy --force
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
+install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk-2.0}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -150,7 +149,10 @@ install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 	pkgconfigdir=%{_pkgconfigdir} \
 	HTML_DIR=%{_gtkdocdir}
 
-ln -sf ../../lib/gtk-2.0/2.0.100/immodules $RPM_BUILD_ROOT/%{_sysconfdir}/gtk-2.0/gtk.immodules
+#ln -sf ../../lib/gtk-2.0/2.0.100/immodules $RPM_BUILD_ROOT/%{_sysconfdir}/gtk-2.0/gtk.immodules
+
+touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
+touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gtk.immodules
 
 cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
@@ -162,7 +164,12 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/en@IPA
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post   -p /sbin/ldconfig
+%post
+umask 022
+/sbin/ldconfig
+%{_bindir}/gdk-pixbuf-query-loaders >%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
+%{_bindir}/gtk-query-immodules-2.0 >%{_sysconfdir}/gtk-2.0/gtk.immodules
+
 %postun -p /sbin/ldconfig
 
 %files -f gtk20.lang
@@ -170,6 +177,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS NEWS README
 %attr(755,root,root) %{_bindir}/gtk-demo
 %attr(755,root,root) %{_bindir}/gtk-query*
+%attr(755,root,root) %{_bindir}/gdk-pixbuf-query-loaders
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 %dir %{_libdir}/gtk-*
 %dir %{_libdir}/gtk-*/2.*
@@ -177,11 +185,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/gtk-*/2.*/loaders/*.so
 %dir %{_libdir}/gtk-*/2.*/immodules
 %attr(755,root,root) %{_libdir}/gtk-*/2.*/immodules/*.so
-%{_sysconfdir}/gtk-*
-%dir %{_sysconfdir}/themes/Default/gtk-*
-%{_sysconfdir}/themes/Default/gtk-*/gtkrc
-%dir %{_sysconfdir}/themes/Emacs/gtk-*
-%{_sysconfdir}/themes/Emacs/gtk-*/gtkrc
+%{_datadir}/gtk-*
+%dir %{_sysconfdir}/gtk-*
+%ghost %{_sysconfdir}/gtk-*/*
+%dir %{_datadir}/themes/Default/gtk-*
+%{_datadir}/themes/Default/gtk-*/gtkrc
+%dir %{_datadir}/themes/Emacs/gtk-*
+%{_datadir}/themes/Emacs/gtk-*/gtkrc
 
 %files devel
 %defattr(644,root,root,755)
