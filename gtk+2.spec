@@ -12,13 +12,13 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.5.3
+Version:	2.5.4
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.5/gtk+-%{version}.tar.bz2
-# Source0-md5:	21d3c3c1ed78def3c5b8c1a913a9aef7
+# Source0-md5:	f0e52b9129b207a7e97d15a1e4dfb675
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-locale-names.patch
 Patch2:		%{name}-2.2.0-path-check.patch
@@ -33,7 +33,7 @@ BuildRequires:	automake >= 1.7
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.5.3
+BuildRequires:	glib2-devel >= 1:2.5.4
 %{?with_doc:BuildRequires:	gtk-doc >= 1.0}
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
@@ -48,7 +48,7 @@ BuildRequires:	rpm-build >= 4.1-8.2
 BuildRequires:	xcursor-devel
 Requires(post,postun):	/sbin/ldconfig
 Requires:	atk >= 1.8.0
-Requires:	glib2 >= 1:2.5.3
+Requires:	glib2 >= 1:2.5.4
 Requires:	pango >= 1:1.6.0
 Obsoletes:	gtk2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -108,7 +108,7 @@ Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1.8.0
-Requires:	glib2-devel >= 1:2.5.3
+Requires:	glib2-devel >= 1:2.5.4
 Requires:	gtk-doc-common
 Requires:	pango-devel >= 1:1.6.0
 Requires:	xcursor-devel
@@ -220,6 +220,7 @@ exit 0
 %doc AUTHORS NEWS README
 %attr(755,root,root) %{_bindir}/gtk-demo
 %attr(755,root,root) %{_bindir}/gtk-query*
+%attr(755,root,root) %{_bindir}/gtk-update-icon-cache
 %attr(755,root,root) %{_bindir}/gdk-pixbuf-query-loaders
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 %dir %{_libdir}/gtk-*
