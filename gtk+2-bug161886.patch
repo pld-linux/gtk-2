@@ -1,0 +1,67 @@
+diff -urN gtk+-2.6.0.orig/gtk/gtkiconview.c gtk+-2.6.0/gtk/gtkiconview.c
+--- gtk+-2.6.0.orig/gtk/gtkiconview.c	2004-12-22 10:28:32.797113224 +0100
++++ gtk+-2.6.0/gtk/gtkiconview.c	2004-12-22 10:25:39.000000000 +0100
+@@ -2497,14 +2497,20 @@
+   GtkIconView *icon_view;
+   GList *items = NULL, *list;
+   GtkIconViewItem **item_array;
++  gint *order;
+   
+   icon_view = GTK_ICON_VIEW (data);
+ 
+   length = gtk_tree_model_iter_n_children (model, NULL);
+ 
++  order = g_new (gint, length);
++  for (i = 0; i < length; i++)
++    order [new_order[i]] = i;
++
+   item_array = g_new (GtkIconViewItem *, length);
+   for (i = 0, list = icon_view->priv->items; list != NULL; list = list->next, i++)
+-    item_array[new_order[i]] = list->data;
++    item_array[order[i]] = list->data;
++  g_free (order);
+ 
+   for (i = length - 1; i >= 0; i--)
+     {
+diff -urN gtk+-2.6.0.orig/gtk/gtkliststore.c gtk+-2.6.0/gtk/gtkliststore.c
+--- gtk+-2.6.0.orig/gtk/gtkliststore.c	2004-12-22 10:28:34.672828072 +0100
++++ gtk+-2.6.0/gtk/gtkliststore.c	2004-12-22 10:25:39.000000000 +0100
+@@ -1413,21 +1413,27 @@
+   GtkTreePath *path;
+   GHashTable *new_positions;
+   GtkSequencePtr ptr;
+-
++  gint *order;
++  
+   g_return_if_fail (GTK_IS_LIST_STORE (store));
+   g_return_if_fail (!GTK_LIST_STORE_IS_SORTED (store));
+   g_return_if_fail (new_order != NULL);
+ 
++  order = g_new (gint, _gtk_sequence_get_length (store->seq));
++  for (i = 0; i < _gtk_sequence_get_length (store->seq); i++)
++    order[new_order[i]] = i;
++  
+   new_positions = g_hash_table_new (g_direct_hash, g_direct_equal);
+ 
+   ptr = _gtk_sequence_get_begin_ptr (store->seq);
+   i = 0;
+   while (!_gtk_sequence_ptr_is_end (ptr))
+     {
+-      g_hash_table_insert (new_positions, ptr, GINT_TO_POINTER (new_order[i++]));
++      g_hash_table_insert (new_positions, ptr, GINT_TO_POINTER (order[i++]));
+ 
+       ptr = _gtk_sequence_ptr_next (ptr);
+     }
++  g_free (order);
+   
+   _gtk_sequence_sort (store->seq, gtk_list_store_reorder_func, new_positions);
+ 
+@@ -1470,7 +1476,7 @@
+   while (!_gtk_sequence_ptr_is_end (ptr))
+     {
+       int old_pos = GPOINTER_TO_INT (g_hash_table_lookup (old_positions, ptr));
+-      order[old_pos] = i++;
++      order[i++] = old_pos;
+       ptr = _gtk_sequence_ptr_next (ptr);
+     }
+ 
