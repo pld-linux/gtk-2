@@ -41,7 +41,7 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs
 BuildRequires:	libxslt-progs
-BuildRequires:	pango-devel >= 1.4.0
+BuildRequires:	pango-devel >= 1:1.4.0
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-build >= 4.1-8.2
@@ -111,7 +111,7 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1.6.0
 Requires:	glib2-devel >= 1:2.4.4
 Requires:	gtk-doc-common
-Requires:	pango-devel >= 1.4.0
+Requires:	pango-devel >= 1:1.4.0
 Requires:	xcursor-devel
 Obsoletes:	gtk2-devel
 
