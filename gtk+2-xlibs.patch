@@ -5,7 +5,7 @@
    x_extra_libs=
  
 -  AC_PATH_XTRA
-+  PKG_CHECK_MODULES(X, [x11], [$x_no = no])
++  PKG_CHECK_MODULES(X, [x11 xi], [$x_no = no])
    if test x$no_x = xyes ; then
      AC_MSG_ERROR([X development libraries not found])
    fi
