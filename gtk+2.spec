@@ -11,7 +11,7 @@ Version:	2.0.0
 Release:	1
 License:	LGPL
 Group:		X11/Libraries
-Source0:	ftp://ftp.gtk.org/pub/gtk/v2.0/gtk+-%{version}.tar.gz
+Source0:	ftp://ftp.gtk.org/pub/gtk/v2.0/gtk+-%{version}.tar.bz2
 Patch0:		%{name}-gettext.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
