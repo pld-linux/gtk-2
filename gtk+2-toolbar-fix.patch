@@ -1,0 +1,29 @@
+diff -Nuard gtk+-2.2.4.orig/gtk/gtktoolbar.c gtk+-2.2.4/gtk/gtktoolbar.c
+--- gtk+-2.2.4.orig/gtk/gtktoolbar.c	2003-06-06 01:38:07.000000000 +0200
++++ gtk+-2.2.4/gtk/gtktoolbar.c	2003-09-19 18:58:31.000000000 +0200
+@@ -552,17 +552,20 @@
+ 
+       toolbar = GTK_TOOLBAR (widget);
+ 
+-      gtk_widget_style_get (widget, "shadow_type", &shadow_type, NULL);
++      if (g_object_get_data (G_OBJECT (widget), "__force_no_shadow"))
++          shadow_type = GTK_SHADOW_NONE;
++      else
++          gtk_widget_style_get (widget, "shadow_type", &shadow_type, NULL);
+       
+       gtk_paint_box (widget->style,
+ 		     widget->window,
+                      GTK_WIDGET_STATE (widget),
+                      shadow_type,
+ 		     &event->area, widget, "toolbar",
+-		     widget->allocation.x + border_width,
+-                     widget->allocation.y + border_width,
+-		     widget->allocation.width - 2 * border_width,
+-                     widget->allocation.height - 2 * border_width);
++		     widget->allocation.x,
++                     widget->allocation.y,
++		     widget->allocation.width,
++                     widget->allocation.height);
+       
+       for (children = toolbar->children; children; children = children->next)
+ 	{
