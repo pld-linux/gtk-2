@@ -8,17 +8,18 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.0.3
-Release:	1
+Release:	2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.0/gtk+-%{version}.tar.bz2
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
+Buildrequires:	atk-devel >= 1.0.1
 BuildRequires:	autoconf
 BuildRequires:	automake
-Buildrequires:	atk-devel >= 1.0.1
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 2.0.1
+BuildRequires:	gtk-doc >= 0.9-2
 BuildRequires:	libtool
 BuildRequires:	pango-devel >= 1.0.1
 Requires:	glib2 >= 2.0.1
@@ -29,6 +30,7 @@ Obsoletes:	gtk2
 %define		_prefix		/usr/X11R6
 %define		_mandir		%{_prefix}/man
 %define		_sysconfdir	%{_datadir}
+%define		_gtkdocdir	/usr/share/doc/gtk-doc/html
 
 %description
 Gtk+, which stands for the Gimp ToolKit, is a library for creating
@@ -116,20 +118,18 @@ Biblioteki statyczne Gtk+
 
 %build
 %{__libtoolize}
-#%{__gettextize}
-#sed 's,@PACKAGE@,@GETTEXT_PACKAGE@,' po/Makefile.in.in > po/Mafefile.in.in.new
-#mv -f po/Mafefile.in.in.new po/Makefile.in.in
+glib-gettextize --copy --force
 aclocal
 %{__autoconf}
 %configure \
 	--enable-static \
-	--disable-gtk-doc \
+	--enable-gtk-doc \
 	--enable-shm \
 	--enable-xim \
 	--enable-fbmanager \
 	--with-xinput=xfree \
 	--with-gdktarget=x11 \
-	CPPFLAGS="$CPPFLAGS"
+	--with-html-path=%{_gtkdocdir}
 
 %{__make}
 
@@ -139,7 +139,8 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
 	m4datadir=%{_aclocaldir} \
-	pkgconfigdir=%{_pkgconfigdir}
+	pkgconfigdir=%{_pkgconfigdir} \
+	HTML_DIR=%{_gtkdocdir}
 
 ln -sf ../../lib/gtk-2.0/2.0.0/immodules $RPM_BUILD_ROOT/%{_sysconfdir}/gtk-2.0/gtk.immodules
 
@@ -164,6 +165,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/gtk-*/2.*/immodules/*.so
 %{_sysconfdir}/gtk-*
 %dir %{_sysconfdir}/themes/Default/gtk-*
+%{_sysconfdir}/themes/Default/gtk-*/gtkrc
+%dir %{_sysconfdir}/themes/Emacs/gtk-*
+%{_sysconfdir}/themes/Emacs/gtk-*/gtkrc
 
 %files devel
 %defattr(644,root,root,755)
@@ -177,6 +181,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/gtk-*/include
 %{_pkgconfigdir}/*.pc
 %{_mandir}/man1/*
+%{_gtkdocdir}/*
 
 %files static
 %defattr(644,root,root,755)
