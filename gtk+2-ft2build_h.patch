@@ -1,0 +1,11 @@
+diff -durN -x '*~' gtk+-2.2.4.orig/configure.in gtk+-2.2.4/configure.in
+--- gtk+-2.2.4.orig/configure.in	2003-09-04 19:06:42.000000000 +0200
++++ gtk+-2.2.4/configure.in	2004-12-23 15:17:52.048338992 +0100
+@@ -963,6 +963,7 @@
+ 
+       AC_MSG_CHECKING([For sufficiently new FreeType (at least 2.0.1)])
+       AC_TRY_COMPILE([
++#include <ft2build.h>
+ #include <freetype/freetype.h>
+ #include FT_ERRORS_H
+     ],
