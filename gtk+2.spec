@@ -8,7 +8,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	1.3.12
-Release:	1
+Release:	2
 License:	LGPL
 Group:		X11/Libraries
 Group(de):	X11/Libraries
