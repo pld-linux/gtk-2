@@ -7,25 +7,25 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.0.5
-Release:	3
+Version:	2.0.6
+Release:	1
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.0/gtk+-%{version}.tar.bz2
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
-BuildRequires:	atk-devel >= 1.0.1
+BuildRequires:	atk-devel >= 1.0.3
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 2.0.1
+BuildRequires:	glib2-devel >= 2.0.6
 BuildRequires:	gtk-doc >= 0.9-2
 BuildRequires:	libtool
 BuildRequires:	pango-devel >= 1.0.3
 BuildRequires:	libtiff-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
-Requires:	glib2 >= 2.0.1
+Requires:	glib2 >= 2.0.6
 Requires:	iconv
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	gtk2
@@ -194,3 +194,4 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
 %{_libdir}/gtk-*/2.*/loaders/*.a
+%{_libdir}/gtk-*/2.*/immodules/*.a
