@@ -166,7 +166,8 @@ glib-gettextize --copy --force
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk-2.0}
+install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk-2.0} \
+	$RPM_BUILD_ROOT%{_libdir}/gtk-2.0/2.4.0/filesystems
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -227,6 +228,7 @@ exit 0
 %dir %{_libdir}/gtk-*/modules
 %dir %{_libdir}/gtk-*/2.*
 %dir %{_libdir}/gtk-*/2.*/engines
+%dir %{_libdir}/gtk-*/2.*/filesystems
 %dir %{_libdir}/gtk-*/2.*/loaders
 %attr(755,root,root) %{_libdir}/gtk-*/2.*/loaders/*.so
 %dir %{_libdir}/gtk-*/2.*/immodules
