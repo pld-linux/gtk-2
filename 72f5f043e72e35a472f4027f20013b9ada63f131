@@ -1,0 +1,3 @@
+- updated gtkrc files list,
+- all gtkrc fiels moved to %%{_datadir}/gtk (this is rather data files then
+  config files).
