@@ -87,7 +87,7 @@ Requires:	XFree86-devel
 Requires:	autoconf >= 2.13
 Requires:	automake >= 1.4
 Requires:	atk-devel >= 1.0.0
-Requires:	glib2-devel >= %{version}
+Requires:	glib2-devel >= 2.0.1
 Requires:	libtool  >= 1.3.2
 Requires:	pango-devel >= 1.0.0
 Requires:	%{name} = %{version}
