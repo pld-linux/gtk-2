@@ -4,7 +4,7 @@
  
  #define DEFAULT_POPUP_DELAY    225
  #define DEFAULT_POPDOWN_DELAY  1000
-+#define DEFAULT_SHADOW_DELAY   50
++#define DEFAULT_SHADOW_DELAY   10
  
  #define NAVIGATION_REGION_OVERSHOOT 50  /* How much the navigation region
  					 * extends below the submenu
@@ -421,7 +421,7 @@
 +  gtk_settings_install_property (g_param_spec_boolean ("gtk-menu-drop-shadow",
 +						       _("Display menu drop-shadow"),
 +						       _("Whether menu drop-shadow should be displayed"),
-+						       FALSE,
++						       TRUE,
 +						       G_PARAM_READWRITE));
 +
 +  gtk_settings_install_property (g_param_spec_int ("gtk-menu-shadow-delay",
