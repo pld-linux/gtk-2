@@ -20,10 +20,9 @@ Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.6/gtk+-%{version}.tar.bz2
 # Source0-md5:	ca717c728264fa0b3302ca00da2bcfe4
 Patch0:		%{name}-insensitive-iain.patch
-Patch1:		%{name}-locale-names.patch
-Patch2:		%{name}-2.2.0-path-check.patch
-Patch3:		%{name}-menushadow.patch
-Patch4:		%{name}-xlibs.patch
+Patch1:		%{name}-2.2.0-path-check.patch
+Patch2:		%{name}-menushadow.patch
+Patch3:		%{name}-xlibs.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 %{?with_xlibs:BuildRequires:	libXi-devel}
@@ -137,11 +136,7 @@ Biblioteki statyczne Gtk+
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%{?with_xlibs:%patch4 -p1}
-
-mv po/{no,nb}.po
-mv po-properties/{no,nb}.po
+%{?with_xlibs:%patch3 -p1}
 
 %build
 gtkdocize --copy
@@ -173,6 +168,8 @@ install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk
 	DESTDIR=$RPM_BUILD_ROOT \
 	m4datadir=%{_aclocaldir} \
 	pkgconfigdir=%{_pkgconfigdir}
+
+rm -r $RPM_BUILD_ROOT%{_datadir}/locale/no
 
 touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
 touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gtk.immodules
