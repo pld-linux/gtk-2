@@ -16,17 +16,16 @@ Group:		X11/Libraries
 #Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.3/gtk+-%{version}.tar.bz2
 Source0:	gtk+-%{version}.%{snap}.tar.bz2
 # Source0-md5:	6d8de9705dfd452dba4affc31ac4fb0a
-Patch0:		%{name}-gtk_socket_focus.patch
-Patch1:		%{name}-insensitive-iain.patch
+Patch0:		%{name}-insensitive-iain.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
-BuildRequires:	atk-devel >= 1.2.0
+BuildRequires:	atk-devel >= 1.5.0
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 2.3.0-1.20031110.1
+BuildRequires:	glib2-devel >= 2.3.1-0.20031126.1
 BuildRequires:	gtk-doc >= 0.10
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
@@ -39,7 +38,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	rpm-build >= 4.1-8.2
 BuildRequires:	xcursor-devel
 Requires(post):	/sbin/ldconfig
-Requires:	glib2 >= 2.3.0
+Requires:	glib2 >= 2.3.1
 Requires:	iconv
 Obsoletes:	gtk2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -99,8 +98,8 @@ Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}
 Requires:	XFree86-devel
-Requires:	atk-devel >= 1.0.0
-Requires:	glib2-devel >= 2.3.0
+Requires:	atk-devel >= 1.5.0
+Requires:	glib2-devel >= 2.3.1
 Requires:	gtk-doc-common
 Requires:	pango-devel >= 1.3.0
 Requires:	xcursor-devel
@@ -127,7 +126,6 @@ Biblioteki statyczne Gtk+
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
-%patch1 -p1
 
 %build
 %{__libtoolize}
