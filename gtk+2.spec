@@ -19,6 +19,7 @@ Group(pt_BR):	X11/Bibliotecas
 Group(ru):	X11/Библиотеки
 Group(uk):	X11/Б╕бл╕отеки
 Source0:	ftp://ftp.gtk.org/pub/gtk/v1.3/gtk+-%{version}.tar.gz
+Patch0:		%{name}-gettext.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 Requires:	glib2 >= %{version}
@@ -134,6 +135,7 @@ Biblioteki statyczne Gtk+
 
 %build
 gettextize --copy --force
+patch -p1 < %{PATCH0}
 aclocal
 autoconf
 %configure \
@@ -157,9 +159,7 @@ ln -sf ../../lib/gtk-2.0/immodules $RPM_BUILD_ROOT/%{_datadir}/gtk-2.0/gtk.immod
 
 gzip -9nf AUTHORS ChangeLog NEWS README TODO
 
-# Collision with gtk 1.2
-# %find_lang gtk+
-:> gtk+.lang
+%find_lang gtk+20
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -167,7 +167,7 @@ rm -rf $RPM_BUILD_ROOT
 %post   -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
-%files -f gtk+.lang
+%files -f gtk+20.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/gtk-demo
 %attr(755,root,root) %{_bindir}/gtk-query*
