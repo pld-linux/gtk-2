@@ -13,13 +13,13 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.6.1
-Release:	2
+Version:	2.6.2
+Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.6/gtk+-%{version}.tar.bz2
-# Source0-md5:	146ed9d12c9506fcf8745ddb2c22530a
+# Source0-md5:	f5cbbcb82627bc6d0d186063e6109399
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-menushadow.patch
 Patch2:		%{name}-xlibs.patch
@@ -32,7 +32,7 @@ BuildRequires:	automake >= 1:1.7
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.6.1
+BuildRequires:	glib2-devel >= 1:2.6.2
 %{?with_doc:BuildRequires:	gtk-doc >= 1.0}
 %{?with_xlibs:BuildRequires:	libXfixes-devel}
 %{?with_xlibs:BuildRequires:	libXi-devel}
@@ -49,7 +49,7 @@ BuildRequires:	rpmbuild(macros) >= 1.98
 BuildRequires:	xcursor-devel
 Requires(post,postun):	/sbin/ldconfig
 Requires:	atk >= 1.8.0
-Requires:	glib2 >= 1:2.6.1
+Requires:	glib2 >= 1:2.6.2
 Requires:	pango >= 1:1.8.0
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
@@ -111,7 +111,7 @@ Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 %{!?with_xlibs:Requires:	X11-devel >= 1:6.8.0}
 Requires:	atk-devel >= 1.8.0
-Requires:	glib2-devel >= 1:2.6.1
+Requires:	glib2-devel >= 1:2.6.2
 Requires:	gtk-doc-common
 %{?with_xlibs:Requires:	libXfixes-devel}
 %{?with_xlibs:Requires:	libXi-devel}
