@@ -158,7 +158,7 @@ ln -sf ../../lib/gtk-2.0/immodules $RPM_BUILD_ROOT/%{_datadir}/gtk-2.0/gtk.immod
 
 gzip -9nf AUTHORS ChangeLog NEWS README TODO
 
-%find_lang gtk+20
+%find_lang gtk20
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -166,7 +166,7 @@ rm -rf $RPM_BUILD_ROOT
 %post   -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
-%files -f gtk+20.lang
+%files -f gtk20.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/gtk-demo
 %attr(755,root,root) %{_bindir}/gtk-query*
