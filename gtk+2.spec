@@ -15,18 +15,18 @@ Source0:	ftp://ftp.gnome.org/pub/GNOME/sources/gtk+/2.1/gtk+-%{version}.tar.bz2
 Patch1:		%{name}-Xft2.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
+BuildRequires:  Xft-devel >= 2.0
 BuildRequires:	atk-devel >= 1.0.3
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 2.1.0
 BuildRequires:	gtk-doc >= 0.9-4
-BuildRequires:	libtool
-BuildRequires:	pango-devel >= 1.0.4
-BuildRequires:	libtiff-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
-BuildRequires:  Xft-devel >= 2.0
+BuildRequires:	libtiff-devel
+BuildRequires:	libtool
+BuildRequires:	pango-devel >= 1.0.4
 Requires(post):	/sbin/ldconfig
 Requires:	glib2 >= 2.1.0
 Requires:	iconv
@@ -91,15 +91,15 @@ Summary(it):	GIMP Toolkit and GIMP Drawing Kit
 Summary(pl):	Pliki nag³ówkowe i dokumentacja do Gtk+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
+Requires:	%{name} = %{version}
 Requires:	XFree86-devel
+Requires:	atk-devel >= 1.0.0
 Requires:	autoconf >= 2.13
 Requires:	automake >= 1.4
-Requires:	atk-devel >= 1.0.0
 Requires:	glib2-devel >= 2.0.1
 Requires:	gtk-doc-common
 Requires:	libtool  >= 1.3.2
 Requires:	pango-devel >= 1.0.0
-Requires:	%{name} = %{version}
 Obsoletes:	gtk2-devel
 
 %description devel
@@ -190,8 +190,10 @@ umask 022
 %{_datadir}/gtk-*
 %dir %{_sysconfdir}/gtk-*
 %ghost %{_sysconfdir}/gtk-*/*
+# %dir %{_datadir}/themes/Default	-- belongs to gtk+ 1.2
 %dir %{_datadir}/themes/Default/gtk-*
 %{_datadir}/themes/Default/gtk-*/gtkrc
+%dir %{_datadir}/themes/Emacs
 %dir %{_datadir}/themes/Emacs/gtk-*
 %{_datadir}/themes/Emacs/gtk-*/gtkrc
 
