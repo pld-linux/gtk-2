@@ -8,10 +8,10 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.0.0
-Release:	0.1
+Release:	1
 License:	LGPL
 Group:		X11/Libraries
-Source0:	ftp://ftp.gtk.org/pub/gtk/v1.3/testing/gtk+-rc1-%{version}.tar.gz
+Source0:	ftp://ftp.gtk.org/pub/gtk/v2.0/gtk+-%{version}.tar.gz
 Patch0:		%{name}-gettext.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
@@ -112,7 +112,7 @@ Gtk+ static libraries.
 Biblioteki statyczne Gtk+
 
 %prep
-%setup -q -n gtk+-rc1-%{version}
+%setup -q -n gtk+-%{version}
 
 %build
 gettextize --copy --force
