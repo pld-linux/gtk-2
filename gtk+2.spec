@@ -7,19 +7,19 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	1.3.14
-Release:	1
+Version:	2.0.0
+Release:	0.1
 License:	LGPL
 Group:		X11/Libraries
-Source0:	ftp://ftp.gtk.org/pub/gtk/v1.3/gtk+-%{version}.tar.gz
+Source0:	ftp://ftp.gtk.org/pub/gtk/v1.3/testing/gtk+-rc1-%{version}.tar.gz
 Patch0:		%{name}-gettext.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	glib2-devel >= %{version}
 BuildRequires:	fribidi-devel >= 0.10.1
-Buildrequires:	atk-devel >= 0.12
+Buildrequires:	atk-devel >= 1.0.0
 BuildRequires:	gettext-devel
-BuildRequires:	pango-devel >= 0.25
+BuildRequires:	pango-devel >= 1.0.0
 Requires:	glib2 >= %{version}
 Requires:	iconv
 Requires:	pango
@@ -86,10 +86,10 @@ Group:		X11/Development/Libraries
 Requires:	XFree86-devel
 Requires:	autoconf >= 2.13
 Requires:	automake >= 1.4
-Requires:	atk-devel >= 0.12
+Requires:	atk-devel >= 1.0.0
 Requires:	glib2-devel >= %{version}
 Requires:	libtool  >= 1.3.2
-Requires:	pango-devel >= 0.25
+Requires:	pango-devel >= 1.0.0
 Requires:	%{name} = %{version}
 Obsoletes:	gtk2-devel
 
@@ -112,7 +112,7 @@ Gtk+ static libraries.
 Biblioteki statyczne Gtk+
 
 %prep
-%setup -q -n gtk+-%{version}
+%setup -q -n gtk+-rc1-%{version}
 
 %build
 gettextize --copy --force
@@ -120,6 +120,7 @@ patch -p1 < %{PATCH0}
 aclocal
 autoconf
 %configure \
+	--enable-static \
 	--disable-gtk-doc \
 	--enable-shm \
 	--enable-xim \
@@ -158,9 +159,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/gtk-*/%{version}
 %dir %{_libdir}/gtk-*/%{version}/loaders
 %attr(755,root,root) %{_libdir}/gtk-*/%{version}/loaders/*.so
-%dir %{_libdir}/gtk-*/immodules
-%dir %{_libdir}/gtk-*/immodules/%{version}
-%attr(755,root,root) %{_libdir}/gtk-*/immodules/%{version}/*.so
+%dir %{_libdir}/gtk-*/%{version}/immodules
+%attr(755,root,root) %{_libdir}/gtk-*/%{version}/immodules/*.so
 %{_sysconfdir}/gtk-*
 %dir %{_sysconfdir}/themes/Default/gtk-*
 
@@ -170,8 +170,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/*csource
 %attr(755,root,root) %{_libdir}/lib*.la
 %attr(755,root,root) %{_libdir}/lib*.so
-%attr(755,root,root) %{_libdir}/gtk-*/%{version}/loaders/*.la
-%attr(755,root,root) %{_libdir}/gtk-*/immodules/%{version}/*.la
+%attr(755,root,root) %{_libdir}/gtk-*/%{version}/*/*.la
 %{_includedir}/*
 %{_aclocaldir}/*.m4
 %{_libdir}/gtk-*/include
