@@ -55,12 +55,12 @@ Obsoletes:	gtk2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-Gtk+, which stands for the Gimp ToolKit, is a library for creating
+GTK+, which stands for the Gimp ToolKit, is a library for creating
 graphical user interfaces for the X Window System. It is designed to
-be small, efficient, and flexible. Gtk+ is written in C with a very
-object-oriented approach. Gdk (part of Gtk+) is a drawing toolkit
+be small, efficient, and flexible. GTK+ is written in C with a very
+object-oriented approach. Gdk (part of GTK+) is a drawing toolkit
 which provides a thin layer over Xlib to help automate things like
-dealing with different color depths, and Gtk is a widget set for
+dealing with different color depths, and GTK is a widget set for
 creating user interfaces.
 
 %description -l cs
@@ -83,13 +83,13 @@ käytetään nyt myös useissa muissakin ohjelmissa.
 Libreria X scritta per GIMP. Viene usata da diversi programmi.
 
 %description -l pl
-Gtk+, która to biblioteka sta³a siê podstaw± programu Gimp zawiera
+GTK+, która to biblioteka sta³a siê podstaw± programu Gimp zawiera
 funkcje do tworzenia graficznego interfejsu u¿ytkownika pod X Window.
-By³a tworzona z za³o¿eniem ¿eby by³a ma³a, efektywna i wygodna. Gtk+
+By³a tworzona z za³o¿eniem ¿eby by³a ma³a, efektywna i wygodna. GTK+
 jest napisane w C z podej¶ciem zorientowanym bardzo obiektowo. Gdk
-(czê¶æ Gtk+) jest warstw± po¶redni± pomiêdzy Xlib a w³a¶ciwym Gtk
+(czê¶æ GTK+) jest warstw± po¶redni± pomiêdzy Xlib a w³a¶ciwym GTK
 zapewniaj±c± pracê niezale¿nie od g³êbi koloru (ilo¶ci bitów na
-piksel). Gtk (druga czê¶æ Gtk+) jest natomiast ju¿ zbiorem ró¿nego
+piksel). GTK (druga czê¶æ GTK+) jest natomiast ju¿ zbiorem ró¿nego
 rodzaju kontrolek s³u¿±cych do tworzenia interfejsu u¿ytkownika.
 
 %description -l tr
@@ -97,14 +97,14 @@ Baþlangýçta GIMP için yazýlmýþ X kitaplýklarý. Þu anda baþka
 programlarca da kullanýlmaktadýr.
 
 %package devel
-Summary:	Gtk+ header files and development documentation
+Summary:	GTK+ header files and development documentation
 Summary(cs):	Sada nástrojù GIMP a kreslící kit GIMP
 Summary(da):	GIMP Toolkit og GIMP Tegnings-værktøj
 Summary(de):	GIMP Toolkit und GIMP Drawing Kit
 Summary(fi):	Gimp-työkalukokoelma ja Gimp-piirtotyökalut
 Summary(fr):	Toolkit de GIMP (GTK) et Kit de dessin de GIMP (GDK)
 Summary(it):	GIMP Toolkit and GIMP Drawing Kit
-Summary(pl):	Pliki nag³ówkowe i dokumentacja do Gtk+
+Summary(pl):	Pliki nag³ówkowe i dokumentacja do GTK+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
@@ -116,22 +116,22 @@ Requires:	xcursor-devel
 Obsoletes:	gtk2-devel
 
 %description devel
-Header files and development documentation for the Gtk+ libraries.
+Header files and development documentation for the GTK+ libraries.
 
 %description devel -l pl
-Pliki nag³ówkowe i dokumentacja do bibliotek Gtk+.
+Pliki nag³ówkowe i dokumentacja do bibliotek GTK+.
 
 %package static
-Summary:	Gtk+ static libraries
-Summary(pl):	Biblioteki statyczne Gtk+
+Summary:	GTK+ static libraries
+Summary(pl):	Biblioteki statyczne GTK+
 Group:		X11/Development/Libraries
 Requires:	%{name}-devel = %{epoch}:%{version}-%{release}
 
 %description static
-Gtk+ static libraries.
+GTK+ static libraries.
 
 %description static -l pl
-Biblioteki statyczne Gtk+
+Biblioteki statyczne GTK+
 
 %prep
 %setup -q -n gtk+-%{version}
@@ -180,9 +180,9 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/en@IPA
 # shut up check-files (static modules and *.la for modules)
 rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*/*/*.{a,la}
 
-# for various gtk+2 modules
+# for various GTK+2 modules
 install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*)/modules
-# for gtk+2 theme engines
+# for GTK+2 theme engines
 install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*)/engines
 
 rm -r $RPM_BUILD_ROOT%{_datadir}/locale/no
