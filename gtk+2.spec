@@ -21,13 +21,13 @@ Patch1:		%{name}-locale-names.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	atk-devel >= 1.5.5
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 2.3.3
-BuildRequires:	gtk-doc >= 0.10
+BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
@@ -35,6 +35,7 @@ BuildRequires:	libtool
 BuildRequires:	libxml2-progs
 BuildRequires:	libxslt-progs
 BuildRequires:	pango-devel >= 1.3.3
+BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-build >= 4.1-8.2
 BuildRequires:	xcursor-devel
@@ -97,12 +98,12 @@ Summary(it):	GIMP Toolkit and GIMP Drawing Kit
 Summary(pl):	Pliki nag³ówkowe i dokumentacja do Gtk+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
-Requires:	%{name} = %{epoch}:%{version}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	XFree86-devel
-Requires:	atk-devel >= 1.5.0
-Requires:	glib2-devel >= 2.3.2
+Requires:	atk-devel >= 1.5.5
+Requires:	glib2-devel >= 2.3.3
 Requires:	gtk-doc-common
-Requires:	pango-devel >= 1.3.2
+Requires:	pango-devel >= 1.3.3
 Requires:	xcursor-devel
 Obsoletes:	gtk2-devel
 
@@ -116,7 +117,7 @@ Pliki nag³ówkowe i dokumentacja do bibliotek Gtk+.
 Summary:	Gtk+ static libraries
 Summary(pl):	Biblioteki statyczne Gtk+
 Group:		X11/Development/Libraries
-Requires:	%{name}-devel = %{epoch}:%{version}
+Requires:	%{name}-devel = %{epoch}:%{version}-%{release}
 
 %description static
 Gtk+ static libraries.
@@ -133,7 +134,6 @@ mv po/{no,nb}.po
 mv po-properties/{no,nb}.po
 
 %build
-cp /usr/share/automake/mkinstalldirs .
 gtkdocize --copy
 %{__libtoolize}
 glib-gettextize --copy --force
@@ -148,7 +148,8 @@ glib-gettextize --copy --force
 	--enable-xim \
 	--with-xinput=xfree \
 	--with-gdktarget=x11 \
-	--with-html-path=%{_gtkdocdir}
+	--with-html-path=%{_gtkdocdir} \
+	--enable-man
 
 %{__make}
 
