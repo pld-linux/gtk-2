@@ -1,3 +1,7 @@
+#
+# Conditional build:
+# _with_shadows - apply a patch which adds shadow to menus and popups
+
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
@@ -8,12 +12,14 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.2.1
-Release:	4
+Release:	5
 License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.2/gtk+-%{version}.tar.bz2
 Patch0:		%{name}-locale-sp.patch
 Patch1:		%{name}-scrollfix.patch
+# This patch adds shadow to menus and popups (taken from gnome mailing list)
+Patch2:		%{name}-drop-shadow.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:  XFree86-xft-devel
@@ -120,7 +126,8 @@ Biblioteki statyczne Gtk+
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
-%patch1 -p1 
+%patch1 -p1
+%{?_with_shadows:%patch2 -p1}
 
 mv -f po/{sp,sr@cyrillic}.po
 
