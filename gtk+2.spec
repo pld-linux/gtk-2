@@ -22,15 +22,14 @@ Source0:	ftp://ftp.gtk.org/pub/gtk/v1.3/gtk+-%{version}.tar.gz
 Patch0:		%{name}-gettext.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
-Requires:	glib2 >= %{version}
-Requires:	iconv
-Requires:	pango
 BuildRequires:	glib2-devel >= %{version}
 BuildRequires:	fribidi-devel >= 0.10.0
-Buildrequires:	atk >= 0.6
 Buildrequires:	atk-devel >= 0.6
 BuildRequires:	gettext-devel
 BuildRequires:	pango-devel >= 0.21
+Requires:	glib2 >= %{version}
+Requires:	iconv
+Requires:	pango
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_prefix		/usr/X11R6
@@ -97,13 +96,12 @@ Group(pl):	X11/Programowanie/Biblioteki
 Group(pt_BR):	X11/Desenvolvimento/Bibliotecas
 Group(ru):	X11/Разработка/Библиотеки
 Group(uk):	X11/Розробка/Б╕бл╕отеки
-Requires:	%{name} = %{version}
-Requires:	glib2-devel >= %{version}
+Requires:	XFree86-devel
 Requires:	autoconf >= 2.13
 Requires:	automake >= 1.4
+Requires:	glib2-devel >= %{version}
 Requires:	libtool  >= 1.3.2
-Requires:	XFree86-devel
-Requires:	glib2-devel
+Requires:	%{name} = %{version}
 
 %description devel
 Header files and development documentation for the Gtk+ libraries.
