@@ -12,10 +12,9 @@ Release:	2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gnome.org/pub/GNOME/sources/gtk+/2.1/gtk+-%{version}.tar.bz2
-Patch1:		%{name}-Xft2.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
-BuildRequires:  Xft-devel >= 2.0
+BuildRequires:  Xft-devel >= 2.0-5
 BuildRequires:	atk-devel >= 1.0.3
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -119,7 +118,6 @@ Biblioteki statyczne Gtk+
 
 %prep
 %setup -q -n gtk+-%{version}
-%patch1 -p1
 
 %build
 rm -f missing
