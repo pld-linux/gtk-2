@@ -131,7 +131,7 @@ aclocal
 %{__autoconf}
 %configure \
 	--enable-static \
-	--enable-gtkdoc \
+	--enable-gtk-doc \
 	--enable-shm \
 	--enable-xim \
 	--enable-fbmanager \
