@@ -1,3 +1,10 @@
+#
+# Conditional build:
+# --with nicefileselector	- build with nice fileselector patch
+#
+
+%bcond_with nicefileselector
+
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
@@ -126,7 +133,11 @@ Biblioteki statyczne Gtk+
 %setup -q -n gtk+-%{version}
 %patch0 -p1
 %patch1 -p1
-#%patch2 -p1
+
+%if %{with nicefileselector}
+%patch2 -p1
+%endif
+
 %patch3 -p1
 %patch4 -p1
 
