@@ -96,7 +96,7 @@ Obsoletes:	gtk2-devel
 %description devel
 Header files and development documentation for the Gtk+ libraries.
 
-%description -l pl devel
+%description devel -l pl
 Pliki nag³ówkowe i dokumentacja do bibliotek Gtk+.
 
 %package static
@@ -108,7 +108,7 @@ Requires:	%{name}-devel = %{version}
 %description static
 Gtk+ static libraries.
 
-%description -l pl static
+%description static -l pl
 Biblioteki statyczne Gtk+
 
 %prep
