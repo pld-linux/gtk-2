@@ -8,11 +8,12 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.2.1
-Release:	3
+Release:	4
 License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.2/gtk+-%{version}.tar.bz2
 Patch0:		%{name}-locale-sp.patch
+Patch1:		%{name}-scrollfix.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:  XFree86-xft-devel
@@ -118,7 +119,8 @@ Biblioteki statyczne Gtk+
 
 %prep
 %setup -q -n gtk+-%{version}
-%patch -p1
+%patch0 -p1
+%patch1 -p1 
 
 mv -f po/{sp,sr@cyrillic}.po
 
