@@ -26,7 +26,7 @@ BuildRequires:	automake >= 1.7
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.4.1
+BuildRequires:	glib2-devel >= 1:2.4.0
 BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
