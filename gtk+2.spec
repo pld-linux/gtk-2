@@ -8,13 +8,13 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.3.6
+Version:	2.4.0
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.3/gtk+-%{version}.tar.bz2
-# Source0-md5:	2bb03af55fd797ec31ab60eafc29ff8a
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.4/gtk+-%{version}.tar.bz2
+# Source0-md5:	fd16157de447c7f0a86495ad0dc67a1b
 #Source0:	gtk+-%{version}-%{snap}.tar.bz2
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-locale-names.patch
@@ -26,7 +26,7 @@ BuildRequires:	automake
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 2.3.6
+BuildRequires:	glib2-devel >= 2.4.0
 BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
@@ -34,13 +34,13 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool
 BuildRequires:	libxml2-progs
 BuildRequires:	libxslt-progs
-BuildRequires:	pango-devel >= 1.3.6
+BuildRequires:	pango-devel >= 1.4.0
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-build >= 4.1-8.2
 BuildRequires:	xcursor-devel
 Requires(post):	/sbin/ldconfig
-Requires:	glib2 >= 2.3.6
+Requires:	glib2 >= 2.4.0
 Requires:	iconv
 Obsoletes:	gtk2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -101,9 +101,9 @@ Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	XFree86-devel
 Requires:	atk-devel >= 1.6.0
-Requires:	glib2-devel >= 2.3.6
+Requires:	glib2-devel >= 2.4.0
 Requires:	gtk-doc-common
-Requires:	pango-devel >= 1.3.6
+Requires:	pango-devel >= 1.4.0
 Requires:	xcursor-devel
 Obsoletes:	gtk2-devel
 
