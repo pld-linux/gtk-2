@@ -109,6 +109,7 @@ Requires:	atk-devel >= 1.0.0
 Requires:	glib2-devel >= 2.2.3
 Requires:	gtk-doc-common
 Requires:	pango-devel >= 1.2.4
+Requires:	xcursor-devel
 Obsoletes:	gtk2-devel
 
 %description devel
