@@ -129,7 +129,7 @@ Biblioteki statyczne Gtk+
 %build
 %{__libtoolize}
 glib-gettextize --copy --force
-aclocal
+%{__aclocal}
 %{__autoconf}
 %configure \
 	--enable-static \
