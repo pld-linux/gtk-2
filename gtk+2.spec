@@ -13,18 +13,16 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.6.0
-Release:	4
+Version:	2.6.1
+Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.6/gtk+-%{version}.tar.bz2
-# Source0-md5:	ca717c728264fa0b3302ca00da2bcfe4
+# Source0-md5:	146ed9d12c9506fcf8745ddb2c22530a
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-menushadow.patch
 Patch2:		%{name}-xlibs.patch
-Patch3:		%{name}-bug-fixes.patch
-Patch4:		%{name}-bug161886.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 %{?with_xlibs:BuildRequires:	libXi-devel}
@@ -34,7 +32,7 @@ BuildRequires:	automake >= 1:1.7
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.6.0-2
+BuildRequires:	glib2-devel >= 1:2.6.1
 %{?with_doc:BuildRequires:	gtk-doc >= 1.0}
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
@@ -49,7 +47,7 @@ BuildRequires:	rpmbuild(macros) >= 1.98
 BuildRequires:	xcursor-devel
 Requires(post,postun):	/sbin/ldconfig
 Requires:	atk >= 1.8.0
-Requires:	glib2 >= 1:2.6.0-2
+Requires:	glib2 >= 1:2.6.1
 Requires:	pango >= 1:1.8.0
 Obsoletes:	gtk2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -109,7 +107,7 @@ Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1.8.0
-Requires:	glib2-devel >= 1:2.6.0-2
+Requires:	glib2-devel >= 1:2.6.1
 Requires:	gtk-doc-common
 Requires:	pango-devel >= 1:1.8.0
 Requires:	xcursor-devel
@@ -138,8 +136,6 @@ Biblioteki statyczne GTK+
 %patch0 -p1
 %patch1 -p1
 %{?with_xlibs:%patch2 -p1}
-%patch3 -p1
-%patch4 -p1
 
 %build
 gtkdocize --copy
