@@ -7,13 +7,11 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.0.2
-Release:	3
+Version:	2.0.3
+Release:	1
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.0/gtk+-%{version}.tar.bz2
-Patch0:		%{name}-gettext.patch
-Patch1:		%{name}-gtktextlayout.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	glib2-devel >= 2.0.1
@@ -115,14 +113,14 @@ Biblioteki statyczne Gtk+
 
 %prep
 %setup -q -n gtk+-%{version}
-%patch1
 
 %build
 libtoolize --copy --force
 gettextize --copy --force
-patch -p1 < %{PATCH0}
+sed 's,@PACKAGE@,@GETTEXT_PACKAGE@,' po/Makefile.in.in > po/Mafefile.in.in.new
+mv po/Mafefile.in.in.new po/Makefile.in.in
 aclocal
-autoconf
+%{__autoconf}
 %configure \
 	--enable-static \
 	--disable-gtk-doc \
@@ -130,7 +128,8 @@ autoconf
 	--enable-xim \
 	--enable-fbmanager \
 	--with-xinput=xfree \
-	--with-gdktarget=x11
+	--with-gdktarget=x11 \
+	CPPFLAGS="$CPPFLAGS"
 
 %{__make}
 
@@ -143,8 +142,6 @@ rm -rf $RPM_BUILD_ROOT
 	pkgconfigdir=%{_pkgconfigdir}
 
 ln -sf ../../lib/gtk-2.0/2.0.0/immodules $RPM_BUILD_ROOT/%{_sysconfdir}/gtk-2.0/gtk.immodules
-
-gzip -9nf AUTHORS ChangeLog NEWS README TODO
 
 %find_lang gtk20
 
@@ -170,7 +167,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(644,root,root,755)
-%doc *.gz
+%doc AUTHORS ChangeLog NEWS README TODO
 %attr(755,root,root) %{_bindir}/*csource
 %attr(755,root,root) %{_libdir}/lib*.la
 %attr(755,root,root) %{_libdir}/lib*.so
