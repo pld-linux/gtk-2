@@ -12,18 +12,17 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.4.4
+Version:	2.4.6
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.4/gtk+-%{version}.tar.bz2
-# Source0-md5:	6e6ffc9003aee319ed99336b147ad19f
+# Source0-md5:	d3da9aecbb760d276353b3392f338cee
 Patch0:		%{name}-insensitive-iain.patch
-Patch1:		%{name}-locale-names.patch
-Patch2:		%{name}-2.2.0-path-check.patch
-Patch3:		%{name}-menushadow.patch
-Patch4:		%{name}-xlibs.patch
+Patch1:		%{name}-2.2.0-path-check.patch
+Patch2:		%{name}-menushadow.patch
+Patch3:		%{name}-xlibs.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 %{?with_xlibs:BuildRequires:	libXi-devel}
@@ -33,7 +32,7 @@ BuildRequires:	automake >= 1.7
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.4.4
+BuildRequires:	glib2-devel >= 1:2.4.6
 %{?with_doc:BuildRequires:	gtk-doc >= 1.0}
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
@@ -138,11 +137,7 @@ Biblioteki statyczne Gtk+
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%{?with_xlibs:%patch4 -p1}
-
-mv po/{no,nb}.po
-mv po-properties/{no,nb}.po
+%{?with_xlibs:%patch3 -p1}
 
 %build
 gtkdocize --copy
