@@ -8,13 +8,13 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.3.4
+Version:	2.3.5
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.3/gtk+-%{version}.tar.bz2
-# Source0-md5:	817baa1bb0000315c2cc9ce390b763f9
+# Source0-md5:	1afcbac22ac6111771d0e5996136086a
 #Source0:	gtk+-%{version}-%{snap}.tar.bz2
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-locale-names.patch
@@ -26,7 +26,7 @@ BuildRequires:	automake
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 2.3.3
+BuildRequires:	glib2-devel >= 2.3.5
 BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
