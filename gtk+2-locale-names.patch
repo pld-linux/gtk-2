@@ -1,12 +1,12 @@
-diff -urN gtk+-2.3.3.orig/configure.in gtk+-2.3.3/configure.in
---- gtk+-2.3.3.orig/configure.in	2004-02-25 10:35:42.044133504 +0100
-+++ gtk+-2.3.3/configure.in	2004-02-25 10:36:31.342638992 +0100
-@@ -381,7 +381,7 @@
- fi
- 
- # i18n stuff
--ALL_LINGUAS="af am ar az be bg bn br ca cs cy da de el en_CA en_GB es et eu fa fi fr ga gl he hi hr hu ia id it ja ko li lt lv mi mk ml mn ms ne nl nn no pl pt pt_BR ro ru sk sl sq sr sr@Latn sv ta th tr uk uz uz@Latn vi wa yi zh_CN zh_TW"
-+ALL_LINGUAS="af am ar az be bg bn br ca cs cy da de el en_CA en_GB es et eu fa fi fr ga gl he hi hr hu ia id it ja ko li lt lv mi mk ml mn ms nb ne nl nn pl pt pt_BR ro ru sk sl sq sr sr@Latn sv ta th tr uk uz uz@Latn vi wa yi zh_CN zh_TW"
+diff -urN gtk+-2.3.5.orig/configure.in gtk+-2.3.5/configure.in
+--- gtk+-2.3.5.orig/configure.in	2004-03-03 01:50:43.366977432 +0100
++++ gtk+-2.3.5/configure.in	2004-03-03 02:14:48.954214768 +0100
+@@ -387,7 +387,7 @@
+ # sure that both po/ and po-properties/ have .po files that correspond
+ # to your language.  If you only add one to po/, the build will break
+ # in po-properties/.
+-ALL_LINGUAS="af am ar az be bg bn br ca cs cy da de el en_CA en_GB es et eu fa fi fr ga gl he hi hr hu ia id it ja ko li lt lv mi mk ml mn ms ne nl nn no pl pt pt_BR ro ru sk sl sq sr sr@ije sr@Latn sv ta th tr uk uz uz@Latn vi wa yi zh_CN zh_TW"
++ALL_LINGUAS="af am ar az be bg bn br ca cs cy da de el en_CA en_GB es et eu fa fi fr ga gl he hi hr hu ia id it ja ko li lt lv mi mk ml mn ms nb ne nl nn pl pt pt_BR ro ru sk sl sq sr sr@ije sr@Latn sv ta th tr uk uz uz@Latn vi wa yi zh_CN zh_TW"
  AM_GLIB_GNU_GETTEXT
  LIBS="$LIBS $INTLLIBS"
  AC_OUTPUT_COMMANDS([case "$CONFIG_FILES" in *po-properties/Makefile.in*)

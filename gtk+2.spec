@@ -1,7 +1,4 @@
-#
-# Conditional build:
-%bcond_with nicefileselector	# build with nice fileselector patch (unstable, uses GNOME)
-#
+%define		snap 20040114
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
@@ -11,43 +8,39 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.2.4
-Release:	9
-Epoch:		1
+Version:	2.4.0
+Release:	1
+Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.2/gtk+-%{version}.tar.bz2
-# Source0-md5:	605332199533e73bc6eec481fb4f1671
-Source1:	%{name}-README.shadow
-# This patch adds shadow to menus and popups
-# Taken from http://www.xfce.org/gtkmenu-shadow/
-Patch0:		%{name}-drop-shadow.patch
-Patch1:		%{name}-gtk_socket_focus.patch
-Patch2:		%{name}-nice-filesel.patch
-Patch3:		%{name}-toolbar-fix.patch
-Patch4:		%{name}-insensitive-iain.patch
-Patch5:		%{name}-xembed_info.patch
-Patch6:		%{name}-am18.patch
-Patch7:		%{name}-ft2build_h.patch
-Patch8:		%{name}-menu-separator.patch
-Patch9:		%{name}-sort-order-doc.patch
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.4/gtk+-%{version}.tar.bz2
+# Source0-md5:	fd16157de447c7f0a86495ad0dc67a1b
+#Source0:	gtk+-%{version}-%{snap}.tar.bz2
+Patch0:		%{name}-insensitive-iain.patch
+Patch1:		%{name}-locale-names.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
-BuildRequires:	atk-devel >= 1.2.0
-BuildRequires:	autoconf
+BuildRequires:	atk-devel >= 1.6.0
+BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake
+BuildRequires:	docbook-dtd412-xml
+BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 2.2.3
-BuildRequires:	gtk-doc >= 0.10
+BuildRequires:	glib2-devel >= 1:2.4.0
+BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
 BuildRequires:	libtool
-BuildRequires:	pango-devel >= 1.2.4
+BuildRequires:	libxml2-progs
+BuildRequires:	libxslt-progs
+BuildRequires:	pango-devel >= 1.4.0
+BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-build >= 4.1-8.2
+BuildRequires:	xcursor-devel
 Requires(post):	/sbin/ldconfig
-Requires:	glib2 >= 2.2.3
+Requires:	glib2 >= 1:2.4.0
 Requires:	iconv
 Obsoletes:	gtk2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -105,12 +98,13 @@ Summary(it):	GIMP Toolkit and GIMP Drawing Kit
 Summary(pl):	Pliki nag³ówkowe i dokumentacja do Gtk+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
-Requires:	%{name} = %{epoch}:%{version}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	XFree86-devel
-Requires:	atk-devel >= 1.0.0
-Requires:	glib2-devel >= 2.2.3
+Requires:	atk-devel >= 1.6.0
+Requires:	glib2-devel >= 1:2.4.0
 Requires:	gtk-doc-common
-Requires:	pango-devel >= 1.2.4
+Requires:	pango-devel >= 1.4.0
+Requires:	xcursor-devel
 Obsoletes:	gtk2-devel
 
 %description devel
@@ -123,7 +117,7 @@ Pliki nag³ówkowe i dokumentacja do bibliotek Gtk+.
 Summary:	Gtk+ static libraries
 Summary(pl):	Biblioteki statyczne Gtk+
 Group:		X11/Development/Libraries
-Requires:	%{name}-devel = %{epoch}:%{version}
+Requires:	%{name}-devel = %{epoch}:%{version}-%{release}
 
 %description static
 Gtk+ static libraries.
@@ -135,31 +129,28 @@ Biblioteki statyczne Gtk+
 %setup -q -n gtk+-%{version}
 %patch0 -p1
 %patch1 -p1
-%{?with_nicefileselector:%patch2 -p1}
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p0
+
+mv po/{no,nb}.po
+mv po-properties/{no,nb}.po
 
 %build
-rm -f missing
+gtkdocize --copy
 %{__libtoolize}
 glib-gettextize --copy --force
 %{__aclocal}
-%{__autoconf}
 %{__autoheader}
+%{__autoconf}
+%{__automake}
 %configure \
 	--enable-static \
-	--enable-debug=%{?debug:yes}%{!?debug:minimum} \
 	--enable-gtk-doc \
 	--enable-shm \
 	--enable-xim \
-	--with-xinput=yes \
+	--with-xinput=xfree \
 	--with-gdktarget=x11 \
-	--with-html-path=%{_gtkdocdir}
+	--with-html-path=%{_gtkdocdir} \
+	--enable-debug=%{?debug:yes}%{!?debug:minimum} \
+	--enable-man
 
 %{__make}
 
@@ -172,8 +163,6 @@ install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk
 	m4datadir=%{_aclocaldir} \
 	pkgconfigdir=%{_pkgconfigdir} \
 	HTML_DIR=%{_gtkdocdir}
-
-#ln -sf ../../lib/gtk-2.0/2.0.100/immodules $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gtk.immodules
 
 touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
 touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gtk.immodules
@@ -190,9 +179,7 @@ install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*)/modules
 # for gtk+2 theme engines
 install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*)/engines
 
-install %{SOURCE1} README.shadow
-
-%find_lang gtk20
+%find_lang %{name} --all-name
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -202,12 +189,13 @@ umask 022
 /sbin/ldconfig
 %{_bindir}/gdk-pixbuf-query-loaders >%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
 %{_bindir}/gtk-query-immodules-2.0 >%{_sysconfdir}/gtk-2.0/gtk.immodules
+exit 0
 
 %postun -p /sbin/ldconfig
 
-%files -f gtk20.lang
+%files -f %{name}.lang
 %defattr(644,root,root,755)
-%doc AUTHORS NEWS README README.shadow
+%doc AUTHORS NEWS README
 %attr(755,root,root) %{_bindir}/gtk-demo
 %attr(755,root,root) %{_bindir}/gtk-query*
 %attr(755,root,root) %{_bindir}/gdk-pixbuf-query-loaders
