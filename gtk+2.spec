@@ -26,6 +26,7 @@ Patch3:		%{name}-menushadow.patch
 Patch4:		%{name}-xlibs.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
+%{?with_xlibs:BuildRequires:	libXi-devel}
 BuildRequires:	atk-devel >= 1.6.0
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1.7
