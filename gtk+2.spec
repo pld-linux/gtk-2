@@ -1,10 +1,4 @@
 #
-# Conditional build:
-# --with nicefileselector	- build with nice fileselector patch
-#
-
-%bcond_with nicefileselector
-
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
@@ -14,17 +8,17 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.2.4
-Release:	5
+Version:	2.3.0
+Release:	0.1
 Epoch:		1
 License:	LGPL
 Group:		X11/Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.2/gtk+-%{version}.tar.bz2
-# Source0-md5:	605332199533e73bc6eec481fb4f1671
-Source1:	%{name}-README.shadow
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.3/gtk+-%{version}.tar.bz2
+# Source0-md5:	e3336aa41e440755543cb6532bec9938
+#Source1:	%{name}-README.shadow
 # This patch adds shadow to menus and popups
 # Taken from http://www.xfce.org/gtkmenu-shadow/
-Patch0:		%{name}-drop-shadow.patch
+#Patch0:		%{name}-drop-shadow.patch
 Patch1:		%{name}-gtk_socket_focus.patch
 Patch2:		%{name}-nice-filesel.patch
 Patch3:		%{name}-toolbar-fix.patch
@@ -35,17 +29,22 @@ BuildRequires:	atk-devel >= 1.2.0
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 2.2.3
+BuildRequires:	glib2-devel >= 2.3.0
 BuildRequires:	gtk-doc >= 0.10
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
 BuildRequires:	libtool
-BuildRequires:	pango-devel >= 1.2.4
+BuildRequires:	pango-devel >= 1.3.0
 BuildRequires:	rpm-build >= 4.1-8.2
 BuildRequires:	pkgconfig
+BuildRequires:	xcursor-devel
+BuildRequires:	libxml2-progs
+BuildRequires:	libxslt-progs
+BuildRequires:	docbook-dtd412-xml
+BuildRequires:	docbook-style-xsl
 Requires(post):	/sbin/ldconfig
-Requires:	glib2 >= 2.2.3
+Requires:	glib2 >= 2.3.0
 Requires:	iconv
 Obsoletes:	gtk2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -106,9 +105,9 @@ Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}
 Requires:	XFree86-devel
 Requires:	atk-devel >= 1.0.0
-Requires:	glib2-devel >= 2.2.3
+Requires:	glib2-devel >= 2.3.0
 Requires:	gtk-doc-common
-Requires:	pango-devel >= 1.2.4
+Requires:	pango-devel >= 1.3.0
 Obsoletes:	gtk2-devel
 
 %description devel
@@ -131,14 +130,9 @@ Biblioteki statyczne Gtk+
 
 %prep
 %setup -q -n gtk+-%{version}
-%patch0 -p1
+#%%patch0 -p1 -b .wiget
 %patch1 -p1
-
-%if %{with nicefileselector}
-%patch2 -p1
-%endif
-
-%patch3 -p1
+#%%patch3 -p1
 %patch4 -p1
 
 %build
@@ -168,8 +162,6 @@ install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk
 	pkgconfigdir=%{_pkgconfigdir} \
 	HTML_DIR=%{_gtkdocdir}
 
-#ln -sf ../../lib/gtk-2.0/2.0.100/immodules $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gtk.immodules
-
 touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
 touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gtk.immodules
 
@@ -185,7 +177,7 @@ install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*)/modules
 # for gtk+2 theme engines
 install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*)/engines
 
-install %{SOURCE1} README.shadow
+#install %{SOURCE1} README.shadow
 
 %find_lang gtk20
 
@@ -202,7 +194,7 @@ umask 022
 
 %files -f gtk20.lang
 %defattr(644,root,root,755)
-%doc AUTHORS NEWS README README.shadow
+%doc AUTHORS NEWS README
 %attr(755,root,root) %{_bindir}/gtk-demo
 %attr(755,root,root) %{_bindir}/gtk-query*
 %attr(755,root,root) %{_bindir}/gdk-pixbuf-query-loaders
