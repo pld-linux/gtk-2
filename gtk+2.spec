@@ -7,8 +7,8 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+
-Version:	1.3.2
-Release:	3
+Version:	1.3.5
+Release:	1
 License:	LGPL
 Group:		X11/Libraries
 Group(de):	X11/Libraries
@@ -23,6 +23,7 @@ Requires:	glib >= %{version}
 Requires:	iconv
 Prereq:		pango
 BuildRequires:	glib-devel >= %{version}
+Buildrequires:	atk-devel
 BuildRequires:	gettext-devel
 BuildRequires:	pango-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -160,39 +161,39 @@ rm -rf $RPM_BUILD_ROOT
 %files -f %{name}.lang
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
-%lang(bg) %{_sysconfdir}/gtk-2.0/gtkrc.bg*
-%lang(cs) %{_sysconfdir}/gtk-2.0/gtkrc.cs
-%lang(cy) %{_sysconfdir}/gtk-2.0/gtkrc.cy
-%lang(el) %{_sysconfdir}/gtk-2.0/gtkrc.el
-%lang(eo) %{_sysconfdir}/gtk-2.0/gtkrc.eo
-%lang(et) %{_sysconfdir}/gtk-2.0/gtkrc.et
-%lang(ga) %{_sysconfdir}/gtk-2.0/gtkrc.ga
-%lang(he) %{_sysconfdir}/gtk-2.0/gtkrc.he
-%lang(hr) %{_sysconfdir}/gtk-2.0/gtkrc.hr
-%lang(hu) %{_sysconfdir}/gtk-2.0/gtkrc.hu
-%lang(hy) %{_sysconfdir}/gtk-2.0/gtkrc.hy
-%lang(ja) %{_sysconfdir}/gtk-2.0/gtkrc.ja
-%lang(ka) %{_sysconfdir}/gtk-2.0/gtkrc.ka*
-%lang(ko) %{_sysconfdir}/gtk-2.0/gtkrc.ko
-%lang(lt) %{_sysconfdir}/gtk-2.0/gtkrc.lt
-%lang(mk) %{_sysconfdir}/gtk-2.0/gtkrc.mk
-%lang(pl) %{_sysconfdir}/gtk-2.0/gtkrc.pl
-%lang(ro) %{_sysconfdir}/gtk-2.0/gtkrc.ro
-%lang(ru) %{_sysconfdir}/gtk-2.0/gtkrc.ru*
-%lang(sk) %{_sysconfdir}/gtk-2.0/gtkrc.sk
-%lang(sl) %{_sysconfdir}/gtk-2.0/gtkrc.sl
-%lang(sq) %{_sysconfdir}/gtk-2.0/gtkrc.sq
-%lang(sr) %{_sysconfdir}/gtk-2.0/gtkrc.sr
-%lang(th) %{_sysconfdir}/gtk-2.0/gtkrc.th
-%lang(tr) %{_sysconfdir}/gtk-2.0/gtkrc.tr
-%lang(uk) %{_sysconfdir}/gtk-2.0/gtkrc.uk
-%lang(vi) %{_sysconfdir}/gtk-2.0/gtkrc.vi*
-%lang(zh) %{_sysconfdir}/gtk-2.0/gtkrc.zh*
-%lang(cs,hr,hu,pl,ro,sk,sl,sq) %{_sysconfdir}/gtk-2.0/gtkrc.iso-8859-2
-%lang(bg,mk,ru,sr) %{_sysconfdir}/gtk-2.0/gtkrc.iso-8859-5
-%lang(lt) %{_sysconfdir}/gtk-2.0/gtkrc.iso-8859-13
-%lang(cy,ga) %{_sysconfdir}/gtk-2.0/gtkrc.iso-8859-14
-%lang(et) %{_sysconfdir}/gtk-2.0/gtkrc.iso-8859-15
+#%lang(bg) %{_sysconfdir}/gtk-2.0/gtkrc.bg*
+#%lang(cs) %{_sysconfdir}/gtk-2.0/gtkrc.cs
+#%lang(cy) %{_sysconfdir}/gtk-2.0/gtkrc.cy
+#%lang(el) %{_sysconfdir}/gtk-2.0/gtkrc.el
+#%lang(eo) %{_sysconfdir}/gtk-2.0/gtkrc.eo
+#%lang(et) %{_sysconfdir}/gtk-2.0/gtkrc.et
+#%lang(ga) %{_sysconfdir}/gtk-2.0/gtkrc.ga
+#%lang(he) %{_sysconfdir}/gtk-2.0/gtkrc.he
+#%lang(hr) %{_sysconfdir}/gtk-2.0/gtkrc.hr
+#%lang(hu) %{_sysconfdir}/gtk-2.0/gtkrc.hu
+#%lang(hy) %{_sysconfdir}/gtk-2.0/gtkrc.hy
+#%lang(ja) %{_sysconfdir}/gtk-2.0/gtkrc.ja
+#%lang(ka) %{_sysconfdir}/gtk-2.0/gtkrc.ka*
+#%lang(ko) %{_sysconfdir}/gtk-2.0/gtkrc.ko
+#%lang(lt) %{_sysconfdir}/gtk-2.0/gtkrc.lt
+#%lang(mk) %{_sysconfdir}/gtk-2.0/gtkrc.mk
+#%lang(pl) %{_sysconfdir}/gtk-2.0/gtkrc.pl
+#%lang(ro) %{_sysconfdir}/gtk-2.0/gtkrc.ro
+#%lang(ru) %{_sysconfdir}/gtk-2.0/gtkrc.ru*
+#%lang(sk) %{_sysconfdir}/gtk-2.0/gtkrc.sk
+#%lang(sl) %{_sysconfdir}/gtk-2.0/gtkrc.sl
+#%lang(sq) %{_sysconfdir}/gtk-2.0/gtkrc.sq
+#%lang(sr) %{_sysconfdir}/gtk-2.0/gtkrc.sr
+#%lang(th) %{_sysconfdir}/gtk-2.0/gtkrc.th
+#%lang(tr) %{_sysconfdir}/gtk-2.0/gtkrc.tr
+#%lang(uk) %{_sysconfdir}/gtk-2.0/gtkrc.uk
+#%lang(vi) %{_sysconfdir}/gtk-2.0/gtkrc.vi*
+#%lang(zh) %{_sysconfdir}/gtk-2.0/gtkrc.zh*
+#%lang(cs,hr,hu,pl,ro,sk,sl,sq) %{_sysconfdir}/gtk-2.0/gtkrc.iso-8859-2
+#%lang(bg,mk,ru,sr) %{_sysconfdir}/gtk-2.0/gtkrc.iso-8859-5
+#%lang(lt) %{_sysconfdir}/gtk-2.0/gtkrc.iso-8859-13
+#%lang(cy,ga) %{_sysconfdir}/gtk-2.0/gtkrc.iso-8859-14
+#%lang(et) %{_sysconfdir}/gtk-2.0/gtkrc.iso-8859-15
 %dir %{_libdir}/gtk/themes
 %dir %{_libdir}/gtk/themes/engines
 %dir %{_sysconfdir}/themes
