@@ -20,6 +20,8 @@ BuildRequires:	fribidi-devel >= 0.10.1
 Buildrequires:	atk-devel >= 1.0.1
 BuildRequires:	gettext-devel
 BuildRequires:	pango-devel >= 1.0.1
+BuildRequires:	libtool
+BuildRequires:	autoconf
 Requires:	glib2 >= 2.0.1
 Requires:	iconv
 Requires:	pango
@@ -115,6 +117,7 @@ Biblioteki statyczne Gtk+
 %setup -q -n gtk+-%{version}
 
 %build
+libtoolize --copy --force
 gettextize --copy --force
 patch -p1 < %{PATCH0}
 aclocal
