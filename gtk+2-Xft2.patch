@@ -1,0 +1,12 @@
+diff -Nru gtk+-2.1.0.orig/gdk/x11/gdkdrawable-x11.h gtk+-2.1.0/gdk/x11/gdkdrawable-x11.h
+--- gtk+-2.1.0.orig/gdk/x11/gdkdrawable-x11.h	Fri Aug  2 06:00:22 2002
++++ gtk+-2.1.0/gdk/x11/gdkdrawable-x11.h	Fri Oct  4 15:57:58 2002
+@@ -34,7 +34,7 @@
+ #include <X11/Xlib.h>
+ 
+ #ifdef HAVE_XFT
+-#include <X11/Xft/Xft.h>
++#include <X11/Xft2/Xft.h>
+ #endif
+ 
+ #ifdef __cplusplus
