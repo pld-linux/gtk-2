@@ -22,6 +22,10 @@ BuildRequires:	glib2-devel >= 2.0.1
 BuildRequires:	gtk-doc >= 0.9-2
 BuildRequires:	libtool
 BuildRequires:	pango-devel >= 1.0.3
+BuildRequires:	pango-devel >= 1.0.3
+BuildRequires:	libtiff-devel
+BuildRequires:	libjpeg-devel
+BuildRequires:	libpng-devel
 Requires:	glib2 >= 2.0.1
 Requires:	iconv
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
