@@ -1,4 +1,3 @@
-%define	_rc	rc1
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
@@ -9,12 +8,11 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.2.3
-Release:	0.%{_rc}.1
+Release:	1
 License:	LGPL
 Group:		X11/Libraries
-#Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.2/gtk+-%{version}.tar.bz2
-Source0:	ftp://ftp.gtk.org/pub/gtk/v2.2/testing/gtk+-%{_rc}-%{version}.tar.gz
-# Source0-md5:	c4d0b2286ad9322a8d8eb8dccb6eb015
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.2/gtk+-%{version}.tar.bz2
+# Source0-md5:	b7ab19482a3dcaf42d0fb4bd204fc80d
 Source1:	%{name}-README.shadow
 # This patch adds shadow to menus and popups
 # Taken from http://www.xfce.org/gtkmenu-shadow/
@@ -123,7 +121,7 @@ Gtk+ static libraries.
 Biblioteki statyczne Gtk+
 
 %prep
-%setup -q -n gtk+-%{_rc}-%{version}
+%setup -q -n gtk+-%{version}
 %patch0 -p1
 
 %build
