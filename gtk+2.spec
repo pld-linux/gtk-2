@@ -201,9 +201,9 @@ umask 022
 %defattr(644,root,root,755)
 %doc ChangeLog
 %attr(755,root,root) %{_bindir}/*csource
-%attr(755,root,root) %{_libdir}/lib*.la
+%{_libdir}/lib*.la
 %attr(755,root,root) %{_libdir}/lib*.so
-%attr(755,root,root) %{_libdir}/gtk-*/2.*/*/*.la
+%{_libdir}/gtk-*/2.*/*/*.la
 %{_includedir}/*
 %{_aclocaldir}/*.m4
 %{_libdir}/gtk-*/include
