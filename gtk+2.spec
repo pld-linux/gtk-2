@@ -14,18 +14,17 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.4.10
+Version:	2.4.11
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.4/gtk+-%{version}.tar.bz2
-# Source0-md5:	d74a4eaa2cded9c125c6b322cc6622ec
+# Source0-md5:	52169a2ca9dcf72af980628cb1136d26
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-2.2.0-path-check.patch
 Patch2:		%{name}-menushadow.patch
 Patch3:		%{name}-xlibs.patch
-Patch4:		%{name}-locale-names.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 %{?with_xlibs:BuildRequires:	libXi-devel}
@@ -138,11 +137,8 @@ Biblioteki statyczne Gtk+
 %setup -q -n gtk+-%{version}
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
+#%patch2 -p1
 %{?with_xlibs:%patch3 -p1}
-%patch4 -p1
-
-rm po/no.po
 
 %build
 gtkdocize --copy
@@ -188,6 +184,8 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*/*/*.{a,la}
 install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*)/modules
 # for gtk+2 theme engines
 install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*)/engines
+
+rm -r $RPM_BUILD_ROOT%{_datadir}/locale/no
 
 %find_lang %{name} --all-name
 
