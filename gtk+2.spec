@@ -151,10 +151,11 @@ glib-gettextize --copy --force
 %{__autoconf}
 %configure \
 	--enable-static \
+	--enable-debug=%{?debug:yes}%{!?debug:minimum} \
 	--enable-gtk-doc \
 	--enable-shm \
 	--enable-xim \
-	--with-xinput=xfree \
+	--with-xinput=yes \
 	--with-gdktarget=x11 \
 	--with-html-path=%{_gtkdocdir}
 
