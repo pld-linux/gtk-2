@@ -1,0 +1,11 @@
+--- gtk+-2.2.1/configure.in.orig	Sun Feb  2 15:03:52 2003
++++ gtk+-2.2.1/configure.in	Thu Feb 27 13:31:25 2003
+@@ -389,7 +389,7 @@
+ AC_SUBST(STRIP_END)
+ 
+ # i18n stuff
+-ALL_LINGUAS="am az be bg ca cs cy da de el en_GB en@IPA es et eu fa fi fr ga gl he hi hr hu ia it ja ko lt lv mk mn ms nl nn no pl pt pt_BR ro ru sk sl sp sr sv ta tr uk vi wa zh_TW zh_CN"
++ALL_LINGUAS="am az be bg ca cs cy da de el en_GB en@IPA es et eu fa fi fr ga gl he hi hr hu ia it ja ko lt lv mk mn ms nl nn no pl pt pt_BR ro ru sk sl sr sr@cyrillic sv ta tr uk vi wa zh_TW zh_CN"
+ AM_GLIB_GNU_GETTEXT
+ LIBS="$LIBS $INTLLIBS"
+ 
