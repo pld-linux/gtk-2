@@ -151,7 +151,7 @@ install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk
 	pkgconfigdir=%{_pkgconfigdir} \
 	HTML_DIR=%{_gtkdocdir}
 
-#ln -sf ../../lib/gtk-2.0/2.0.100/immodules $RPM_BUILD_ROOT/%{_sysconfdir}/gtk-2.0/gtk.immodules
+#ln -sf ../../lib/gtk-2.0/2.0.100/immodules $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gtk.immodules
 
 touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
 touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gtk.immodules
