@@ -211,15 +211,15 @@ umask 022
 %defattr(644,root,root,755)
 %doc ChangeLog
 %attr(755,root,root) %{_bindir}/*csource
-%{_libdir}/lib*.la
 %attr(755,root,root) %{_libdir}/lib*.so
+%{_libdir}/lib*.la
 %{_includedir}/*
 %{_aclocaldir}/*.m4
 %{_libdir}/gtk-*/include
 %{_pkgconfigdir}/*.pc
 %{_mandir}/man1/*
 %{_gtkdocdir}/*
-%doc %{_examplesdir}/%{name}-%{version}
+%{_examplesdir}/%{name}-%{version}
 
 %files static
 %defattr(644,root,root,755)
