@@ -13,21 +13,19 @@ Epoch:		1
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.0/gtk+-%{version}.tar.bz2
+Patch0:		%{name}-gtkdoc.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
-BuildRequires:	atk-devel >= 1.0.3
+BuildRequires:	atk-devel
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 2.0.6
 BuildRequires:	gtk-doc >= 0.9-2
 BuildRequires:	libtool
-BuildRequires:	pango-devel >= 1.0.3
 BuildRequires:	libtiff-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 Requires(post):	/sbin/ldconfig
-Requires:	glib2 >= 2.0.6
 Requires:	iconv
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	gtk2
@@ -90,14 +88,8 @@ Summary(it):	GIMP Toolkit and GIMP Drawing Kit
 Summary(pl):	Pliki nag³ówkowe i dokumentacja do Gtk+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
-Requires:	XFree86-devel
-Requires:	autoconf >= 2.13
-Requires:	automake >= 1.4
-Requires:	atk-devel >= 1.0.0
-Requires:	glib2-devel >= 2.0.1
+Requires:	atk-devel
 Requires:	gtk-doc-common
-Requires:	libtool  >= 1.3.2
-Requires:	pango-devel >= 1.0.0
 Requires:	%{name} = %{version}
 Obsoletes:	gtk2-devel
 
@@ -132,6 +124,7 @@ Program demonstrujacy mozliwo¶ci Gtk+
 
 %prep
 %setup -q -n gtk+-%{version}
+%patch0 -p1
 
 %build
 rm -f missing
