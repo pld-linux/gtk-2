@@ -14,7 +14,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.6.1
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
@@ -50,6 +50,7 @@ Requires:	atk >= 1.8.0
 Requires:	glib2 >= 1:2.6.1
 Requires:	pango >= 1:1.8.0
 Obsoletes:	gtk2
+Conflicts:	gtk2-engines < 1:2.2.0-6
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
