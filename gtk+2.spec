@@ -1,10 +1,7 @@
 #
 # Conditional build:
-# --with nicefileselector	- build with nice fileselector patch
+%bcond_with nicefileselector	# build with nice fileselector patch (unstable, uses GNOME)
 #
-
-%bcond_with nicefileselector
-
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
@@ -15,7 +12,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.2.4
-Release:	6
+Release:	7
 Epoch:		1
 License:	LGPL
 Group:		X11/Libraries
@@ -30,6 +27,7 @@ Patch2:		%{name}-nice-filesel.patch
 Patch3:		%{name}-toolbar-fix.patch
 Patch4:		%{name}-insensitive-iain.patch
 Patch5:		%{name}-xembed_info.patch
+Patch6:		%{name}-am18.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	atk-devel >= 1.2.0
@@ -43,8 +41,8 @@ BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
 BuildRequires:	libtool
 BuildRequires:	pango-devel >= 1.2.4
-BuildRequires:	rpm-build >= 4.1-8.2
 BuildRequires:	pkgconfig
+BuildRequires:	rpm-build >= 4.1-8.2
 Requires(post):	/sbin/ldconfig
 Requires:	glib2 >= 2.2.3
 Requires:	iconv
@@ -134,14 +132,11 @@ Biblioteki statyczne Gtk+
 %setup -q -n gtk+-%{version}
 %patch0 -p1
 %patch1 -p1
-
-%if %{with nicefileselector}
-%patch2 -p1
-%endif
-
+%{?with_nicefileselector:%patch2 -p1}
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 rm -f missing
@@ -149,6 +144,7 @@ rm -f missing
 glib-gettextize --copy --force
 %{__aclocal}
 %{__autoconf}
+%{__autoheader}
 %configure \
 	--enable-static \
 	--enable-debug=%{?debug:yes}%{!?debug:minimum} \
