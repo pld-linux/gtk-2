@@ -14,14 +14,13 @@ Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.0/gtk+-%{version}.tar.bz2
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
-Buildrequires:	atk-devel >= 1.0.1
+BuildRequires:	atk-devel >= 1.0.1
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 2.0.1
 BuildRequires:	gtk-doc >= 0.9-2
 BuildRequires:	libtool
-BuildRequires:	pango-devel >= 1.0.3
 BuildRequires:	pango-devel >= 1.0.3
 BuildRequires:	libtiff-devel
 BuildRequires:	libjpeg-devel
