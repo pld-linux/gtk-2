@@ -1,6 +1,4 @@
 #
-# TODO: check CAN-2004-0782 CAN-2004-0783
-#
 # Conditional build:
 %bcond_without 	doc	# disable gtk-doc
 %bcond_with	xlibs	# use pkgconfig to find libX11
