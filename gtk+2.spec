@@ -171,8 +171,14 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gtk-query*
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 %dir %{_libdir}/gtk-*
-%{_libdir}/gtk-*/%{version}
-%{_libdir}/gtk-*/immodules
+%dir %{_libdir}/gtk-*/%{version}
+%dir %{_libdir}/gtk-*/%{version}/loaders
+%attr(755,root,root) %{_libdir}/gtk-*/%{version}/loaders/*.so
+%dir %{_libdir}/gtk-*/immodules
+%dir %{_libdir}/gtk-*/immodules/%{version}
+%attr(755,root,root) %{_libdir}/gtk-*/immodules/%{version}/*.so
+%{_datadir}/gtk-*
+%dir %{_datadir}/themes/Default/gtk-*
 
 %files devel
 %defattr(644,root,root,755)
@@ -180,6 +186,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/*csource
 %attr(755,root,root) %{_libdir}/lib*.la
 %attr(755,root,root) %{_libdir}/lib*.so
+%attr(755,root,root) %{_libdir}/gtk-*/%{version}/loaders/*.la
+%attr(755,root,root) %{_libdir}/gtk-*/immodules/%{version}/*.la
 %{_includedir}/*
 %{_aclocaldir}/*.m4
 %{_libdir}/gtk-*/include
@@ -189,3 +197,4 @@ rm -rf $RPM_BUILD_ROOT
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
+%{_libdir}/gtk-*/%{version}/loaders/*.a
