@@ -26,6 +26,7 @@ Requires:	iconv
 Requires:	pango
 BuildRequires:	glib2-devel >= %{version}
 BuildRequires:	fribidi-devel >= 0.20011029
+Buildrequires:	atk >= 0.6
 Buildrequires:	atk-devel >= 0.6
 BuildRequires:	gettext-devel
 BuildRequires:	pango-devel >= 0.21
