@@ -8,7 +8,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.2.3
-Release:	1
+Release:	2
 Epoch:		1
 License:	LGPL
 Group:		X11/Libraries
@@ -20,7 +20,6 @@ Source1:	%{name}-README.shadow
 Patch0:		%{name}-drop-shadow.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
-BuildRequires:	xft-devel
 BuildRequires:	atk-devel >= 1.2.0
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -92,14 +91,11 @@ Summary(it):	GIMP Toolkit and GIMP Drawing Kit
 Summary(pl):	Pliki nag³ówkowe i dokumentacja do Gtk+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{epoch}:%{version}
 Requires:	XFree86-devel
 Requires:	atk-devel >= 1.0.0
-Requires:	autoconf >= 2.13
-Requires:	automake >= 1.4
 Requires:	glib2-devel >= 2.2.3
 Requires:	gtk-doc-common
-Requires:	libtool  >= 1.3.2
 Requires:	pango-devel >= 1.2.4
 Obsoletes:	gtk2-devel
 
@@ -113,7 +109,7 @@ Pliki nag³ówkowe i dokumentacja do bibliotek Gtk+.
 Summary:	Gtk+ static libraries
 Summary(pl):	Biblioteki statyczne Gtk+
 Group:		X11/Development/Libraries
-Requires:	%{name}-devel = %{version}
+Requires:	%{name}-devel = %{epoch}:%{version}
 
 %description static
 Gtk+ static libraries.
