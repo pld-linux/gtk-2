@@ -13,7 +13,6 @@ License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.0/gtk+-%{version}.tar.bz2
 Patch0:		%{name}-gettext.patch
-Patch1:		%{name}-gtktextlayout.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	glib2-devel >= 2.0.1
@@ -120,7 +119,6 @@ Biblioteki statyczne Gtk+
 %build
 libtoolize --copy --force
 gettextize --copy --force
-patch -p1 < %{PATCH0}
 aclocal
 %{__autoconf}
 if [ -f %{_pkgconfigdir}/libpng12.pc ] ; then
