@@ -153,6 +153,8 @@ rm -rf $RPM_BUILD_ROOT
 	m4datadir=%{_aclocaldir} \
 	pkgconfigdir=%{_pkgconfigdir}
 
+ln -sf ../../lib/gtk-2.0/immodules $RPM_BUILD_ROOT/%{_datadir}/gtk-2.0/gtk.immodules
+
 gzip -9nf AUTHORS ChangeLog NEWS README TODO
 
 # Collision with gtk 1.2
