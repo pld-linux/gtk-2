@@ -1,3 +1,4 @@
+%define	_rc	rc1
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
@@ -7,12 +8,13 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.2.2
-Release:	3
+Version:	2.2.3
+Release:	0.%{_rc}.1
 License:	LGPL
 Group:		X11/Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.2/gtk+-%{version}.tar.bz2
-# Source0-md5:	5a7c639f0f2d682bdc17e3f81c17c79c
+#Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.2/gtk+-%{version}.tar.bz2
+Source0:	ftp://ftp.gtk.org/pub/gtk/v2.2/testing/gtk+-%{_rc}-%{version}.tar.gz
+# Source0-md5:	c4d0b2286ad9322a8d8eb8dccb6eb015
 Source1:	%{name}-README.shadow
 # This patch adds shadow to menus and popups
 # Taken from http://www.xfce.org/gtkmenu-shadow/
@@ -24,19 +26,19 @@ BuildRequires:	atk-devel >= 1.2.0
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 2.2.2
+BuildRequires:	glib2-devel >= 2.2.3
 BuildRequires:	gtk-doc >= 0.10
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
 BuildRequires:	libtool
-BuildRequires:	pango-devel >= 1.2.1
+BuildRequires:	pango-devel >= 1.2.4
 BuildRequires:	rpm-build >= 4.1-8.2
 Requires(post):	/sbin/ldconfig
-Requires:	glib2 >= 2.2.1
+Requires:	glib2 >= 2.2.3
 Requires:	iconv
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	gtk2
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 Gtk+, which stands for the Gimp ToolKit, is a library for creating
@@ -96,10 +98,10 @@ Requires:	XFree86-devel
 Requires:	atk-devel >= 1.0.0
 Requires:	autoconf >= 2.13
 Requires:	automake >= 1.4
-Requires:	glib2-devel >= 2.2.1
+Requires:	glib2-devel >= 2.2.3
 Requires:	gtk-doc-common
 Requires:	libtool  >= 1.3.2
-Requires:	pango-devel >= 1.2.1
+Requires:	pango-devel >= 1.2.4
 Obsoletes:	gtk2-devel
 
 %description devel
@@ -121,7 +123,7 @@ Gtk+ static libraries.
 Biblioteki statyczne Gtk+
 
 %prep
-%setup -q -n gtk+-%{version}
+%setup -q -n gtk+-%{_rc}-%{version}
 %patch0 -p1
 
 %build
