@@ -8,7 +8,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.2.4
-Release:	2
+Release:	3
 Epoch:		1
 License:	LGPL
 Group:		X11/Libraries
@@ -19,6 +19,8 @@ Source1:	%{name}-README.shadow
 # Taken from http://www.xfce.org/gtkmenu-shadow/
 Patch0:		%{name}-drop-shadow.patch
 Patch1:		%{name}-gtk_socket_focus.patch
+Patch2:		%{name}-nice-filesel.patch
+Patch3:		%{name}-toolbar-fix.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	atk-devel >= 1.2.0
@@ -122,6 +124,8 @@ Biblioteki statyczne Gtk+
 %setup -q -n gtk+-%{version}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 %build
 rm -f missing
