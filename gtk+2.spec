@@ -118,6 +118,17 @@ Gtk+ static libraries.
 %description static -l pl
 Biblioteki statyczne Gtk+
 
+%package demo
+Summary:	Gtk+ demo
+Summary(pl):	Program demonstrujacy mo¿liwo¶ci Gtk+
+Group:		X11/Applications
+
+%description demo
+Gtk+ demo.
+
+%description demo -l pl
+Program demonstrujacy mozliwo¶ci Gtk+
+
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
@@ -163,7 +174,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -f gtk20.lang
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/gtk-demo
+%doc AUTHORS NEWS README
 %attr(755,root,root) %{_bindir}/gtk-query*
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 %dir %{_libdir}/gtk-*
@@ -172,7 +183,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/gtk-*/2.*/loaders/*.so
 %dir %{_libdir}/gtk-*/2.*/immodules
 %attr(755,root,root) %{_libdir}/gtk-*/2.*/immodules/*.so
-%{_sysconfdir}/gtk-*
+%dir %{_sysconfdir}/gtk-*
+%{_sysconfdir}/gtk-*/gtk.immodules
 %dir %{_sysconfdir}/themes/Default/gtk-*
 %{_sysconfdir}/themes/Default/gtk-*/gtkrc
 %dir %{_sysconfdir}/themes/Emacs/gtk-*
@@ -180,7 +192,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog NEWS README TODO
+%doc ChangeLog TODO
 %attr(755,root,root) %{_bindir}/*csource
 %attr(755,root,root) %{_libdir}/lib*.la
 %attr(755,root,root) %{_libdir}/lib*.so
@@ -197,3 +209,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/lib*.a
 %{_libdir}/gtk-*/2.*/loaders/*.a
 %{_libdir}/gtk-*/2.*/immodules/*.a
+
+%files demo
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/gtk-demo
+%{_sysconfdir}/gtk-*/demo
