@@ -34,7 +34,6 @@ Requires:	iconv
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	gtk2
 
-%define		_sysconfdir	/etc/X11
 
 %description
 Gtk+, which stands for the Gimp ToolKit, is a library for creating
