@@ -7,8 +7,8 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.0.3
-Release:	2
+Version:	2.0.5
+Release:	1
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.0/gtk+-%{version}.tar.bz2
@@ -21,7 +21,7 @@ BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 2.0.1
 BuildRequires:	gtk-doc >= 0.9-2
 BuildRequires:	libtool
-BuildRequires:	pango-devel >= 1.0.1
+BuildRequires:	pango-devel >= 1.0.3
 Requires:	glib2 >= 2.0.1
 Requires:	iconv
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
