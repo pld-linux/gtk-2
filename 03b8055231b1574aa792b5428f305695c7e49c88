@@ -1,0 +1,2 @@
+- updated to 1.2.4,
+- /etc/X11 replaced by %%{_sysconfdir} in %files.
