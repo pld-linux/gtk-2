@@ -158,6 +158,13 @@ cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 # remove unsupported locale scheme
 rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/en@IPA
+# shut up check-files (static modules and *.la for modules)
+rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*/*/*.{a,la}
+
+# for various gtk+2 modules
+install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*)/modules
+# for gtk+2 theme engines
+install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*)/engines
 
 %find_lang gtk20
 
@@ -180,7 +187,9 @@ umask 022
 %attr(755,root,root) %{_bindir}/gdk-pixbuf-query-loaders
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 %dir %{_libdir}/gtk-*
+%dir %{_libdir}/gtk-*/modules
 %dir %{_libdir}/gtk-*/2.*
+%dir %{_libdir}/gtk-*/2.*/engines
 %dir %{_libdir}/gtk-*/2.*/loaders
 %attr(755,root,root) %{_libdir}/gtk-*/2.*/loaders/*.so
 %dir %{_libdir}/gtk-*/2.*/immodules
@@ -188,7 +197,6 @@ umask 022
 %{_datadir}/gtk-*
 %dir %{_sysconfdir}/gtk-*
 %ghost %{_sysconfdir}/gtk-*/*
-# %dir %{_datadir}/themes/Default	-- belongs to gtk+ 1.2
 %dir %{_datadir}/themes/Default/gtk-*
 %{_datadir}/themes/Default/gtk-*/gtkrc
 %dir %{_datadir}/themes/Emacs
@@ -201,7 +209,6 @@ umask 022
 %attr(755,root,root) %{_bindir}/*csource
 %{_libdir}/lib*.la
 %attr(755,root,root) %{_libdir}/lib*.so
-%{_libdir}/gtk-*/2.*/*/*.la
 %{_includedir}/*
 %{_aclocaldir}/*.m4
 %{_libdir}/gtk-*/include
@@ -213,5 +220,3 @@ umask 022
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
-%{_libdir}/gtk-*/2.*/loaders/*.a
-%{_libdir}/gtk-*/2.*/immodules/*.a
