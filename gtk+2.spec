@@ -30,7 +30,7 @@ Icon:		gtk+.xpm
 %{?with_xlibs:BuildRequires:	libXi-devel}
 BuildRequires:	atk-devel >= 1.8.0
 BuildRequires:	autoconf >= 2.54
-BuildRequires:	automake >= 1.7
+BuildRequires:	automake >= 1:1.7
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
