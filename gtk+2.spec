@@ -26,7 +26,7 @@ BuildRequires:	automake
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 2.4.0
+BuildRequires:	glib2-devel >= 1:2.4.0
 BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
@@ -40,7 +40,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	rpm-build >= 4.1-8.2
 BuildRequires:	xcursor-devel
 Requires(post):	/sbin/ldconfig
-Requires:	glib2 >= 2.4.0
+Requires:	glib2 >= 1:2.4.0
 Requires:	iconv
 Obsoletes:	gtk2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -101,7 +101,7 @@ Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	XFree86-devel
 Requires:	atk-devel >= 1.6.0
-Requires:	glib2-devel >= 2.4.0
+Requires:	glib2-devel >= 1:2.4.0
 Requires:	gtk-doc-common
 Requires:	pango-devel >= 1.4.0
 Requires:	xcursor-devel
