@@ -14,7 +14,7 @@ Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.1/gtk+-%{version}.tar.bz2
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
-BuildRequires:  Xft-devel >= 2.0-6
+BuildRequires:  Xft-devel >= 2.1
 BuildRequires:	atk-devel >= 1.1.3-2
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -30,6 +30,7 @@ BuildRequires:	rpm-build >= 4.1-8.2
 Requires(post):	/sbin/ldconfig
 Requires:	glib2 >= 2.1.4
 Requires:	iconv
+Requires:	Xft >= 2.1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	gtk2
 
