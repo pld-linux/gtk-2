@@ -2,7 +2,7 @@ Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
 Summary(fi):	Gimp-työkalukokoelma
-Summary(fr):	Le toolkit de Gimp.
+Summary(fr):	Le toolkit de Gimp
 Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
@@ -11,6 +11,8 @@ Version:	1.3.2
 Release:	3
 License:	LGPL
 Group:		X11/Libraries
+Group(de):	X11/Libraries
+Group(es):	X11/Bibliotecas
 Group(pl):	X11/Biblioteki
 Source0:	ftp://ftp.gtk.org/pub/gtk/v1.3/%{name}-%{version}.tar.gz
 #Patch0:	%{name}-info.patch
@@ -60,7 +62,7 @@ Libreria X scritta per GIMP. Viene usata da diversi programmi.
 
 %description -l pl
 Gtk+, która to biblioteka sta³a siê podstaw± programu Gimp zawiera
-funkcje do tworzenia graficznego interfrjsu uzytkownika pod X Window.
+funkcje do tworzenia graficznego interfejsu u¿ytkownika pod X Window.
 By³a tworzona z za³o¿eniem ¿eby by³a ma³a, efektywna i wygodna. Gtk+
 jest napisane w C z podej¶ciem zorientowanym bardzo obiektowo. Gdk
 (czê¶æ Gtk+) jest warstw± po¶redni± pomiêdzy Xlib a w³a¶ciwym Gtk
@@ -78,11 +80,12 @@ Summary(cs):	Sada nástrojù GIMP a kreslící kit GIMP
 Summary(da):	GIMP Toolkit og GIMP Tegnings-værktøj
 Summary(de):	GIMP Toolkit und GIMP Drawing Kit
 Summary(fi):	Gimp-työkalukokoelma ja Gimp-piirtotyökalut
-Summary(fr):	Toolkit de GIMP (GTK) et Kit de dessin de GIMP (GDK).
+Summary(fr):	Toolkit de GIMP (GTK) et Kit de dessin de GIMP (GDK)
 Summary(it):	GIMP Toolkit and GIMP Drawing Kit
-Summary(pl):	Pliki nag³ówkowe i dokumentacja do Gtk+ 
+Summary(pl):	Pliki nag³ówkowe i dokumentacja do Gtk+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
+Group(de):	X11/Entwicklung/Libraries
 Group(pl):	X11/Programowanie/Biblioteki
 Requires:	%{name} = %{version}
 Requires:	glib-devel >= %{version}
@@ -105,6 +108,7 @@ Pliki nag³ówkowe i dokumentacja do bibliotek Gtk+.
 Summary:	Gtk+ static libraries
 Summary(pl):	Biblioteki statyczne Gtk+
 Group:		X11/Development/Libraries
+Group(de):	X11/Entwicklung/Libraries
 Group(pl):	X11/Programowanie/Biblioteki
 Requires:	%{name}-devel = %{version}
 
@@ -121,7 +125,6 @@ Biblioteki statyczne Gtk+
 
 %build
 gettextize --copy --force
-LDFLAGS="-s"; export LDFLAGS
 %configure \
 	--enable-shm \
 	--with-xinput=xfree \
@@ -138,10 +141,7 @@ install -d $RPM_BUILD_ROOT%{_libdir}/gtk/themes/engines
 	DESTDIR=$RPM_BUILD_ROOT \
 	m4datadir=/usr/share/aclocal
 
-strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*so.*.*
-
-gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man1/* \
-	AUTHORS ChangeLog NEWS README TODO
+gzip -9nf AUTHORS ChangeLog NEWS README TODO
 
 %find_lang %{name}
 
