@@ -1,7 +1,3 @@
-#
-# Conditional build:
-# _with_shadows - apply a patch which adds shadow to menus and popups
-
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
@@ -12,11 +8,12 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.2.2
-Release:	2
+Release:	3
 License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.2/gtk+-%{version}.tar.bz2
 # Source0-md5:	5a7c639f0f2d682bdc17e3f81c17c79c
+Source1:	%{name}-README.shadow
 # This patch adds shadow to menus and popups
 # Taken from http://www.xfce.org/gtkmenu-shadow/
 Patch0:		%{name}-drop-shadow.patch
@@ -125,7 +122,7 @@ Biblioteki statyczne Gtk+
 
 %prep
 %setup -q -n gtk+-%{version}
-%{?_with_shadows:%patch0 -p1}
+%patch0 -p1
 
 %build
 rm -f missing
@@ -171,6 +168,8 @@ install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*)/modules
 # for gtk+2 theme engines
 install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*)/engines
 
+install %{SOURCE1} README.shadow
+
 %find_lang gtk20
 
 %clean
@@ -186,7 +185,7 @@ umask 022
 
 %files -f gtk20.lang
 %defattr(644,root,root,755)
-%doc AUTHORS NEWS README
+%doc AUTHORS NEWS README README.shadow
 %attr(755,root,root) %{_bindir}/gtk-demo
 %attr(755,root,root) %{_bindir}/gtk-query*
 %attr(755,root,root) %{_bindir}/gdk-pixbuf-query-loaders
