@@ -11,17 +11,14 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.2.1
-Release:	6
+Version:	2.2.2
+Release:	1
 License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.2/gtk+-%{version}.tar.bz2
-# Source0-md5:	dfd5755fddb26a46c96bfaa813280ac4
-Patch0:		%{name}-locale-sp.patch
-Patch1:		%{name}-scrollfix.patch
+# Source0-md5:	5a7c639f0f2d682bdc17e3f81c17c79c
 # This patch adds shadow to menus and popups (taken from gnome mailing list)
-Patch2:		%{name}-drop-shadow.patch
-Patch3:		%{name}-treeview.patch
+Patch0:		%{name}-drop-shadow.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:  xft-devel
@@ -127,12 +124,7 @@ Biblioteki statyczne Gtk+
 
 %prep
 %setup -q -n gtk+-%{version}
-%patch0 -p1
-%patch1 -p1
-%{?_with_shadows:%patch2 -p1}
-%patch3 -p1
-
-mv -f po/{sp,sr@cyrillic}.po
+%{?_with_shadows:%patch0 -p1}
 
 %build
 rm -f missing
