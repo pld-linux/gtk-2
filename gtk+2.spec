@@ -50,7 +50,6 @@ Requires(post,postun):	/sbin/ldconfig
 Requires:	atk >= 1.6.0
 Requires:	glib2 >= 1:2.4.4
 Requires:	pango >= 1:1.4.0
-Requires:	iconv
 Obsoletes:	gtk2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
