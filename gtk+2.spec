@@ -122,7 +122,7 @@ libtoolize --copy --force
 gettextize --copy --force
 patch -p1 < %{PATCH0}
 aclocal
-autoconf
+%{__autoconf}
 %configure \
 	--enable-static \
 	--disable-gtk-doc \
