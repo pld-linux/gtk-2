@@ -1,4 +1,4 @@
-%define		snap %{nil}
+%define		snap 20040114
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
@@ -9,13 +9,13 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.3.1
-Release:	2
+Release:	2.%{snap}.1
 Epoch:		1
 License:	LGPL
 Group:		X11/Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.3/gtk+-%{version}.tar.bz2
-# Source0-md5:	d19a07d0fdb04a68f7a0506900cf9691
-#Source0:	gtk+-%{version}.%{snap}.tar.bz2
+Source0:	gtk+-%{version}-%{snap}.tar.bz2
+# Source0-md5:	1949aa7d4a1d7721bcbc04a526f995a1
+#Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.3/gtk+-%{version}.tar.bz2
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-am18.patch
 URL:		http://www.gtk.org/
@@ -26,7 +26,7 @@ BuildRequires:	automake
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 2.3.1-2
+BuildRequires:	glib2-devel >= 2.3.1-2.20040114.1
 BuildRequires:	gtk-doc >= 0.10
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
@@ -34,7 +34,7 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool
 BuildRequires:	libxml2-progs
 BuildRequires:	libxslt-progs
-BuildRequires:	pango-devel >= 1.3.1
+BuildRequires:	pango-devel >= 1.3.1-1.20040114.1
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-build >= 4.1-8.2
 BuildRequires:	xcursor-devel
@@ -130,9 +130,12 @@ Biblioteki statyczne Gtk+
 %patch1 -p1
 
 %build
+cp /usr/share/automake/mkinstalldirs .
+gtkdocize --copy
 %{__libtoolize}
 glib-gettextize --copy --force
 %{__aclocal}
+%{__autoheader}
 %{__autoconf}
 %{__automake}
 %configure \
