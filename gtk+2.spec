@@ -2,6 +2,7 @@
 # Conditional build:
 %bcond_without 	doc	# disable gtk-doc
 %bcond_with	xlibs	# use pkgconfig to find libX11
+%bcond_with	debug
 #
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
@@ -154,7 +155,7 @@ glib-gettextize --copy --force
 	--with-xinput=xfree \
 	--with-gdktarget=x11 \
 	--with-html-dir=%{_gtkdocdir} \
-	--enable-debug=%{?debug:yes}%{!?debug:minimum} \
+	--enable-debug=%{?with_debug:yes}%{?without_debug:minium} \
 	--enable-man
 
 %{__make}
