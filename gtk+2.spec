@@ -12,13 +12,13 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.5.2
+Version:	2.5.3
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.5/gtk+-%{version}.tar.bz2
-# Source0-md5:	2e68e16cfb3194f691b06ed74b65d65a
+# Source0-md5:	21d3c3c1ed78def3c5b8c1a913a9aef7
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-locale-names.patch
 Patch2:		%{name}-2.2.0-path-check.patch
@@ -27,13 +27,13 @@ Patch4:		%{name}-xlibs.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 %{?with_xlibs:BuildRequires:	libXi-devel}
-BuildRequires:	atk-devel >= 1.7.3
+BuildRequires:	atk-devel >= 1.8.0
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1.7
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.5.2
+BuildRequires:	glib2-devel >= 1:2.5.3
 %{?with_doc:BuildRequires:	gtk-doc >= 1.0}
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
@@ -41,15 +41,15 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs
 BuildRequires:	libxslt-progs
-BuildRequires:	pango-devel >= 1:1.5.2
+BuildRequires:	pango-devel >= 1:1.6.0
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-build >= 4.1-8.2
 BuildRequires:	xcursor-devel
 Requires(post,postun):	/sbin/ldconfig
-Requires:	atk >= 1.7.3
-Requires:	glib2 >= 1:2.5.2
-Requires:	pango >= 1:1.5.2
+Requires:	atk >= 1.8.0
+Requires:	glib2 >= 1:2.5.3
+Requires:	pango >= 1:1.6.0
 Obsoletes:	gtk2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -107,10 +107,10 @@ Summary(pl):	Pliki nag³ówkowe i dokumentacja do Gtk+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	atk-devel >= 1.7.3
-Requires:	glib2-devel >= 1:2.5.2
+Requires:	atk-devel >= 1.8.0
+Requires:	glib2-devel >= 1:2.5.3
 Requires:	gtk-doc-common
-Requires:	pango-devel >= 1:1.5.2
+Requires:	pango-devel >= 1:1.6.0
 Requires:	xcursor-devel
 Obsoletes:	gtk2-devel
 
