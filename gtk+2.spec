@@ -36,6 +36,7 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool
 BuildRequires:	pango-devel >= 1.2.4
 BuildRequires:	rpm-build >= 4.1-8.2
+BuildRequires:	pkgconfig
 Requires(post):	/sbin/ldconfig
 Requires:	glib2 >= 2.2.3
 Requires:	iconv
