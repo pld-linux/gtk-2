@@ -45,7 +45,7 @@ BuildRequires:	libxslt-progs
 BuildRequires:	pango-devel >= 1:1.4.0
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
-BuildRequires:	rpm-build >= 4.1-8.2
+BuildRequires:	rpmbuild(macros) >= 1.98
 BuildRequires:	xcursor-devel
 Requires(post,postun):	/sbin/ldconfig
 Requires:	atk >= 1.6.0
