@@ -1,4 +1,3 @@
-%define		snap 20040114
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
@@ -15,14 +14,13 @@ License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.4/gtk+-%{version}.tar.bz2
 # Source0-md5:	fd16157de447c7f0a86495ad0dc67a1b
-#Source0:	gtk+-%{version}-%{snap}.tar.bz2
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-locale-names.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	atk-devel >= 1.6.0
 BuildRequires:	autoconf >= 2.54
-BuildRequires:	automake
+BuildRequires:	automake >= 1.7
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
@@ -31,7 +29,7 @@ BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
-BuildRequires:	libtool
+BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs
 BuildRequires:	libxslt-progs
 BuildRequires:	pango-devel >= 1.4.0
@@ -148,7 +146,7 @@ glib-gettextize --copy --force
 	--enable-xim \
 	--with-xinput=xfree \
 	--with-gdktarget=x11 \
-	--with-html-path=%{_gtkdocdir} \
+	--with-html-dir=%{_gtkdocdir} \
 	--enable-debug=%{?debug:yes}%{!?debug:minimum} \
 	--enable-man
 
@@ -161,8 +159,7 @@ install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
 	m4datadir=%{_aclocaldir} \
-	pkgconfigdir=%{_pkgconfigdir} \
-	HTML_DIR=%{_gtkdocdir}
+	pkgconfigdir=%{_pkgconfigdir}
 
 touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
 touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gtk.immodules
