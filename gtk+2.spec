@@ -8,25 +8,25 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.3.5
-Release:	2
+Version:	2.3.6
+Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.3/gtk+-%{version}.tar.bz2
-# Source0-md5:	1afcbac22ac6111771d0e5996136086a
+# Source0-md5:	2bb03af55fd797ec31ab60eafc29ff8a
 #Source0:	gtk+-%{version}-%{snap}.tar.bz2
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-locale-names.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
-BuildRequires:	atk-devel >= 1.5.5
+BuildRequires:	atk-devel >= 1.6.0
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 2.3.5
+BuildRequires:	glib2-devel >= 2.3.6
 BuildRequires:	gtk-doc >= 1.0
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
@@ -34,13 +34,13 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool
 BuildRequires:	libxml2-progs
 BuildRequires:	libxslt-progs
-BuildRequires:	pango-devel >= 1.3.5
+BuildRequires:	pango-devel >= 1.3.6
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-build >= 4.1-8.2
 BuildRequires:	xcursor-devel
 Requires(post):	/sbin/ldconfig
-Requires:	glib2 >= 2.3.3
+Requires:	glib2 >= 2.3.6
 Requires:	iconv
 Obsoletes:	gtk2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -100,10 +100,10 @@ Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	XFree86-devel
-Requires:	atk-devel >= 1.5.5
-Requires:	glib2-devel >= 2.3.3
+Requires:	atk-devel >= 1.6.0
+Requires:	glib2-devel >= 2.3.6
 Requires:	gtk-doc-common
-Requires:	pango-devel >= 1.3.3
+Requires:	pango-devel >= 1.3.6
 Requires:	xcursor-devel
 Obsoletes:	gtk2-devel
 
