@@ -1,0 +1,120 @@
+Index: gdk/x11/gdkdrawable-x11.c
+===================================================================
+RCS file: /cvs/gnome/gtk+/gdk/x11/gdkdrawable-x11.c,v
+retrieving revision 1.18
+diff -u -r1.18 gdkdrawable-x11.c
+--- gdk/x11/gdkdrawable-x11.c	2 Aug 2002 04:57:53 -0000	1.18
++++ gdk/x11/gdkdrawable-x11.c	22 Aug 2002 16:21:52 -0000
+@@ -268,11 +268,42 @@
+ static Picture
+ gdk_x11_drawable_get_picture (GdkDrawable *drawable)
+ {
++#ifdef HAVE_XFT2
+   XftDraw *draw = gdk_x11_drawable_get_xft_draw (drawable);
+ 
+   return draw ? XftDrawPicture (draw) : None;
+-}
++#else
++  GdkDrawableImplX11 *impl = GDK_DRAWABLE_IMPL_X11 (drawable);
++
++  if (!_gdk_x11_have_render (gdk_drawable_get_display (drawable)))
++    return None;
+   
++  if (impl->picture == None)
++    {
++      GdkVisual *visual = gdk_drawable_get_visual (drawable);
++      XRenderPictFormat *format;
++
++      if (!visual)
++	{
++	  g_warning ("Using Xft rendering requires the drawable argument to\n"
++		     "have a specified colormap. All windows have a colormap,\n"
++		     "however, pixmaps only have colormap by default if they\n"
++		     "were created with a non-NULL window argument. Otherwise\n"
++		     "a colormap must be set on them with gdk_drawable_set_colormap");
++	  return None;
++	}
++
++      format = XRenderFindVisualFormat (GDK_SCREEN_XDISPLAY (impl->screen),
++					gdk_x11_visual_get_xvisual(visual));
++      if (format)
++	impl->picture = XRenderCreatePicture (GDK_SCREEN_XDISPLAY (impl->screen),
++					      impl->xid, format, 0, NULL);
++    }
++
++  return impl->picture;
++#endif
++}
++
+ static void
+ gdk_x11_drawable_update_xft_clip (GdkDrawable *drawable,
+ 				  GdkGC       *gc)
+@@ -1166,7 +1197,7 @@
+ 				 GDK_PIXMAP_XID (pix),
+ 				 mask_format, 0, NULL);
+ 
+-  dest_pict = gdk_x11_drawable_get_picture (drawable);
++  dest_pict = gdk_x11_drawable_get_picture (drawable);  
+   
+   pix_gc = gdk_gc_new (pix);
+ 
+Index: gdk/x11/gdkdrawable-x11.h
+===================================================================
+RCS file: /cvs/gnome/gtk+/gdk/x11/gdkdrawable-x11.h,v
+retrieving revision 1.8
+diff -u -r1.8 gdkdrawable-x11.h
+--- gdk/x11/gdkdrawable-x11.h	2 Aug 2002 04:57:53 -0000	1.8
++++ gdk/x11/gdkdrawable-x11.h	22 Aug 2002 16:21:53 -0000
+@@ -67,6 +67,9 @@
+ 
+ #ifdef HAVE_XFT
+   XftDraw *xft_draw;
++#endif	
++#ifndef HAVE_XFT2
++  Picture picture;
+ #endif  
+ };
+  
+Index: gdk/x11/gdkpixmap-x11.c
+===================================================================
+RCS file: /cvs/gnome/gtk+/gdk/x11/gdkpixmap-x11.c,v
+retrieving revision 1.54
+diff -u -r1.54 gdkpixmap-x11.c
+--- gdk/x11/gdkpixmap-x11.c	2 Aug 2002 04:57:53 -0000	1.54
++++ gdk/x11/gdkpixmap-x11.c	22 Aug 2002 16:21:53 -0000
+@@ -132,9 +132,13 @@
+ #ifdef HAVE_XFT  
+       {
+ 	GdkDrawableImplX11 *draw_impl = GDK_DRAWABLE_IMPL_X11 (impl);
+-	
++
+ 	if (draw_impl->xft_draw)
+ 	  XftDrawDestroy (draw_impl->xft_draw);
++#ifndef HAVE_XFT2
++	if (draw_impl->picture)
++	  XRenderFreePicture (GDK_PIXMAP_XDISPLAY (wrapper), draw_impl->picture);
++#endif
+       }
+ #endif /* HAVE_XFT */  
+ 
+Index: gdk/x11/gdkwindow-x11.c
+===================================================================
+RCS file: /cvs/gnome/gtk+/gdk/x11/gdkwindow-x11.c,v
+retrieving revision 1.160
+diff -u -r1.160 gdkwindow-x11.c
+--- gdk/x11/gdkwindow-x11.c	2 Aug 2002 20:22:49 -0000	1.160
++++ gdk/x11/gdkwindow-x11.c	22 Aug 2002 16:22:00 -0000
+@@ -820,8 +820,13 @@
+   {
+     GdkDrawableImplX11 *draw_impl = GDK_DRAWABLE_IMPL_X11 (private->impl);
+ 
++#ifndef HAVE_XFT2
++    if (draw_impl->picture)
++      XRenderFreePicture (GDK_WINDOW_XDISPLAY (window), draw_impl->picture);
++#endif
+     if (draw_impl->xft_draw)
+       XftDrawDestroy (draw_impl->xft_draw);
++
+   }
+ #endif /* HAVE_XFT */  
+ 
