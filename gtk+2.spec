@@ -19,7 +19,7 @@ Source1:	%{name}-README.shadow
 Patch0:		%{name}-drop-shadow.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
-BuildRequires:  xft-devel
+BuildRequires:	xft-devel
 BuildRequires:	atk-devel >= 1.2.0
 BuildRequires:	autoconf
 BuildRequires:	automake
