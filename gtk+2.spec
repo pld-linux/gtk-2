@@ -6,31 +6,33 @@ Summary(fr):	Le toolkit de Gimp
 Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
-Name:		gtk+
-Version:	1.3.5
+Name:		gtk+2
+Version:	1.3.10
 Release:	1
 License:	LGPL
 Group:		X11/Libraries
 Group(de):	X11/Libraries
 Group(es):	X11/Bibliotecas
+Group(fr):	X11/Librairies
 Group(pl):	X11/Biblioteki
-Source0:	ftp://ftp.gtk.org/pub/gtk/v1.3/%{name}-%{version}.tar.gz
-#Patch0:	%{name}-info.patch
-#Patch1:	%{name}-ahiguti.patch
+Group(pt_BR):	X11/Bibliotecas
+Group(ru):	X11/âÉÂÌÉÏÔÅËÉ
+Group(uk):	X11/â¦ÂÌ¦ÏÔÅËÉ
+Source0:	ftp://ftp.gtk.org/pub/gtk/v1.3/gtk+-%{version}.tar.gz
 URL:		http://www.gtk.org/
-#Icon:		gtk+.xpm
-Requires:	glib >= %{version}
+Icon:		gtk+.xpm
+Requires:	glib2 >= %{version}
 Requires:	iconv
-Prereq:		pango
-BuildRequires:	glib-devel >= %{version}
-Buildrequires:	atk-devel
+Requires:	pango
+BuildRequires:	glib2-devel >= %{version}
+BuildRequires:	fribidi-devel >= 0.20011029
+Buildrequires:	atk-devel >= 0.6
 BuildRequires:	gettext-devel
-BuildRequires:	pango-devel
+BuildRequires:	pango-devel >= 0.21
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_prefix		/usr/X11R6
-%define		_infodir	/usr/share/info
-%define		_mandir		/usr/X11R6/man
+%define		_mandir		%{_prefix}/man
 %define		_sysconfdir	%{_datadir}
 
 %description
@@ -87,17 +89,19 @@ Summary(pl):	Pliki nag³ówkowe i dokumentacja do Gtk+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Group(de):	X11/Entwicklung/Libraries
+Group(es):	X11/Desarrollo/Bibliotecas
+Group(fr):	X11/Development/Librairies
 Group(pl):	X11/Programowanie/Biblioteki
+Group(pt_BR):	X11/Desenvolvimento/Bibliotecas
+Group(ru):	X11/òÁÚÒÁÂÏÔËÁ/âÉÂÌÉÏÔÅËÉ
+Group(uk):	X11/òÏÚÒÏÂËÁ/â¦ÂÌ¦ÏÔÅËÉ
 Requires:	%{name} = %{version}
-Requires:	glib-devel >= %{version}
+Requires:	glib2-devel >= %{version}
 Requires:	autoconf >= 2.13
 Requires:	automake >= 1.4
 Requires:	libtool  >= 1.3.2
-# Every program using gtk+ should get a list of libraries to link with by
-# executing `gtk-config --libs`. All libraries listed below are returned by
-# this call, so they are required by every program compiled with gtk+.
 Requires:	XFree86-devel
-Requires:	glib-devel
+Requires:	glib2-devel
 
 %description devel
 Header files and development documentation for the Gtk+ libraries.
@@ -110,7 +114,12 @@ Summary:	Gtk+ static libraries
 Summary(pl):	Biblioteki statyczne Gtk+
 Group:		X11/Development/Libraries
 Group(de):	X11/Entwicklung/Libraries
+Group(es):	X11/Desarrollo/Bibliotecas
+Group(fr):	X11/Development/Librairies
 Group(pl):	X11/Programowanie/Biblioteki
+Group(pt_BR):	X11/Desenvolvimento/Bibliotecas
+Group(ru):	X11/òÁÚÒÁÂÏÔËÁ/âÉÂÌÉÏÔÅËÉ
+Group(uk):	X11/òÏÚÒÏÂËÁ/â¦ÂÌ¦ÏÔÅËÉ
 Requires:	%{name}-devel = %{version}
 
 %description static
@@ -120,31 +129,34 @@ Gtk+ static libraries.
 Biblioteki statyczne Gtk+
 
 %prep
-%setup -q
-#%patch0 -p1
-#%patch1 -p1
+%setup -q -n gtk+-%{version}
 
 %build
 gettextize --copy --force
+aclocal
+autoconf
 %configure \
 	--enable-shm \
+	--enable-xim \
+	--enable-fbmanager \
 	--with-xinput=xfree \
-	#--enable-debug=no \
+	--with-gdktarget=x11
 
-
-%{__make} m4datadir=/usr/share/aclocal
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_libdir}/gtk/themes/engines
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
-	m4datadir=/usr/share/aclocal
+	m4datadir=%{_aclocaldir} \
+	pkgconfigdir=%{_pkgconfigdir}
 
 gzip -9nf AUTHORS ChangeLog NEWS README TODO
 
-%find_lang %{name}
+# Collision with gtk 1.2
+# %find_lang gtk+
+:> gtk+.lang
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -152,64 +164,26 @@ rm -rf $RPM_BUILD_ROOT
 %post   -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
-%post devel
-[ ! -x /usr/sbin/fix-info-dir ] || /usr/sbin/fix-info-dir -c %{_infodir} >/dev/null 2>&1
-
-%postun devel
-[ ! -x /usr/sbin/fix-info-dir ] || /usr/sbin/fix-info-dir -c %{_infodir} >/dev/null 2>&1
-
-%files -f %{name}.lang
+%files -f gtk+.lang
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/gtk-demo
+%attr(755,root,root) %{_bindir}/gtk-query*
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
-#%lang(bg) %{_sysconfdir}/gtk-2.0/gtkrc.bg*
-#%lang(cs) %{_sysconfdir}/gtk-2.0/gtkrc.cs
-#%lang(cy) %{_sysconfdir}/gtk-2.0/gtkrc.cy
-#%lang(el) %{_sysconfdir}/gtk-2.0/gtkrc.el
-#%lang(eo) %{_sysconfdir}/gtk-2.0/gtkrc.eo
-#%lang(et) %{_sysconfdir}/gtk-2.0/gtkrc.et
-#%lang(ga) %{_sysconfdir}/gtk-2.0/gtkrc.ga
-#%lang(he) %{_sysconfdir}/gtk-2.0/gtkrc.he
-#%lang(hr) %{_sysconfdir}/gtk-2.0/gtkrc.hr
-#%lang(hu) %{_sysconfdir}/gtk-2.0/gtkrc.hu
-#%lang(hy) %{_sysconfdir}/gtk-2.0/gtkrc.hy
-#%lang(ja) %{_sysconfdir}/gtk-2.0/gtkrc.ja
-#%lang(ka) %{_sysconfdir}/gtk-2.0/gtkrc.ka*
-#%lang(ko) %{_sysconfdir}/gtk-2.0/gtkrc.ko
-#%lang(lt) %{_sysconfdir}/gtk-2.0/gtkrc.lt
-#%lang(mk) %{_sysconfdir}/gtk-2.0/gtkrc.mk
-#%lang(pl) %{_sysconfdir}/gtk-2.0/gtkrc.pl
-#%lang(ro) %{_sysconfdir}/gtk-2.0/gtkrc.ro
-#%lang(ru) %{_sysconfdir}/gtk-2.0/gtkrc.ru*
-#%lang(sk) %{_sysconfdir}/gtk-2.0/gtkrc.sk
-#%lang(sl) %{_sysconfdir}/gtk-2.0/gtkrc.sl
-#%lang(sq) %{_sysconfdir}/gtk-2.0/gtkrc.sq
-#%lang(sr) %{_sysconfdir}/gtk-2.0/gtkrc.sr
-#%lang(th) %{_sysconfdir}/gtk-2.0/gtkrc.th
-#%lang(tr) %{_sysconfdir}/gtk-2.0/gtkrc.tr
-#%lang(uk) %{_sysconfdir}/gtk-2.0/gtkrc.uk
-#%lang(vi) %{_sysconfdir}/gtk-2.0/gtkrc.vi*
-#%lang(zh) %{_sysconfdir}/gtk-2.0/gtkrc.zh*
-#%lang(cs,hr,hu,pl,ro,sk,sl,sq) %{_sysconfdir}/gtk-2.0/gtkrc.iso-8859-2
-#%lang(bg,mk,ru,sr) %{_sysconfdir}/gtk-2.0/gtkrc.iso-8859-5
-#%lang(lt) %{_sysconfdir}/gtk-2.0/gtkrc.iso-8859-13
-#%lang(cy,ga) %{_sysconfdir}/gtk-2.0/gtkrc.iso-8859-14
-#%lang(et) %{_sysconfdir}/gtk-2.0/gtkrc.iso-8859-15
-%dir %{_libdir}/gtk/themes
-%dir %{_libdir}/gtk/themes/engines
-%dir %{_sysconfdir}/themes
-%{_sysconfdir}/themes/Default
+%dir %{_libdir}/gtk-*
+%{_libdir}/gtk-*/%{version}
+%{_libdir}/gtk-*/immodules
 
 %files devel
 %defattr(644,root,root,755)
 %doc *.gz
+%attr(755,root,root) %{_bindir}/*csource
 %attr(755,root,root) %{_libdir}/lib*.la
 %attr(755,root,root) %{_libdir}/lib*.so
-%attr(755,root,root) %{_bindir}/*
 %{_includedir}/*
-#%{_infodir}/*info*gz
-/usr/share/aclocal/*.m4
-
-%{_mandir}/man1/gtk-config.1*
+%{_aclocaldir}/*.m4
+%{_libdir}/gtk-*/include
+%{_pkgconfigdir}/*.pc
+%{_mandir}/man1/*
 
 %files static
 %defattr(644,root,root,755)
