@@ -8,7 +8,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.0.5
-Release:	2
+Release:	3
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.0/gtk+-%{version}.tar.bz2
@@ -30,7 +30,7 @@ Obsoletes:	gtk2
 %define		_prefix		/usr/X11R6
 %define		_mandir		%{_prefix}/man
 %define		_sysconfdir	%{_datadir}
-%define		_gtkdocdir	/usr/share/doc/gtk-doc/html
+%define		_gtkdocdir	%{_defaultdocdir}/gtk-doc/html
 
 %description
 Gtk+, which stands for the Gimp ToolKit, is a library for creating
@@ -90,6 +90,7 @@ Requires:	autoconf >= 2.13
 Requires:	automake >= 1.4
 Requires:	atk-devel >= 1.0.0
 Requires:	glib2-devel >= 2.0.1
+Requires:	gtk-doc-common
 Requires:	libtool  >= 1.3.2
 Requires:	pango-devel >= 1.0.0
 Requires:	%{name} = %{version}
