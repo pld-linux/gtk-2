@@ -14,15 +14,15 @@ Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.0/gtk+-%{version}.tar.bz2
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
-BuildRequires:	glib2-devel >= 2.0.1
+BuildRequires:	autoconf
+BuildRequires:	automake
 Buildrequires:	atk-devel >= 1.0.1
 BuildRequires:	gettext-devel
-BuildRequires:	pango-devel >= 1.0.1
+BuildRequires:	glib2-devel >= 2.0.1
 BuildRequires:	libtool
-BuildRequires:	autoconf
+BuildRequires:	pango-devel >= 1.0.1
 Requires:	glib2 >= 2.0.1
 Requires:	iconv
-Requires:	pango
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	gtk2
 
@@ -115,10 +115,10 @@ Biblioteki statyczne Gtk+
 %setup -q -n gtk+-%{version}
 
 %build
-libtoolize --copy --force
-gettextize --copy --force
-sed 's,@PACKAGE@,@GETTEXT_PACKAGE@,' po/Makefile.in.in > po/Mafefile.in.in.new
-mv po/Mafefile.in.in.new po/Makefile.in.in
+%{__libtoolize}
+#%{__gettextize}
+#sed 's,@PACKAGE@,@GETTEXT_PACKAGE@,' po/Makefile.in.in > po/Mafefile.in.in.new
+#mv -f po/Mafefile.in.in.new po/Makefile.in.in
 aclocal
 %{__autoconf}
 %configure \
