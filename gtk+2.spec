@@ -20,7 +20,7 @@ Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.3/gtk+-%{version}.tar.bz2
 # Taken from http://www.xfce.org/gtkmenu-shadow/
 #Patch0:		%{name}-drop-shadow.patch
 Patch1:		%{name}-gtk_socket_focus.patch
-Patch2:		%{name}-nice-filesel.patch
+#Patch2:		%{name}-nice-filesel.patch
 Patch3:		%{name}-toolbar-fix.patch
 Patch4:		%{name}-insensitive-iain.patch
 URL:		http://www.gtk.org/
