@@ -7,7 +7,7 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	1.3.12
+Version:	1.3.13
 Release:	2
 License:	LGPL
 Group:		X11/Libraries
@@ -23,10 +23,10 @@ Patch0:		%{name}-gettext.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	glib2-devel >= %{version}
-BuildRequires:	fribidi-devel >= 0.10.0
-Buildrequires:	atk-devel >= 0.8
+BuildRequires:	fribidi-devel >= 0.10.1
+Buildrequires:	atk-devel >= 0.10
 BuildRequires:	gettext-devel
-BuildRequires:	pango-devel >= 0.21
+BuildRequires:	pango-devel >= 0.24
 Requires:	glib2 >= %{version}
 Requires:	iconv
 Requires:	pango
