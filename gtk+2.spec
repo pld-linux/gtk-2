@@ -30,8 +30,8 @@ BuildRequires:	libpng-devel
 BuildRequires:	pango-devel >= 1.0.4
 Requires(post):	/sbin/ldconfig
 Requires:	iconv
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	gtk2
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_prefix		/usr/X11R6
 %define		_mandir		%{_prefix}/man
