@@ -9,7 +9,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.3.1
-Release:	1
+Release:	2
 Epoch:		1
 License:	LGPL
 Group:		X11/Libraries
@@ -17,6 +17,7 @@ Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.3/gtk+-%{version}.tar.bz2
 # Source0-md5:	d19a07d0fdb04a68f7a0506900cf9691
 #Source0:	gtk+-%{version}.%{snap}.tar.bz2
 Patch0:		%{name}-insensitive-iain.patch
+Patch1:		%{name}-am18.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	atk-devel >= 1.5.0
@@ -25,7 +26,7 @@ BuildRequires:	automake
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 2.3.1-1
+BuildRequires:	glib2-devel >= 2.3.1-2
 BuildRequires:	gtk-doc >= 0.10
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
@@ -99,7 +100,7 @@ Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}
 Requires:	XFree86-devel
 Requires:	atk-devel >= 1.5.0
-Requires:	glib2-devel >= 2.3.1
+Requires:	glib2-devel >= 2.3.1-2
 Requires:	gtk-doc-common
 Requires:	pango-devel >= 1.3.0
 Requires:	xcursor-devel
@@ -126,6 +127,7 @@ Biblioteki statyczne Gtk+
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
+%patch1 -p1
 
 %build
 %{__libtoolize}
