@@ -16,7 +16,6 @@ Patch0:		%{name}-gettext.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	glib2-devel >= 2.0.1
-BuildRequires:	fribidi-devel >= 0.10.1
 Buildrequires:	atk-devel >= 1.0.1
 BuildRequires:	gettext-devel
 BuildRequires:	pango-devel >= 1.0.1
