@@ -8,14 +8,14 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.3.1
-Release:	2.%{snap}.1
+Version:	2.3.2
+Release:	1
 Epoch:		1
 License:	LGPL
 Group:		X11/Libraries
-Source0:	gtk+-%{version}-%{snap}.tar.bz2
-# Source0-md5:	1949aa7d4a1d7721bcbc04a526f995a1
-#Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.3/gtk+-%{version}.tar.bz2
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.3/gtk+-%{version}.tar.bz2
+# Source0-md5:	b82e22ec7c4d9a0670fd56b1c29dcc35
+#Source0:	gtk+-%{version}-%{snap}.tar.bz2
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-am18.patch
 URL:		http://www.gtk.org/
@@ -26,7 +26,7 @@ BuildRequires:	automake
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 2.3.1-2.20040114.1
+BuildRequires:	glib2-devel >= 2.3.2
 BuildRequires:	gtk-doc >= 0.10
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
@@ -34,12 +34,12 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool
 BuildRequires:	libxml2-progs
 BuildRequires:	libxslt-progs
-BuildRequires:	pango-devel >= 1.3.1-1.20040114.1
+BuildRequires:	pango-devel >= 1.3.2
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-build >= 4.1-8.2
 BuildRequires:	xcursor-devel
 Requires(post):	/sbin/ldconfig
-Requires:	glib2 >= 2.3.1
+Requires:	glib2 >= 2.3.2
 Requires:	iconv
 Obsoletes:	gtk2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -100,9 +100,9 @@ Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}
 Requires:	XFree86-devel
 Requires:	atk-devel >= 1.5.0
-Requires:	glib2-devel >= 2.3.1-2
+Requires:	glib2-devel >= 2.3.2
 Requires:	gtk-doc-common
-Requires:	pango-devel >= 1.3.0
+Requires:	pango-devel >= 1.3.2
 Requires:	xcursor-devel
 Obsoletes:	gtk2-devel
 
@@ -174,9 +174,7 @@ install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*)/modules
 # for gtk+2 theme engines
 install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*)/engines
 
-#install %{SOURCE1} README.shadow
-
-%find_lang gtk20
+%find_lang %{name} --all-name
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -189,7 +187,7 @@ umask 022
 
 %postun -p /sbin/ldconfig
 
-%files -f gtk20.lang
+%files -f %{name}.lang
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README
 %attr(755,root,root) %{_bindir}/gtk-demo
