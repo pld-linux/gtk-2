@@ -137,6 +137,7 @@ patch -p1 < %{PATCH0}
 aclocal
 autoconf
 %configure \
+	--disable-gtk-doc \
 	--enable-shm \
 	--enable-xim \
 	--enable-fbmanager \
