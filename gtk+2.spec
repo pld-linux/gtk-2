@@ -24,7 +24,7 @@ URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	glib2-devel >= %{version}
 BuildRequires:	fribidi-devel >= 0.10.0
-Buildrequires:	atk-devel >= 0.6
+Buildrequires:	atk-devel >= 0.8
 BuildRequires:	gettext-devel
 BuildRequires:	pango-devel >= 0.21
 Requires:	glib2 >= %{version}
