@@ -1,3 +1,4 @@
+%bcond_without 	doc	# disable gtk-doc
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
@@ -27,7 +28,7 @@ BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.4.2
-BuildRequires:	gtk-doc >= 1.0
+%{?with_doc:BuildRequires:	gtk-doc >= 1.0}
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
@@ -147,7 +148,7 @@ glib-gettextize --copy --force
 %{__automake}
 %configure \
 	--enable-static \
-	--enable-gtk-doc \
+	%{?with_doc:--enable-gtk-doc} \
 	--enable-shm \
 	--enable-xim \
 	--with-xinput=xfree \
@@ -244,7 +245,7 @@ exit 0
 %{_libdir}/gtk-*/include
 %{_pkgconfigdir}/*.pc
 %{_mandir}/man1/*
-%{_gtkdocdir}/*
+%{?with_doc:%{_gtkdocdir}/*}
 %{_examplesdir}/%{name}-%{version}
 
 %files static
