@@ -123,6 +123,9 @@ gettextize --copy --force
 patch -p1 < %{PATCH0}
 aclocal
 %{__autoconf}
+if [ -f %{_pkgconfigdir}/libpng12.pc ] ; then
+	CPPFLAGS="`pkg-config libpng12 --cflags`"
+fi
 %configure \
 	--enable-static \
 	--disable-gtk-doc \
@@ -130,7 +133,8 @@ aclocal
 	--enable-xim \
 	--enable-fbmanager \
 	--with-xinput=xfree \
-	--with-gdktarget=x11
+	--with-gdktarget=x11 \
+	CPPFLAGS="$CPPFLAGS"
 
 %{__make}
 
