@@ -225,6 +225,7 @@ exit 0
 %dir %{_libdir}/gtk-*/modules
 %dir %{_libdir}/gtk-*/2.*
 %dir %{_libdir}/gtk-*/2.*/engines
+%attr(755,root,root) %{_libdir}/gtk-*/2.*/engines/libpixmap.so
 %dir %{_libdir}/gtk-*/2.*/filesystems
 %dir %{_libdir}/gtk-*/2.*/loaders
 %attr(755,root,root) %{_libdir}/gtk-*/2.*/loaders/*.so
