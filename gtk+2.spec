@@ -1,3 +1,4 @@
+%define		snap 20031110
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
@@ -8,20 +9,15 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.3.0
-Release:	0.1
+Release:	1.%{snap}.1
 Epoch:		1
 License:	LGPL
 Group:		X11/Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.3/gtk+-%{version}.tar.bz2
-# Source0-md5:	e3336aa41e440755543cb6532bec9938
-#Source1:	%{name}-README.shadow
-# This patch adds shadow to menus and popups
-# Taken from http://www.xfce.org/gtkmenu-shadow/
-#Patch0:		%{name}-drop-shadow.patch
-Patch1:		%{name}-gtk_socket_focus.patch
-#Patch2:		%{name}-nice-filesel.patch
-Patch3:		%{name}-toolbar-fix.patch
-Patch4:		%{name}-insensitive-iain.patch
+#Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.3/gtk+-%{version}.tar.bz2
+Source0:	gtk+-%{version}.%{snap}.tar.bz2
+# Source0-md5:	f26ea6376c8dfd659bc57477c2a6764a
+Patch0:		%{name}-gtk_socket_focus.patch
+Patch1:		%{name}-insensitive-iain.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	atk-devel >= 1.2.0
@@ -30,7 +26,7 @@ BuildRequires:	automake
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 2.3.0
+BuildRequires:	glib2-devel >= 2.3.0-1.20031110.1
 BuildRequires:	gtk-doc >= 0.10
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
@@ -130,10 +126,8 @@ Biblioteki statyczne Gtk+
 
 %prep
 %setup -q -n gtk+-%{version}
-#%%patch0 -p1 -b .wiget
+%patch0 -p1
 %patch1 -p1
-#%%patch3 -p1
-%patch4 -p1
 
 %build
 %{__libtoolize}
