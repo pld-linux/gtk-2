@@ -1,3 +1,4 @@
+# SECURITY: CAN-2004-0753 CAN-2004-0782 CAN-2004-0783 CAN-2004-0788
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
