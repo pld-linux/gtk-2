@@ -9,7 +9,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.3.5
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
@@ -188,6 +188,7 @@ umask 022
 /sbin/ldconfig
 %{_bindir}/gdk-pixbuf-query-loaders >%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
 %{_bindir}/gtk-query-immodules-2.0 >%{_sysconfdir}/gtk-2.0/gtk.immodules
+exit 0
 
 %postun -p /sbin/ldconfig
 
