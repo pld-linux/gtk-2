@@ -22,7 +22,7 @@ Patch1:		%{name}-scrollfix.patch
 Patch2:		%{name}-drop-shadow.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
-BuildRequires:  XFree86-xft-devel
+BuildRequires:  xft-devel
 BuildRequires:	atk-devel >= 1.2.0
 BuildRequires:	autoconf
 BuildRequires:	automake
