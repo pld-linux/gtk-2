@@ -21,9 +21,8 @@ Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.6/gtk+-%{version}.tar.bz2
 # Source0-md5:	ca717c728264fa0b3302ca00da2bcfe4
 Patch0:		%{name}-insensitive-iain.patch
-Patch1:		%{name}-2.2.0-path-check.patch
-Patch2:		%{name}-menushadow.patch
-Patch3:		%{name}-xlibs.patch
+Patch1:		%{name}-menushadow.patch
+Patch2:		%{name}-xlibs.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 %{?with_xlibs:BuildRequires:	libXi-devel}
@@ -136,8 +135,7 @@ Biblioteki statyczne GTK+
 %setup -q -n gtk+-%{version}
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%{?with_xlibs:%patch3 -p1}
+%{?with_xlibs:%patch2 -p1}
 
 %build
 gtkdocize --copy
