@@ -114,7 +114,7 @@ Biblioteki statyczne Gtk+
 
 %prep
 %setup -q -n gtk+-%{version}
-%patch1
+%patch0
 
 %build
 libtoolize --copy --force
