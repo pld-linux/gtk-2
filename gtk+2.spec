@@ -26,6 +26,7 @@ BuildRequires:	pango-devel >= 1.0.4
 BuildRequires:	libtiff-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
+BuildRequires:  Xft-devel >= 2.0
 Requires(post):	/sbin/ldconfig
 Requires:	glib2 >= 2.1.0
 Requires:	iconv
