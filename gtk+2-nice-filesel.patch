@@ -1,6 +1,6 @@
-diff -Nuard gtk+-2.2.4.orig/gtk/fnmatch.c gtk+-2.2.4/gtk/fnmatch.c
---- gtk+-2.2.4.orig/gtk/fnmatch.c	2003-01-19 02:20:27.000000000 +0100
-+++ gtk+-2.2.4/gtk/fnmatch.c	2003-09-19 18:58:03.000000000 +0200
+diff -urN gtk+-2.2.4.orig/gtk/fnmatch.c gtk+-2.2.4/gtk/fnmatch.c
+--- gtk+-2.2.4.orig/gtk/fnmatch.c	Thu Sep 11 09:33:33 2003
++++ gtk+-2.2.4/gtk/fnmatch.c	Fri Sep 19 23:50:06 2003
 @@ -59,6 +59,8 @@
  #define DO_ESCAPE 1
  #endif  
@@ -19,9 +19,9 @@ diff -Nuard gtk+-2.2.4.orig/gtk/fnmatch.c gtk+-2.2.4/gtk/fnmatch.c
  	    return FALSE;
  
  	  {
-diff -Nuard gtk+-2.2.4.orig/gtk/gtkfilesel.c gtk+-2.2.4/gtk/gtkfilesel.c
---- gtk+-2.2.4.orig/gtk/gtkfilesel.c	2003-08-15 00:30:36.000000000 +0200
-+++ gtk+-2.2.4/gtk/gtkfilesel.c	2003-09-19 18:58:03.000000000 +0200
+diff -urN gtk+-2.2.4.orig/gtk/gtkfilesel.c gtk+-2.2.4/gtk/gtkfilesel.c
+--- gtk+-2.2.4.orig/gtk/gtkfilesel.c	Thu Sep 11 09:33:33 2003
++++ gtk+-2.2.4/gtk/gtkfilesel.c	Fri Sep 19 23:50:06 2003
 @@ -41,8 +41,11 @@
  #ifdef HAVE_PWD_H
  #include <pwd.h>
@@ -2281,16 +2281,361 @@ diff -Nuard gtk+-2.2.4.orig/gtk/gtkfilesel.c gtk+-2.2.4/gtk/gtkfilesel.c
    qsort (sent->entries, sent->entry_count, sizeof (CompletionDirEntry), compare_cmpl_dir);
  
    g_dir_close (directory);
-diff -Nuard gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
---- gtk+-2.2.4.orig/po/pl.po	2003-09-04 19:18:00.000000000 +0200
-+++ gtk+-2.2.4/po/pl.po	2003-09-19 20:10:02.000000000 +0200
+diff -urN gtk+-2.2.4.orig/po/gtk20.pot gtk+-2.2.4/po/gtk20.pot
+--- gtk+-2.2.4.orig/po/gtk20.pot	Thu Sep 11 09:33:30 2003
++++ gtk+-2.2.4/po/gtk20.pot	Sat Sep 20 00:20:55 2003
+@@ -7,7 +7,8 @@
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: PACKAGE VERSION\n"
+-"POT-Creation-Date: 2003-09-04 18:34+0200\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2003-09-20 00:20+0200\n"
+ "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+ "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+ "Language-Team: LANGUAGE <LL@li.org>\n"
+@@ -1134,7 +1135,7 @@
+ msgid "The stock ID of the stock icon to render"
+ msgstr ""
+ 
+-#: gtk/gtkcellrendererpixbuf.c:167
++#: gtk/gtkcellrendererpixbuf.c:167 gtk/gtkfilesel.c:1898
+ msgid "Size"
+ msgstr ""
+ 
+@@ -1856,52 +1857,120 @@
+ msgid "_Insert Unicode control character"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:556 gtk/gtkimage.c:167
++#: gtk/gtkfilesel.c:901 gtk/gtkimage.c:167
+ msgid "Filename"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:557
++#: gtk/gtkfilesel.c:902
+ msgid "The currently selected filename"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:563
++#: gtk/gtkfilesel.c:908
+ msgid "Show file operations"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:564
++#: gtk/gtkfilesel.c:909
+ msgid "Whether buttons for creating/manipulating files should be displayed"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:571
++#: gtk/gtkfilesel.c:916
+ msgid "Select multiple"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:572
++#: gtk/gtkfilesel.c:917
+ msgid "Whether to allow multiple files to be selected"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:727
++#: gtk/gtkfilesel.c:1389
++msgid "Bookmarks"
++msgstr ""
++
++#: gtk/gtkfilesel.c:1390
++msgid "_Add to bookmarks"
++msgstr ""
++
++#: gtk/gtkfilesel.c:1391
++msgid "_Edit bookmarks..."
++msgstr ""
++
++#: gtk/gtkfilesel.c:1662
++msgid "Go to the previous visited location  (Alt+Left)"
++msgstr ""
++
++#: gtk/gtkfilesel.c:1679
++msgid "Go to the parent directory  (Alt+Up)"
++msgstr ""
++
++#: gtk/gtkfilesel.c:1683
++msgid "Display the latest contents of the current location  (Ctrl+R)"
++msgstr ""
++
++#: gtk/gtkfilesel.c:1688
++msgid "Go to the home location  (Alt+Home)"
++msgstr ""
++
++#: gtk/gtkfilesel.c:1696
++msgid "Bookmarks  (Alt+B)"
++msgstr ""
++
++#: gtk/gtkfilesel.c:1723
++msgid "Terminal"
++msgstr ""
++
++#: gtk/gtkfilesel.c:1724
++msgid "Launch a terminal in this folder  (Ctrl+T)"
++msgstr ""
++
++#: gtk/gtkfilesel.c:1731
++msgid "File Manager"
++msgstr ""
++
++#: gtk/gtkfilesel.c:1732
++msgid "Launch a file manager in this folder  (Ctrl+F)"
++msgstr ""
++
++#: gtk/gtkfilesel.c:1783
+ msgid "Folders"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:731
++#: gtk/gtkfilesel.c:1787
+ msgid "Fol_ders"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:763
++#: gtk/gtkfilesel.c:1857
+ msgid "Files"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:767
++#: gtk/gtkfilesel.c:1862
+ msgid "_Files"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:850 gtk/gtkfilesel.c:2240
++#: gtk/gtkfilesel.c:1883
++msgid "Type"
++msgstr ""
++
++#: gtk/gtkfilesel.c:1888
++msgid "_Type"
++msgstr ""
++
++#: gtk/gtkfilesel.c:1903
++msgid "_Size"
++msgstr ""
++
++#: gtk/gtkfilesel.c:1913
++msgid "Last Modified"
++msgstr ""
++
++#: gtk/gtkfilesel.c:1918
++msgid "Last _Modified"
++msgstr ""
++
++#: gtk/gtkfilesel.c:2001 gtk/gtkfilesel.c:3787
+ #, c-format
+ msgid "Folder unreadable: %s"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:981
++#: gtk/gtkfilesel.c:2145
+ #, c-format
+ msgid ""
+ "The file \"%s\" resides on another machine (called %s) and may not be "
+@@ -1909,139 +1978,155 @@
+ "Are you sure that you want to select it?"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1112
+-msgid "_New Folder"
++#: gtk/gtkfilesel.c:2285
++msgid "Create a new empty folder inside this folder"
++msgstr ""
++
++#: gtk/gtkfilesel.c:2291 gtk/gtkfilesel.c:2810
++msgid "New Folder"
++msgstr ""
++
++#: gtk/gtkfilesel.c:2303
++msgid "Delete selected file"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1123
+-msgid "De_lete File"
++#: gtk/gtkfilesel.c:2312
++msgid "Rename"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1134
+-msgid "_Rename File"
++#: gtk/gtkfilesel.c:2312
++msgid "Rename selected file"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1436
++#: gtk/gtkfilesel.c:2764
+ #, c-format
+ msgid ""
+ "The folder name \"%s\" contains symbols that are not allowed in filenames"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1438
++#: gtk/gtkfilesel.c:2766
+ #, c-format
+ msgid ""
+ "Error creating folder \"%s\": %s\n"
+ "%s"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1439 gtk/gtkfilesel.c:1675
++#: gtk/gtkfilesel.c:2767 gtk/gtkfilesel.c:3014
+ msgid "You probably used symbols not allowed in filenames."
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1447
++#: gtk/gtkfilesel.c:2775
+ #, c-format
+ msgid "Error creating folder \"%s\": %s\n"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1481
+-msgid "New Folder"
+-msgstr ""
+-
+-#: gtk/gtkfilesel.c:1496
++#: gtk/gtkfilesel.c:2825
+ msgid "_Folder name:"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1520
++#: gtk/gtkfilesel.c:2854
+ msgid "C_reate"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1563
++#: gtk/gtkfilesel.c:2900
+ #, c-format
+ msgid "The filename \"%s\" contains symbols that are not allowed in filenames"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1566
++#: gtk/gtkfilesel.c:2903
+ #, c-format
+ msgid ""
+ "Error deleting file \"%s\": %s\n"
+ "%s"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1568 gtk/gtkfilesel.c:1689
++#: gtk/gtkfilesel.c:2905 gtk/gtkfilesel.c:3028
+ msgid "It probably contains symbols not allowed in filenames."
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1577
++#: gtk/gtkfilesel.c:2914
+ #, c-format
+ msgid "Error deleting file \"%s\": %s"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1620
++#: gtk/gtkfilesel.c:2957
+ #, c-format
+ msgid "Really delete file \"%s\" ?"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1625
++#: gtk/gtkfilesel.c:2962
+ msgid "Delete File"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1671 gtk/gtkfilesel.c:1685
++#: gtk/gtkfilesel.c:3010 gtk/gtkfilesel.c:3024
+ #, c-format
+ msgid "The file name \"%s\" contains symbols that are not allowed in filenames"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1673
++#: gtk/gtkfilesel.c:3012
+ #, c-format
+ msgid ""
+ "Error renaming file to \"%s\": %s\n"
+ "%s"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1687
++#: gtk/gtkfilesel.c:3026
+ #, c-format
+ msgid ""
+ "Error renaming file \"%s\": %s\n"
+ "%s"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1697
++#: gtk/gtkfilesel.c:3036
+ #, c-format
+ msgid "Error renaming file \"%s\" to \"%s\": %s"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1744
++#: gtk/gtkfilesel.c:3084
+ msgid "Rename File"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1759
++#: gtk/gtkfilesel.c:3100
+ #, c-format
+ msgid "Rename file \"%s\" to:"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:1788
++#: gtk/gtkfilesel.c:3134
+ msgid "_Rename"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:2220
++#: gtk/gtkfilesel.c:3607
++msgid "0 bytes"
++msgstr ""
++
++#: gtk/gtkfilesel.c:3608
++msgid "Unknown"
++msgstr ""
++
++#: gtk/gtkfilesel.c:3620
++msgid "%B %d %G at %T"
++msgstr ""
++
++#: gtk/gtkfilesel.c:3752
+ msgid "_Selection: "
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:3136
++#: gtk/gtkfilesel.c:4859
+ #, c-format
+ msgid ""
+ "The filename \"%s\" couldn't be converted to UTF-8 (try setting the "
+ "environment variable G_BROKEN_FILENAMES): %s"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:3139
++#: gtk/gtkfilesel.c:4862
+ msgid "Invalid Utf-8"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:4016
++#: gtk/gtkfilesel.c:5740
+ msgid "Name too long"
+ msgstr ""
+ 
+-#: gtk/gtkfilesel.c:4018
++#: gtk/gtkfilesel.c:5742
+ msgid "Couldn't convert filename"
+ msgstr ""
+ 
+diff -urN gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
+--- gtk+-2.2.4.orig/po/pl.po	Thu Sep 11 09:33:30 2003
++++ gtk+-2.2.4/po/pl.po	Sat Sep 20 00:18:33 2003
 @@ -9,14 +9,14 @@
  msgid ""
  msgstr ""
  "Project-Id-Version: gtk+\n"
 -"POT-Creation-Date: 2003-09-04 18:34+0200\n"
 +"Report-Msgid-Bugs-To: \n"
-+"POT-Creation-Date: 2003-09-19 19:36+0200\n"
++"POT-Creation-Date: 2003-09-19 23:54+0200\n"
  "PO-Revision-Date: 2003-07-01 07:33+0100\n"
  "Last-Translator: Gnome PL Team <translators@gnome.pl>\n"
  "Language-Team: Polish <pl@li.org>\n"
@@ -2310,7 +2655,7 @@ diff -Nuard gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
  msgid "Size"
  msgstr "Rozmiar"
  
-@@ -1966,54 +1966,128 @@
+@@ -1966,54 +1966,124 @@
  msgid "_Insert Unicode control character"
  msgstr "_Wstaw znak kontrolny Unicode"
  
@@ -2353,7 +2698,7 @@ diff -Nuard gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
 +
 +#: gtk/gtkfilesel.c:1390
 +msgid "_Add to bookmarks"
-+msgstr "_Dodaj zakładkę"
++msgstr "_Dodaj do zakładek"
 +
 +#: gtk/gtkfilesel.c:1391
 +msgid "_Edit bookmarks..."
@@ -2361,19 +2706,19 @@ diff -Nuard gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
 +
 +#: gtk/gtkfilesel.c:1662
 +msgid "Go to the previous visited location  (Alt+Left)"
-+msgstr "Wróć (Alt+Lewo)"
++msgstr "Przechodzi do poprzedniego położenia (Alt+lewo)"
 +
 +#: gtk/gtkfilesel.c:1679
 +msgid "Go to the parent directory  (Alt+Up)"
-+msgstr "Przejdź do katalogu wyżej (Alt+Góra)"
++msgstr "Przechodzi do katalogu nadrzędnego (Alt+góra)"
 +
 +#: gtk/gtkfilesel.c:1683
 +msgid "Display the latest contents of the current location  (Ctrl+R)"
-+msgstr "Odśwież (Ctrl+R)"
++msgstr "Odświeża widok bieżącego położenia (Ctrl+R)"
 +
 +#: gtk/gtkfilesel.c:1688
 +msgid "Go to the home location  (Alt+Home)"
-+msgstr "Katalog domowy (Alt+Home)"
++msgstr "Przechodzi do położenia początkowego (Alt+Home)"
 +
 +#: gtk/gtkfilesel.c:1696
 +msgid "Bookmarks  (Alt+B)"
@@ -2385,16 +2730,15 @@ diff -Nuard gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
 +
 +#: gtk/gtkfilesel.c:1724
 +msgid "Launch a terminal in this folder  (Ctrl+T)"
-+msgstr "Uruchom terminal w tym katalogu (Ctrl+T)"
++msgstr "Uruchamia terminal w bieżącym folderze (Ctrl+T)"
 +
 +#: gtk/gtkfilesel.c:1731
-+#, fuzzy
 +msgid "File Manager"
-+msgstr "Nazwa pliku"
++msgstr "Menedżer plików"
 +
 +#: gtk/gtkfilesel.c:1732
 +msgid "Launch a file manager in this folder  (Ctrl+F)"
-+msgstr "Uruchom menadżera plików w tym katalogu (Ctrl+F)"
++msgstr "Uruchamia menedżera plików w bieżącym folderze (Ctrl+F)"
 +
 +#: gtk/gtkfilesel.c:1783
  msgid "Folders"
@@ -2419,27 +2763,24 @@ diff -Nuard gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
 +# To będą ciut drętwe tłumaczenia, ale może ktoś dzięki temu wymyśli coś 
 +# lepszego
 +#: gtk/gtkfilesel.c:1883
-+#, fuzzy
 +msgid "Type"
-+msgstr "Sugestia typu"
++msgstr "Rodzaj"
 +
 +#: gtk/gtkfilesel.c:1888
-+#, fuzzy
 +msgid "_Type"
-+msgstr "_Góra"
++msgstr "_Rodzaj"
 +
 +#: gtk/gtkfilesel.c:1903
-+#, fuzzy
 +msgid "_Size"
-+msgstr "Rozmiar"
++msgstr "Ro_zmiar"
 +
 +#: gtk/gtkfilesel.c:1913
 +msgid "Last Modified"
-+msgstr "Ostatnio zmodyfikowane"
++msgstr "Ostatnio zmodyfikowany"
 +
 +#: gtk/gtkfilesel.c:1918
 +msgid "Last _Modified"
-+msgstr "Ostatnio z_modyfikowane"
++msgstr "Os_tatnio zmodyfikowany"
 +
 +#: gtk/gtkfilesel.c:2001 gtk/gtkfilesel.c:3787
  #, c-format
@@ -2451,48 +2792,47 @@ diff -Nuard gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
  #, c-format
  msgid ""
  "The file \"%s\" resides on another machine (called %s) and may not be "
-@@ -2024,19 +2098,30 @@
+@@ -2024,19 +2094,27 @@
  "niedostępny dla tego programu.\n"
  "Czy na pewno chcesz go wybrać?"
  
 -#: gtk/gtkfilesel.c:1112
 -msgid "_New Folder"
 -msgstr "_Nowy folder"
-+#: gtk/gtkfilesel.c:2285
-+msgid "Create a new empty folder inside this folder"
-+msgstr "Utwórz nowy katalog w bieżącym katalogu"
- 
+-
 -#: gtk/gtkfilesel.c:1123
 -msgid "De_lete File"
 -msgstr "_Usuń plik"
+-
+-#: gtk/gtkfilesel.c:1134
+-msgid "_Rename File"
+-msgstr "_Zmień nazwę pliku"
++#: gtk/gtkfilesel.c:2285
++msgid "Create a new empty folder inside this folder"
++msgstr "Tworzy nowy folder w bieżącym"
++
 +#: gtk/gtkfilesel.c:2291 gtk/gtkfilesel.c:2810
 +msgid "New Folder"
 +msgstr "Nowy folder"
  
--#: gtk/gtkfilesel.c:1134
--msgid "_Rename File"
--msgstr "_Zmień nazwę pliku"
-+#: gtk/gtkfilesel.c:2303
-+#, fuzzy
-+msgid "Delete selected file"
-+msgstr "Aktualnie wybrana nazwa pliku"
- 
 -#: gtk/gtkfilesel.c:1436
-+#: gtk/gtkfilesel.c:2312
-+#, fuzzy
-+msgid "Rename"
-+msgstr "Zmień _nazwę"
++#: gtk/gtkfilesel.c:2303
++msgid "Delete selected file"
++msgstr "Usuwa wybrany plik"
 +
 +#: gtk/gtkfilesel.c:2312
-+#, fuzzy
++msgid "Rename"
++msgstr "Zmień nazwę"
++
++#: gtk/gtkfilesel.c:2312
 +msgid "Rename selected file"
-+msgstr "Zmiana nazwy pliku"
++msgstr "Zmienia nazwę wybranego pliku"
 +
 +#: gtk/gtkfilesel.c:2764
  #, c-format
  msgid ""
  "The folder name \"%s\" contains symbols that are not allowed in filenames"
-@@ -2044,7 +2129,7 @@
+@@ -2044,7 +2122,7 @@
  "Nazwa folderu \"%s\" zawiera symbole, które nie są dopuszczalne w nazwach "
  "plików"
  
@@ -2501,7 +2841,7 @@ diff -Nuard gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
  #, c-format
  msgid ""
  "Error creating folder \"%s\": %s\n"
-@@ -2053,35 +2138,31 @@
+@@ -2053,35 +2131,31 @@
  "Błąd przy tworzeniu folderu \"%s\": %s\n"
  "%s"
  
@@ -2543,7 +2883,7 @@ diff -Nuard gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
  #, c-format
  msgid ""
  "Error deleting file \"%s\": %s\n"
-@@ -2090,32 +2171,32 @@
+@@ -2090,32 +2164,32 @@
  "Błąd przy usuwaniu pliku \"%s\": %s\n"
  "%s"
  
@@ -2582,7 +2922,7 @@ diff -Nuard gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
  #, c-format
  msgid ""
  "Error renaming file to \"%s\": %s\n"
-@@ -2124,7 +2205,7 @@
+@@ -2124,7 +2198,7 @@
  "Błąd przy zmienianiu nazwy pliku na \"%s\": %s\n"
  "%s"
  
@@ -2591,7 +2931,7 @@ diff -Nuard gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
  #, c-format
  msgid ""
  "Error renaming file \"%s\": %s\n"
-@@ -2133,29 +2214,42 @@
+@@ -2133,29 +2207,41 @@
  "Błąd przy zmianie nazwy pliku \"%s\": %s\n"
  "%s"
  
@@ -2623,13 +2963,12 @@ diff -Nuard gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
 +msgstr "0 bajtów"
 +
 +#: gtk/gtkfilesel.c:3608
-+#, fuzzy
 +msgid "Unknown"
-+msgstr "(nieznane)"
++msgstr "Nieznany"
 +
 +#: gtk/gtkfilesel.c:3620
 +msgid "%B %d %G at %T"
-+msgstr "%B %d %G w %T"
++msgstr "%d %B %G o %T"
 +
 +#: gtk/gtkfilesel.c:3752
  msgid "_Selection: "
@@ -2640,7 +2979,7 @@ diff -Nuard gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
  #, c-format
  msgid ""
  "The filename \"%s\" couldn't be converted to UTF-8 (try setting the "
-@@ -2164,15 +2258,15 @@
+@@ -2164,15 +2250,15 @@
  "Nie można przekonwertować nazwy pliku \"%s\" na UTF-8 (spróbuj ustawić "
  "zmienną środowiskową G_BROKEN_FILENAMES): %s"
  
@@ -2659,85 +2998,7 @@ diff -Nuard gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
  msgid "Couldn't convert filename"
  msgstr "Nie można przekonwertować nazwy pliku"
  
-@@ -2619,44 +2713,44 @@
- msgid "default:LTR"
- msgstr "default:LTR"
- 
--#: gtk/gtkmenu.c:263
-+#: gtk/gtkmenu.c:633
- msgid "Tearoff Title"
- msgstr "Tytuł przy oderwaniu"
- 
--#: gtk/gtkmenu.c:264
-+#: gtk/gtkmenu.c:634
- msgid ""
- "A title that may be displayed by the window manager when this menu is torn-"
- "off"
- msgstr "Tytuł wyświetlany przez menedżera okien, kiedy menu jest oderwane"
- 
--#: gtk/gtkmenu.c:379
-+#: gtk/gtkmenu.c:749
- msgid "Can change accelerators"
- msgstr "Możliwa zmiana akceleratorów"
- 
--#: gtk/gtkmenu.c:380
-+#: gtk/gtkmenu.c:750
- msgid ""
- "Whether menu accelerators can be changed by pressing a key over the menu item"
- msgstr ""
- "Określa, czy możliwa jest zmiana akceleratorów poprzez przyciśnięcie "
- "klawisza przy zaznaczonym elemencie menu"
- 
--#: gtk/gtkmenu.c:385
-+#: gtk/gtkmenu.c:755
- msgid "Delay before submenus appear"
- msgstr "Opóźnienie pojawienia się podmenu"
- 
--#: gtk/gtkmenu.c:386
-+#: gtk/gtkmenu.c:756
- msgid ""
- "Minimum time the pointer must stay over a menu item before the submenu appear"
- msgstr ""
- "Minimalny okres czasu, przez jaki wskaźnik musi znajdować się nad elementem, "
- "zanim zostanie wyświetlone menu podrzędne"
- 
--#: gtk/gtkmenu.c:393
-+#: gtk/gtkmenu.c:763
- msgid "Delay before hiding a submenu"
- msgstr "Opóźnienie ukrycia podmenu"
- 
- # to jakiś bełkot jest
--#: gtk/gtkmenu.c:394
-+#: gtk/gtkmenu.c:764
- msgid ""
- "The time before hiding a submenu when the pointer is moving towards the "
- "submenu"
-@@ -2664,6 +2758,24 @@
- "Okres czasu zanim zostanie ukryte menu podrzędne, gdy wskaźnik przemieszcza "
- "się w jego kierunku"
- 
-+#: gtk/gtkmenu.c:771
-+msgid "Display menu drop-shadow"
-+msgstr ""
-+
-+#: gtk/gtkmenu.c:772
-+#, fuzzy
-+msgid "Whether menu drop-shadow should be displayed"
-+msgstr "Określa, czy powinna być użyta paleta"
-+
-+#: gtk/gtkmenu.c:777
-+#, fuzzy
-+msgid "Delay before drop-shadow appear"
-+msgstr "Opóźnienie pojawienia się menu rozwijanego"
-+
-+#: gtk/gtkmenu.c:778
-+msgid "Minimum time before drop-shadow appear under the menu"
-+msgstr ""
-+
- #: gtk/gtkmenubar.c:157
- msgid "Style of bevel around the menubar"
- msgstr "Styl kantu wokół paska menu"
-@@ -5061,3 +5173,12 @@
+@@ -5061,3 +5147,12 @@
  #: modules/input/gtkimcontextxim.c:331
  msgid "How to draw the input method statusbar"
  msgstr "Sposób rysowania paska stanu metody wejściowej"
