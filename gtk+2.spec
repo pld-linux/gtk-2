@@ -13,7 +13,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.4.7
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
@@ -23,6 +23,7 @@ Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-2.2.0-path-check.patch
 Patch2:		%{name}-menushadow.patch
 Patch3:		%{name}-xlibs.patch
+Patch4:		%{name}-locale-names.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 %{?with_xlibs:BuildRequires:	libXi-devel}
@@ -138,6 +139,9 @@ Biblioteki statyczne Gtk+
 %patch1 -p1
 %patch2 -p1
 %{?with_xlibs:%patch3 -p1}
+%patch4 -p1
+
+rm po/no.po
 
 %build
 gtkdocize --copy
