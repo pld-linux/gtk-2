@@ -149,6 +149,7 @@ glib-gettextize --copy --force
 	--with-xinput=xfree \
 	--with-gdktarget=x11 \
 	--with-html-path=%{_gtkdocdir} \
+	--enable-debug=%{?debug:yes}%{!?debug:minimum} \
 	--enable-man
 
 %{__make}
