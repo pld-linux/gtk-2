@@ -1,4 +1,8 @@
+#
+# Conditional build:
 %bcond_without 	doc	# disable gtk-doc
+%bcond_with	xlibs	# use pkgconfig to find libX11
+#
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
@@ -19,6 +23,7 @@ Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-locale-names.patch
 Patch2:		%{name}-2.2.0-path-check.patch
 Patch3:		%{name}-menushadow.patch
+Patch4:		%{name}-xlibs.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	atk-devel >= 1.6.0
@@ -102,7 +107,6 @@ Summary(pl):	Pliki nag³ówkowe i dokumentacja do Gtk+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	XFree86-devel
 Requires:	atk-devel >= 1.6.0
 Requires:	glib2-devel >= 1:2.4.2
 Requires:	gtk-doc-common
@@ -134,6 +138,7 @@ Biblioteki statyczne Gtk+
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%{?with_xlibs:%patch4 -p1}
 
 mv po/{no,nb}.po
 mv po-properties/{no,nb}.po
