@@ -12,7 +12,6 @@ Release:	4
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.0/gtk+-%{version}.tar.bz2
-Patch0:		%{name}-gtkrc.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	atk-devel >= 1.0.3
@@ -26,6 +25,7 @@ BuildRequires:	pango-devel >= 1.0.3
 BuildRequires:	libtiff-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
+Requires(post):	/sbin/ldconfig
 Requires:	glib2 >= 2.0.6
 Requires:	iconv
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -33,7 +33,7 @@ Obsoletes:	gtk2
 
 %define		_prefix		/usr/X11R6
 %define		_mandir		%{_prefix}/man
-%define		_sysconfdir	%{_datadir}
+%define		_sysconfdir	/etc/X11
 %define		_gtkdocdir	%{_defaultdocdir}/gtk-doc/html
 
 %description
@@ -131,12 +131,12 @@ Program demonstrujacy mozliwo¶ci Gtk+
 
 %prep
 %setup -q -n gtk+-%{version}
-%patch0 -p1
 
 %build
+rm -f missing
 %{__libtoolize}
 glib-gettextize --copy --force
-aclocal
+%{__aclocal}
 %{__autoconf}
 %configure \
 	--enable-static \
@@ -152,6 +152,7 @@ aclocal
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk-2.0}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -159,7 +160,9 @@ rm -rf $RPM_BUILD_ROOT
 	pkgconfigdir=%{_pkgconfigdir} \
 	HTML_DIR=%{_gtkdocdir}
 
-ln -sf ../../lib/gtk-2.0/2.0.0/immodules $RPM_BUILD_ROOT/%{_sysconfdir}/gtk-2.0/gtk.immodules
+touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
+
+cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 # remove unsupported locale scheme
 rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/en@IPA
@@ -169,7 +172,11 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/en@IPA
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post   -p /sbin/ldconfig
+%post
+umask 022
+/sbin/ldconfig
+%{_bindir}/gtk-query-immodules-2.0 >%{_sysconfdir}/gtk-2.0/gtk.immodules
+
 %postun -p /sbin/ldconfig
 
 %files -f gtk20.lang
@@ -183,12 +190,13 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/gtk-*/2.*/loaders/*.so
 %dir %{_libdir}/gtk-*/2.*/immodules
 %attr(755,root,root) %{_libdir}/gtk-*/2.*/immodules/*.so
+%{_datadir}/gtk-*
 %dir %{_sysconfdir}/gtk-*
-%{_sysconfdir}/gtk-*/gtk.immodules
-%dir %{_sysconfdir}/themes/Default/gtk-*
-%{_sysconfdir}/themes/Default/gtk-*/gtkrc
-%dir %{_sysconfdir}/themes/Emacs/gtk-*
-%{_sysconfdir}/themes/Emacs/gtk-*/gtkrc
+%ghost %{_sysconfdir}/gtk-*/*
+%dir %{_datadir}/themes/Default/gtk-*
+%{_datadir}/themes/Default/gtk-*/gtkrc
+%dir %{_datadir}/themes/Emacs/gtk-*
+%{_datadir}/themes/Emacs/gtk-*/gtkrc
 
 %files devel
 %defattr(644,root,root,755)
@@ -203,6 +211,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgconfigdir}/*.pc
 %{_mandir}/man1/*
 %{_gtkdocdir}/*
+%doc %{_examplesdir}/%{name}-%{version}
 
 %files static
 %defattr(644,root,root,755)
@@ -213,4 +222,4 @@ rm -rf $RPM_BUILD_ROOT
 %files demo
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/gtk-demo
-%{_sysconfdir}/gtk-*/demo
+%{_datadir}/gtk-*/demo
