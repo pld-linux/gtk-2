@@ -7,33 +7,35 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.1.0
-Release:	0
+Version:	2.0.9
+Release:	1
+Epoch:		1
 License:	LGPL
 Group:		X11/Libraries
-Source0:	http://ftp.gnome.org/pub/gnome/sources/gtk+/2.1/gtk+-%{version}.tar.bz2
-Patch0:		%{name}-gtkrc.patch
+Source0:	http://ftp.gnome.org/pub/gnome/sources/gtk+/2.0/gtk+-%{version}.tar.bz2
+# Source0-md5:	9827bca97fc09ff62b75579614dcfeb2
+Patch0:		%{name}-gtkdoc.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	atk-devel >= 1.0.3
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 2.1.0
+BuildRequires:	glib2-devel >= 2.0.7
 BuildRequires:	gtk-doc >= 0.9-2
 BuildRequires:	libtool
-BuildRequires:	pango-devel >= 1.0.4
 BuildRequires:	libtiff-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
-Requires:	glib2 >= 2.1.0
+BuildRequires:	pango-devel >= 1.0.4
+Requires(post):	/sbin/ldconfig
 Requires:	iconv
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	gtk2
 
 %define		_prefix		/usr/X11R6
 %define		_mandir		%{_prefix}/man
-%define		_sysconfdir	%{_datadir}
+%define		_sysconfdir	/etc/X11
 %define		_gtkdocdir	%{_defaultdocdir}/gtk-doc/html
 
 %description
@@ -90,8 +92,6 @@ Summary(pl):	Pliki nag³ówkowe i dokumentacja do Gtk+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	XFree86-devel
-Requires:	autoconf >= 2.13
-Requires:	automake >= 1.4
 Requires:	atk-devel >= 1.0.0
 Requires:	glib2-devel >= 2.0.1
 Requires:	gtk-doc-common
@@ -123,13 +123,14 @@ Biblioteki statyczne Gtk+
 %patch0 -p1
 
 %build
+rm -f missing
 %{__libtoolize}
 glib-gettextize --copy --force
-aclocal
+%{__aclocal}
 %{__autoconf}
 %configure \
 	--enable-static \
-	--disable-gtkdoc \
+	--enable-gtkdoc \
 	--enable-shm \
 	--enable-xim \
 	--enable-fbmanager \
@@ -141,6 +142,7 @@ aclocal
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk-2.0}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -148,7 +150,9 @@ rm -rf $RPM_BUILD_ROOT
 	pkgconfigdir=%{_pkgconfigdir} \
 	HTML_DIR=%{_gtkdocdir}
 
-ln -sf ../../lib/gtk-2.0/2.0.0/immodules $RPM_BUILD_ROOT/%{_sysconfdir}/gtk-2.0/gtk.immodules
+touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gtk.immodules
+
+cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 # remove unsupported locale scheme
 rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/en@IPA
@@ -158,11 +162,16 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/en@IPA
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post   -p /sbin/ldconfig
+%post
+umask 022
+/sbin/ldconfig
+%{_bindir}/gtk-query-immodules-2.0 >%{_sysconfdir}/gtk-2.0/gtk.immodules
+
 %postun -p /sbin/ldconfig
 
 %files -f gtk20.lang
 %defattr(644,root,root,755)
+%doc AUTHORS ChangeLog NEWS TODO README
 %attr(755,root,root) %{_bindir}/gtk-demo
 %attr(755,root,root) %{_bindir}/gtk-query*
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
@@ -172,25 +181,30 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/gtk-*/2.*/loaders/*.so
 %dir %{_libdir}/gtk-*/2.*/immodules
 %attr(755,root,root) %{_libdir}/gtk-*/2.*/immodules/*.so
-%{_sysconfdir}/gtk-*
-%dir %{_sysconfdir}/themes/Default/gtk-*
-%{_sysconfdir}/themes/Default/gtk-*/gtkrc
-%dir %{_sysconfdir}/themes/Emacs/gtk-*
-%{_sysconfdir}/themes/Emacs/gtk-*/gtkrc
+%{_datadir}/gtk-*
+%dir %{_sysconfdir}/gtk-*
+%ghost %{_sysconfdir}/gtk-*/*
+%dir %{_datadir}/themes/Default
+%dir %{_datadir}/themes/Default/gtk-*
+%{_datadir}/themes/Default/gtk-*/gtkrc
+%dir %{_datadir}/themes/Emacs
+%dir %{_datadir}/themes/Emacs/gtk-*
+%{_datadir}/themes/Emacs/gtk-*/gtkrc
 
 %files devel
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog NEWS README TODO
+%doc AUTHORS ChangeLog NEWS README
 %attr(755,root,root) %{_bindir}/*csource
-%attr(755,root,root) %{_libdir}/lib*.la
+%{_libdir}/lib*.la
 %attr(755,root,root) %{_libdir}/lib*.so
-%attr(755,root,root) %{_libdir}/gtk-*/2.*/*/*.la
+%{_libdir}/gtk-*/2.*/*/*.la
 %{_includedir}/*
 %{_aclocaldir}/*.m4
 %{_libdir}/gtk-*/include
 %{_pkgconfigdir}/*.pc
 %{_mandir}/man1/*
 %{_gtkdocdir}/*
+%doc %{_examplesdir}/%{name}-%{version}
 
 %files static
 %defattr(644,root,root,755)
