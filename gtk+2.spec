@@ -7,7 +7,7 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.0.0
+Version:	2.0.2
 Release:	1
 License:	LGPL
 Group:		X11/Libraries
@@ -15,12 +15,12 @@ Source0:	ftp://ftp.gtk.org/pub/gtk/v2.0/gtk+-%{version}.tar.bz2
 Patch0:		%{name}-gettext.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
-BuildRequires:	glib2-devel >= %{version}
+BuildRequires:	glib2-devel >= 2.0.1
 BuildRequires:	fribidi-devel >= 0.10.1
-Buildrequires:	atk-devel >= 1.0.0
+Buildrequires:	atk-devel >= 1.0.1
 BuildRequires:	gettext-devel
-BuildRequires:	pango-devel >= 1.0.0
-Requires:	glib2 >= %{version}
+BuildRequires:	pango-devel >= 1.0.1
+Requires:	glib2 >= 2.0.1
 Requires:	iconv
 Requires:	pango
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -156,11 +156,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gtk-query*
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 %dir %{_libdir}/gtk-*
-%dir %{_libdir}/gtk-*/%{version}
-%dir %{_libdir}/gtk-*/%{version}/loaders
-%attr(755,root,root) %{_libdir}/gtk-*/%{version}/loaders/*.so
-%dir %{_libdir}/gtk-*/%{version}/immodules
-%attr(755,root,root) %{_libdir}/gtk-*/%{version}/immodules/*.so
+%dir %{_libdir}/gtk-*/2.*
+%dir %{_libdir}/gtk-*/2.*/loaders
+%attr(755,root,root) %{_libdir}/gtk-*/2.*/loaders/*.so
+%dir %{_libdir}/gtk-*/2.*/immodules
+%attr(755,root,root) %{_libdir}/gtk-*/2.*/immodules/*.so
 %{_sysconfdir}/gtk-*
 %dir %{_sysconfdir}/themes/Default/gtk-*
 
@@ -170,7 +170,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/*csource
 %attr(755,root,root) %{_libdir}/lib*.la
 %attr(755,root,root) %{_libdir}/lib*.so
-%attr(755,root,root) %{_libdir}/gtk-*/%{version}/*/*.la
+%attr(755,root,root) %{_libdir}/gtk-*/2.*/*/*.la
 %{_includedir}/*
 %{_aclocaldir}/*.m4
 %{_libdir}/gtk-*/include
@@ -180,4 +180,4 @@ rm -rf $RPM_BUILD_ROOT
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
-%{_libdir}/gtk-*/%{version}/loaders/*.a
+%{_libdir}/gtk-*/2.*/loaders/*.a
