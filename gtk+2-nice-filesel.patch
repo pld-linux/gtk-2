@@ -1,0 +1,2752 @@
+diff -Nuard gtk+-2.2.4.orig/gtk/fnmatch.c gtk+-2.2.4/gtk/fnmatch.c
+--- gtk+-2.2.4.orig/gtk/fnmatch.c	2003-01-19 02:20:27.000000000 +0100
++++ gtk+-2.2.4/gtk/fnmatch.c	2003-09-19 18:58:03.000000000 +0200
+@@ -59,6 +59,8 @@
+ #define DO_ESCAPE 1
+ #endif  
+ 
++gboolean _gtk_fnmatch_show_hidden = FALSE;
++
+ static gunichar
+ get_unescaped_char (const char **str,
+ 		    gboolean    *was_escaped)
+@@ -106,7 +108,7 @@
+ 	    return FALSE;
+ 	  break;
+ 	case '*':
+-	  if (nc == '.' && component_start)
++	  if (!_gtk_fnmatch_show_hidden && nc == '.' && component_start)
+ 	    return FALSE;
+ 
+ 	  {
+diff -Nuard gtk+-2.2.4.orig/gtk/gtkfilesel.c gtk+-2.2.4/gtk/gtkfilesel.c
+--- gtk+-2.2.4.orig/gtk/gtkfilesel.c	2003-08-15 00:30:36.000000000 +0200
++++ gtk+-2.2.4/gtk/gtkfilesel.c	2003-09-19 18:58:03.000000000 +0200
+@@ -41,8 +41,11 @@
+ #ifdef HAVE_PWD_H
+ #include <pwd.h>
+ #endif
++#include <time.h>
++#include <ctype.h>
+ 
+ #include <glib.h>		/* Include early to get G_OS_WIN32 etc */
++#include <gmodule.h>
+ 
+ #if defined(G_PLATFORM_WIN32)
+ #include <ctype.h>
+@@ -55,8 +58,10 @@
+ #endif
+ 
+ #include "gdk/gdkkeysyms.h"
++#include "gdk/x11/gdkx.h"
+ #include "gtkbutton.h"
+ #include "gtkcellrenderertext.h"
++#include "gtkcellrendererpixbuf.h"
+ #include "gtkentry.h"
+ #include "gtkfilesel.h"
+ #include "gtkhbox.h"
+@@ -78,6 +83,15 @@
+ #include "gtkmessagedialog.h"
+ #include "gtkdnd.h"
+ #include "gtkeventbox.h"
++#include "gtktoolbar.h"
++#include "gtkimage.h"
++#include "gtktogglebutton.h"
++#include "gtkarrow.h"
++#include "gtkbin.h"
++#undef GTK_DISABLE_DEPRECATED
++#  include "gtklist.h"
++#  include "gtkcombo.h"
++#define GTK_DISABLE_DEPRECATED
+ 
+ #define WANT_HPANED 1
+ #include "gtkhpaned.h"
+@@ -95,7 +109,7 @@
+ #include <sys/cygwin.h>		/* For cygwin_conv_to_posix_path */
+ #endif
+ 
+-#define DIR_LIST_WIDTH   180
++#define DIR_LIST_WIDTH   150
+ #define DIR_LIST_HEIGHT  180
+ #define FILE_LIST_WIDTH  180
+ #define FILE_LIST_HEIGHT 180
+@@ -246,7 +260,13 @@
+ };
+ 
+ enum {
+-  FILE_COLUMN
++  FILE_COLUMN,
++  ICON_COLUMN,
++  TYPE_COLUMN,
++  SIZE_COLUMN,
++  SIZE_DATA_COLUMN,
++  DATE_COLUMN,
++  DATE_DATA_COLUMN
+ };
+ 
+ /* File completion functions which would be external, were they used
+@@ -413,12 +433,337 @@
+ static void gtk_file_selection_update_history_menu (GtkFileSelection       *fs,
+ 						    gchar                  *current_dir);
+ 
++static void gtk_file_selection_back (GtkWidget *widget, gpointer data);
++static void gtk_file_selection_up (GtkWidget *widget, gpointer data);
++static void gtk_file_selection_refresh (GtkWidget *widget, gpointer data);
++static void gtk_file_selection_home (GtkWidget *widget, gpointer data);
++static void gtk_file_selection_launch_terminal (GtkWidget *widget, GtkFileSelection *fs);
++static void gtk_file_selection_launch_fm (GtkWidget *widget, GtkFileSelection *fs);
+ static void gtk_file_selection_create_dir  (GtkWidget *widget, gpointer data);
+ static void gtk_file_selection_delete_file (GtkWidget *widget, gpointer data);
+ static void gtk_file_selection_rename_file (GtkWidget *widget, gpointer data);
+ 
+ static void free_selected_names (GPtrArray *names);
+ 
++static void reload_bookmarks (GtkWidget *bookmarks_button, GtkWidget *fs);
++
++static gboolean simple_mode = FALSE;
++static gchar *global_last_dir = NULL;
++extern gboolean _gtk_fnmatch_show_hidden;
++
++
++#define GNOME_VFS_FILE_INFO_GET_MIME_TYPE (1 << 0)
++#define GNOME_VFS_FILE_INFO_FORCE_FAST_MIME_TYPE (1 << 1)
++typedef struct _GnomeVFSFileInfo GnomeVFSFileInfo;
++static GModule *gnome_mod = NULL;
++static gboolean vfs_initialized = FALSE;
++static GnomeVFSFileInfo* (*gnome_vfs_file_info_new) (void);
++static gint (*gnome_vfs_get_file_info) (const gchar *text_uri, GnomeVFSFileInfo *info, gint options);
++static const char* (*gnome_vfs_file_info_get_mime_type) (GnomeVFSFileInfo *info);
++static const char* (*gnome_vfs_mime_get_description) (const gchar *mime_type);
++static const char* (*gnome_vfs_mime_get_icon) (const gchar *mime_type);
++static void (*gnome_vfs_file_info_unref) (GnomeVFSFileInfo *info);
++
++static gboolean icon_theme_initialized = FALSE;
++typedef struct _GnomeIconTheme GnomeIconTheme;
++static GnomeIconTheme* (*gnome_icon_theme_new) (void);
++static char* (*gnome_icon_theme_lookup_icon) (GnomeIconTheme *theme, const char *icon_name,
++					      int size, gpointer icon_data, int *base_size);
++static void (*gnome_icon_theme_append_search_path) (GnomeIconTheme *theme, const char *path);
++static GSList *icon_theme_paths = NULL;
++
++#define GNOME_FILE_DOMAIN_PIXMAP 4
++typedef struct _GnomeProgram GnomeProgram;
++static GnomeProgram* (*gnome_program_get) (void);
++static gchar* (*gnome_program_locate_file) (GnomeProgram *program, gint domain, const gchar *filename,
++					    gboolean only_if_exists, GSList **ret_locations);
++
++typedef struct _GConfClient GConfClient;
++typedef struct _GConfEntry GConfEntry;
++#define GCONF_CLIENT_PRELOAD_NONE 0
++typedef void (*GConfClientNotifyFunc) (GConfClient* client,
++				       guint cnxn_id,
++				       GConfEntry *entry,
++				       gpointer user_data);
++static gboolean gconf_initialized = FALSE;
++static gchar *gconf_hidden_key = NULL;
++static GConfClient* (*gconf_client_get_default) (void);
++static gboolean (*gconf_client_dir_exists) (GConfClient* client,
++					    const gchar* dir, GError** err);
++static gboolean (*gconf_client_get_bool) (GConfClient* client, const gchar* key, GError** err);
++static void (*gconf_client_add_dir) (GConfClient* client,
++				     const gchar* dir,
++				     gint preload,
++				     GError** err);
++static guint (*gconf_client_notify_add) (GConfClient* client,
++					 const gchar* namespace_section,
++					 GConfClientNotifyFunc func,
++					 gpointer user_data,
++					 GFreeFunc destroy_notify,
++					 GError** err);
++static void (*gconf_client_notify_remove) (GConfClient* client, guint cnxn);
++
++static gboolean sn_launch_app (const gchar *name, const gchar *description,
++			       const gchar *icon, gchar **argv);
++
++
++static const guint8 new_folder_icon[] = 
++{ ""
++  /* Pixbuf magic (0x47646b50) */
++  "GdkP"
++  /* length: header (24) + pixel_data (1622) */
++  "\0\0\6n"
++  /* pixdata_type (0x2010002) */
++  "\2\1\0\2"
++  /* rowstride (96) */
++  "\0\0\0`"
++  /* width (24) */
++  "\0\0\0\30"
++  /* height (24) */
++  "\0\0\0\30"
++  /* pixel_data: */
++  "\251\0\0\0\0\3\0\0\0!\0\0\0\377\0\0\0T\206\0\0\0\0\1\16\16\16Y\207\0"
++  "\0\0\377\2\0\0\0O\6\7\6\3\203\0\0\0\0\10\11\10\0P\7\7\0p\0\0\0\377\310"
++  "\305\0\363\0\0\0\377\11\11\0=\35\34\0\214\0\0\0\13\203\0\0\0\0\1\0\0"
++  "\0\377\206\216\222|\377\3fiX\377\0\0\0\377\1\2\1J\203\0\0\0\0\10\7\7"
++  "\0p\0\0\0\377\266\261\0\377\367\363\0\377\306\303\0\377\0\0\0\3771.\0"
++  "\277\0\0\0\20\203\0\0\0\0\11\0\0\0\377\241\244\214\377\204\207o\377\204"
++  "\206n\377\203\205m\377\202\204m\377\200\204l\377\205\210u\377gh[\377"
++  "\205\0\0\0\377\1\266\261\0\377\202\373\367\0\377\5\372\366\0\377\332"
++  "\326\0\377\0\0\0\377\0\0\0p\0\0\0\6\202\0\0\0\0\11\0\0\0\377\216\222"
++  "|\377twa\377swa\377sv`\377ru`\377qs_\377or]\377rrb\377\203ruc\377\3\0"
++  "\0\0\377\310\304\1\377\367\363\0\377\203\373\367\0\377\4\370\364\0\377"
++  "\307\305\2\377\0\0\0\377\0\0\0D\202\0\0\0\0\2\0\0\0\377\216\222|\377"
++  "\202hjW\377\202giV\377\1VXH\377\207\0\0\0\377\1\307\304\0\377\202\373"
++  "\367\0\377\5\371\365\0\377\340\334\0\377\36\35\0\377\0\0\0\377\0\0\0"
++  "\16\202\0\0\0\0\2\0\0\0\377\216\222|\377\202]`N\377\202\\_M\377\17\0"
++  "\0\0\377\242\243\233\377\330\331\314\377\326\327\312\377\322\324\307"
++  "\377\321\323\306\377\320\321\304\377\225\225\210\377\0\0\0\377\330\324"
++  "\0\377\355\351\0\377\337\333\0\377\0\0\0\37700\30\377\0\0\0\377\203\0"
++  "\0\0\0\206\0\0\0\377\2\247\250\241\377\333\334\317\377\205\303\305\261"
++  "\377\10ghO\377cc\"\377\0\0\0\377\310\305\3\377\0\0\0\377\77A\"\37741"
++  "\2\377\0\0\0\377\203\0\0\0\0\11\0\0\0\377\320\321\304\377\331\332\316"
++  "\377\331\331\315\377\327\330\314\377\327\327\312\377\326\327\311\377"
++  "\276\300\254\377\276\301\254\377\202\276\301\255\377\12\276\300\254\377"
++  "\277\301\255\377\266\267\245\377\257\260\236\377\233\235\215\377\0\0"
++  "\0\377LN<\377\272\273\247\377\203\205o\377\0\0\0\377\203\0\0\0\0\4\0"
++  "\0\0\377\327\330\314\377\272\274\250\377\273\274\250\377\205\272\274"
++  "\250\377\2\273\274\251\377\272\274\251\377\205\272\274\250\377\5\220"
++  "\221\201\377\272\274\251\377\272\274\250\377\217\221\177\377\0\0\0\377"
++  "\203\0\0\0\0\6\0\0\0\377\327\330\314\377\265\267\244\377\266\267\245"
++  "\377\266\270\244\377\265\267\244\377\202\266\270\244\377\2\265\267\244"
++  "\377\266\267\244\377\202\266\270\244\377\203\266\267\244\377\6\266\270"
++  "\244\377\266\267\244\377\265\270\244\377\266\270\244\377\214\216y\377"
++  "\0\0\0\377\203\0\0\0\0\2\0\0\0\377\327\330\314\377\203\261\263\240\377"
++  "\1\262\263\237\377\205\261\263\240\377\5\261\262\240\377\261\263\240"
++  "\377\262\263\240\377\261\263\240\377\262\262\240\377\203\261\263\240"
++  "\377\2\203\205u\377\0\0\0\377\203\0\0\0\0\2\0\0\0\377\327\330\314\377"
++  "\202\255\256\233\377\2\254\256\233\377\255\257\233\377\202\255\256\233"
++  "\377\1\254\256\234\377\202\255\256\234\377\204\255\256\233\377\6\255"
++  "\256\234\377\255\256\233\377\255\256\234\377\254\257\234\377\177\201"
++  "r\377\0\0\0\377\202\0\0\0\0\5\0\0\0\1\0\0\0\377\327\330\314\377\250\252"
++  "\227\377\251\252\227\377\210\250\252\227\377\3\250\251\227\377\250\252"
++  "\230\377\251\252\227\377\202\250\252\227\377\4\251\252\227\377\250\252"
++  "\227\377|~o\377\0\0\0\377\202\0\0\0\1\3\0\0\0\5\0\0\0\377\327\330\314"
++  "\377\202\244\245\222\377\202\243\245\223\377\202\244\245\223\377\4\244"
++  "\245\222\377\244\245\223\377\244\246\223\377\244\245\222\377\202\243"
++  "\245\223\377\2\244\245\222\377\244\245\223\377\202\243\245\223\377\10"
++  "\244\246\223\377{}m\377\0\0\0\377\0\0\0\6\0\0\0\5\0\0\0\21\0\0\0\377"
++  "\327\330\314\377\202\237\240\216\377\202\240\241\217\377\4\237\240\217"
++  "\377\237\241\216\377\237\240\216\377\237\241\217\377\202\237\241\216"
++  "\377\202\240\241\216\377\202\237\241\217\377\14\240\241\217\377\237\241"
++  "\216\377\240\241\217\377yzl\377\0\0\0\377\0\0\0\21\0\0\0\10\0\0\0\33"
++  "\0\0\0\377\327\330\314\377\233\234\212\377\232\234\212\377\204\233\234"
++  "\212\377\2\233\235\213\377\233\234\212\377\203\232\234\212\377\202\233"
++  "\234\212\377\20\233\234\213\377\233\234\212\377\232\234\212\377\233\234"
++  "\212\377wxj\377\0\0\0\377\0\0\0\31\0\0\0\12\0\0\0/\0\0\0\377\327\330"
++  "\314\377\227\227\206\377\227\230\206\377\226\227\206\377\227\230\206"
++  "\377\226\227\206\377\204\227\230\206\377\3\226\230\206\377\226\227\206"
++  "\377\227\227\206\377\205\226\230\206\377\10yzl\377\0\0\0\377\0\0\0-\0"
++  "\0\0\10\0\0\0""1\0\0\0\377\327\330\314\377\224\226\201\377\202\224\225"
++  "\202\377\1\222\223\202\377\202\222\223\201\377\3\221\223\201\377\222"
++  "\223\201\377\221\223\201\377\203\222\223\201\377\15\222\223\202\377\222"
++  "\223\201\377\222\223\202\377\222\224\201\377\222\223\201\377wxj\377\0"
++  "\0\0\377\0\0\0""0\0\0\0\4\0\0\0*\0\0\0\377\327\330\314\377\222\222|\377"
++  "\202\222\223|\377\5\215\216~\377\215\216}\377\216\217~\377\215\217}\377"
++  "\216\217}\377\202\215\217}\377\4\215\217~\377\215\216}\377\215\217~\377"
++  "\216\216}\377\202\216\217}\377\34\215\216}\377vxi\377\0\0\0\377\0\0\0"
++  "*\0\0\0\1\0\0\0\4\0\0\0\377\231\233\211\377\222\226|\377\221\224{\377"
++  "\216\221x\377\210\212y\377\206\210w\377\205\206u\377\202\203s\377\200"
++  "\201r\377}\177o\377|~o\377z|m\377y{l\377xyk\377vxi\377uwi\377uwh\377"
++  "vxi\377^`T\377\0\0\0\377\0\0\0\37\202\0\0\0\0\1\0\0\0\214\223\0\0\0\377"
++  "\2\0\0\0\204\0\0\0\16\202\0\0\0\0\5\0\0\0\12\0\0\0\15\0\0\0\23\0\0\0"
++  "\24\0\0\0\25\203\0\0\0\26\1\0\0\0\27\207\0\0\0\30\202\0\0\0\31\4\0\0"
++  "\0\26\0\0\0\22\0\0\0\13\0\0\0\6"};
++
++static const guint8 terminal_icon[] = 
++{ ""
++  /* Pixbuf magic (0x47646b50) */
++  "GdkP"
++  /* length: header (24) + pixel_data (1990) */
++  "\0\0\7\336"
++  /* pixdata_type (0x2010002) */
++  "\2\1\0\2"
++  /* rowstride (96) */
++  "\0\0\0`"
++  /* width (24) */
++  "\0\0\0\30"
++  /* height (24) */
++  "\0\0\0\30"
++  /* pixel_data: */
++  "\231\0\0\0\0\3\0\0\0\2\0\0\0\4\0\0\0\5\220\0\0\0\6\12\0\0\0\5\0\0\0\4"
++  "\0\0\0\2\0\0\0\0\0\0\0\2B@A\304\201\202\201\377|||\377{||\377|{{\377"
++  "\203|}}\377\25{|z\377yyx\377xxw\377wxv\377wvu\377qrp\377mli\377jig\377"
++  "ged\377cca\377_^\\\377ec^\377'&$\312\0\0\0\17\0\0\0\3\0\0\0\4\204\203"
++  "\203\377\366\363\351\377\365\361\350\377\376\374\362\377\377\377\367"
++  "\377\202\377\377\370\377\13\377\377\367\377\377\376\366\377\377\374\364"
++  "\377\376\370\357\377\371\364\352\377\363\356\344\377\357\351\337\377"
++  "\345\340\327\377\335\327\315\377\324\315\304\377\310\303\270\377\202"
++  "\270\263\251\377\13\77\77:\377\0\0\0%\0\0\0\10\0\0\0\6||{\377\364\360"
++  "\346\377\202\200z\377EDA\377HEC\377FCA\377EC@\377\203EB@\377\177EC@\377"
++  "DC\77\377DB\77\377C@=\377A>;\377<;8\377;95\37720/\377qng\377\253\247"
++  "\235\377751\377\0\0\0""5\0\0\0\13\0\0\0\6||}\377\373\367\355\377DB\77"
++  "\377HMI\377qwr\377sxt\377y}y\377tyu\377mrn\377bic\377Y^Z\377KQL\377B"
++  "FC\377>B\77\3779=:\377061\377',(\377\22\30\24\377UTO\377\250\242\230"
++  "\37744/\377\0\0\0:\0\0\0\15\0\0\0\6zzy\377\367\363\353\377CA>\377puq"
++  "\377\264\267\264\377\257\260\257\377\243\246\243\377\223\230\223\377"
++  "\204\210\204\377qwq\377_d_\377SWS\377PVP\377LQL\377HMH\377<A<\377040"
++  "\377\33\37\34\377WSN\377\240\233\220\37711-\377\0\0\0;\0\0\0\16\0\0\0"
++  "\6{zz\377\361\354\342\377>=:\377svs\377\244\247\244\377\223\225\223\377"
++  "\211\215\211\377\201\206\201\377sxs\377glg\377bhb\377`f`\377\\a\\\377"
++  "V\\V\377PVP\377CHC\3776<6\377\37$\40\377TPK\377\226\223\210\377..*\377"
++  "\0\0\0<\0\0\0\16\0\0\0\6yyy\377\350\344\332\377>;8\377kpl\377\214\216"
++  "\214\377}\202}\377x\177x\377v~v\377x~x\377t{t\377pxp\377msm\377glg\377"
++  "aga\377W]W\377JMJ\3779>9\377\"&#\377QMG\377\214\211\177\377,+'\377\0"
++  "\0\0<\0\0\0\16\0\0\0\6rsr\377\337\332\317\377;85\377cgd\377rwr\377lq"
++  "l\377pvp\377}\203}\377\202\207\202\377\177\206\177\377|\202|\377t|t\377"
++  "ouo\377hmh\377]b]\377MSM\377=@=\377\177#'$\377NHD\377\203\200u\377)("
++  "%\377\0\0\0<\0\0\0\16\0\0\0\6qpo\377\324\317\304\377763\377RYS\377X^"
++  "X\377djd\377t|t\377\200\205\200\377\205\212\205\377\204\212\204\377\201"
++  "\211\201\377{\201{\377u{u\377lrl\377_e_\377OTO\377<@<\377\"'#\377JGA"
++  "\377|vk\377&$\"\377\0\0\0<\0\0\0\16\0\0\0\6onm\377\312\305\271\37763"
++  "0\377JPK\377\232\236\232\377V]V\377ini\377y\177y\377\202\211\202\377"
++  "\203\211\203\377\201\207\201\377|\203|\377v|v\377lql\377_e_\377MRM\377"
++  "<A<\377\"'$\377HD>\377roe\377%#\37\377\0\0\0<\0\0\0\16\0\0\0\6mlk\377"
++  "\276\267\255\3772/,\377DLE\377\344\345\344\377\376\377\376\377\274\277"
++  "\274\377{\201{\377y~y\377~\204~\377{\203{\377y\177y\377rxr\377gng\377"
++  "\\b\\\377KPK\377:>:\377#(%\377GC;\377kf]\377\"!\35\377\0\0\0<\0\0\0\16"
++  "\0\0\0\6ffc\377\260\254\240\377/,(\377>D\77\377]a]\377\241\244\241\377"
++  "\377\377\377\377\233\237\233\377ele\377dld\377djd\377cic\377bgb\377\\"
++  "a\\\377QVQ\377BIB\3777:7\377\"%#\377D@:\377d_V\377\37\36\33\377\0\0\0"
++  "<\0\0\0\16\0\0\0\6`^]\377\246\240\226\377*(%\377=D>\377\377\377\377\377"
++  "\215\220\215\377OTO\377RXR\377\206\213\206\377\316\321\316\377\320\322"
++  "\320\377\220\224\220\377OVO\377JQJ\377AEA\3778=8\377.3.\377\36#\37\377"
++  "C\77""8\377]XN\377\35\33\30\377\0\0\0<\0\0\0\16\0\0\0\6\177[ZV\377\230"
++  "\222\206\377#!\36\377.71\377082\3774<6\377BHC\377FKH\377BHC\377;A=\377"
++  "6>7\3776<7\3776=8\377274\377,1.\377&,(\377\40#\"\377\21\27\24\377>:4"
++  "\377SPF\377\33\32\26\377\0\0\0<\0\0\0\16\0\0\0\6WUS\377\210\202w\377"
++  "li`\377WSM\377WUM\377WTN\377UQJ\377TPI\377RNG\377RNE\377OKD\377NIC\377"
++  "LHA\377KG\77\377JD<\377HD:\377FC:\377C\77""5\377hdU\377RNC\377\33\33"
++  "\27\377\0\0\0<\0\0\0\16\0\0\0\6RQO\377yti\377vrf\377yui\377zsi\377ws"
++  "i\377vqg\377qlb\377oi^\377ieY\377c_U\377_\\P\377\\YM\377XVJ\377VRF\377"
++  "RND\377TQG\377eaX\377MJ@\377QNC\377\33\33\27\377\0\0\0<\0\0\0\16\0\0"
++  "\0\6RPK\376upd\377pj_\377lh\\\377lg\\\377hdZ\377fbW\377b^R\377_[O\377"
++  "[WK\377ZUJ\377WRG\377TQE\377RND\377QLB\377MJ\77\377ZVM\377A<3\377HF;"
++  "\377URF\377\"!\34\377\0\0\0""9\0\0\0\15\0\0\0\5!\40\36\316!\37\33\377"
++  "omg\375ljc\377qoh\377vsm\377xvo\377zwq\377xvn\377tpk\377qnh\377kid\377"
++  "jfa\377eb]\377a_W\377\\ZT\377[YR\377\\[T\377UQK\376\31\31\25\377\21\20"
++  "\16\336\0\0\0/\0\0\0\12\0\0\0\2\0\0\0\24\0\0\0s/.,\372#\"\35\377)'$\377"
++  "./*\377642\377\26""896\377763\377541\37732/\37710-\377,-(\377)(%\377"
++  "$\"\37\377\40\40\33\377\37\36\31\377\40\36\32\377\34\33\27\374\0\0\0"
++  "\221\0\0\0>\0\0\0\31\0\0\0\5\0\0\0\1\0\0\0\6\0\0\0\25\0\0\0.\0\0\0B\0"
++  "\0\0J\203\0\0\0K\207\0\0\0L\202\0\0\0K\6\0\0\0J\0\0\0C\0\0\0/\0\0\0\26"
++  "\0\0\0\6\0\0\0\1\202\0\0\0\0\3\0\0\0\4\0\0\0\12\0\0\0\21\204\0\0\0\24"
++  "\207\0\0\0\25\203\0\0\0\24\4\0\0\0\21\0\0\0\12\0\0\0\4\0\0\0\1\205\0"
++  "\0\0\0\203\0\0\0\1\213\0\0\0\2\202\0\0\0\1\204\0\0\0\0"};
++
++static const guint8 fm_icon[] = 
++{ ""
++  /* Pixbuf magic (0x47646b50) */
++  "GdkP"
++  /* length: header (24) + pixel_data (1756) */
++  "\0\0\6\364"
++  /* pixdata_type (0x2010002) */
++  "\2\1\0\2"
++  /* rowstride (96) */
++  "\0\0\0`"
++  /* width (24) */
++  "\0\0\0\30"
++  /* height (24) */
++  "\0\0\0\30"
++  /* pixel_data: */
++  "\210\0\0\0\0\1\340\247\2123\204\340\247\212Z\1\340\247\2128\217\0\0\0"
++  "\0\14\375\274\232\13\366\270\227c\361\265\216\263\355\256s\336\351\253"
++  "k\377\353\254c\377\354\257l\377\354\263w\377\357\270\201\342\363\273"
++  "\220\263\367\270\226l\377\303\240\14\212\0\0\0\0\20\376\277\236\13\357"
++  "\260\213g\352\243t\342\345\231R\377\353\230>\377\356\237D\377\360\251"
++  "P\377\361\261U\377\364\276`\377\365\305f\377\370\320v\377\370\311f\377"
++  "\351\231M\377\360\264\202\353\366\303\237g\377\301\241\21\206\0\0\0\0"
++  "\24\377\304\244\1\357\261\224_\345\242|\310\337\214M\377\342\213@\377"
++  "\345\220D\377\346\222D\377\344\224F\377\344\231F\377\347\242I\377\361"
++  "\263V\377\364\276`\377\365\312n\377\366\307d\377\345\201)\377\347\223"
++  "9\377\362\316\203\377\361\277\226\313\357\261\224h\377\302\241\3\204"
++  "\0\0\0\0\24\353\256\221Z\325\212c\377\324w9\377\326}A\377\323yE\377\317"
++  "s\77\377\311e7\377\302_2\377\271g-\377\313x1\377\340\2108\377\345\221"
++  "9\377\356\250E\377\360\253H\377\331l)\377\335r!\377\356\255R\377\370"
++  "\330\202\377\346\261~\377\357\263\225h\203\0\0\0\0\26\325\231|c\310|"
++  "Z\361\300c5\377\277h>\377\267`8\377\257U4\377\254O-\377\254G*\377\255"
++  "G(\377\254W(\377\265g+\377\315r.\377\331|/\377\345\2167\377\347\222;"
++  "\377\306P&\377\324b#\377\340\2034\377\367\314d\377\354\242\77\377\355"
++  "\265\211\363\367\271\233T\202\0\0\0\0\177\314\214o\377\245R1\377\250"
++  "W6\377\236M0\377\227D*\377\225A)\377\241F-\377\247A+\377\254A'\377\266"
++  "Q-\377\267].\377\276l/\377\315w1\377\334\2106\377\350\213:\377\324l3"
++  "\377\311U$\377\331m*\377\353\235@\377\346\204'\377\355\260[\377\360\275"
++  "\223\265\375\275\235\7\0\0\0\0\316\220t\377\231P6\377\211A*\377\204;"
++  "'\377\212=&\377\221\77&\377\241I.\377\256L3\377\254D)\377\276[6\377\301"
++  "i<\377\273p9\377\301q;\377\265j4\377\274c.\377\316m0\377\275Q(\377\310"
++  "]$\377\333s2\377\337v'\377\353\234F\377\360\310\201\377\372\277\2332"
++  "\0\0\0\0\324\231}\241\232U@\377u3!\377y7#\377\204<&\377\223C+\377\240"
++  "L1\377\265^=\377\270V6\377\302d>\377\305pH\377\273oI\377\257gJ\377\234"
++  "Z\77\377\216I2\377\2058\40\377\2158\"\377\263M&\377\320b-\377\326f%\377"
++  "\343\215E\377\370\315a\377\363\274\221\263\0\0\0\0\337\246\211A\317\224"
++  "y\353q5&\377t3!\377|8$\377\222E,\377\241L4\377\254X8\377\262]<\377\257"
++  "_B\377\266oP\377\277\201_\377\311\212m\377\321\210p\377\273nT\377\211"
++  "\77%\377}3\35\377\265\\3\377\315k6\377\317^%\377\344\215I\377\354\235"
++  "5\377\353\243h\371\341\252\214R\0\0\0\0\360\263\224L\260v`\377t6#\377"
++  "{7#\377\216@(\377\230E.\377\234K1\377\231K2\377\223H2\377\233T>\377\256"
++  "mT\377\264v]\377\251iN\377\270vX\377\303\203\\\377\325\225^\377\315|"
++  "L\377\303n>\377\327{G\377\337~A\377\330e\37\377\343\220L\377\340\252"
++  "\207\300\0\0\0\0\377\304\241\0\360\264\226J\303\210m\353\206D/\377\203"
++  ";%\377\204=)\377\21\201>,\377~;-\377\207A6\377\257mQ\377\273uK\377\266"
++  "n@\377\272pG\377\236X1\377\223S7\377\332\233x\377\332\214_\377\314{L"
++  "\377\336\205Q\377\310Y\"\377\330l1\377\352\237N\377\340\243w\377\203"
++  "\0\0\0\0\25\375\275\235\77\312\213q\237\226UA\376o2#\377n3#\377i/%\377"
++  "\250dH\377\306xJ\377\274o>\377\311~D\377\317\177C\377\267f7\377\207C"
++  "%\377\222X7\377\361\277\200\377\337\220Y\377\324wA\377\322k4\377\350"
++  "\243p\377\343\217B\377\333\235u\377\205\0\0\0\0\23\362\264\225\201\247"
++  "nY\320xG8\377yE7\377\305sD\377\245\\1\377\257c1\377\314zD\377\270z\\"
++  "\377\267{W\377\276}S\377\206M3\377\323\224e\377\336\216[\377\335\215"
++  "[\377\355\270\212\377\345\232P\377\334z3\377\325\230v\377\206\0\0\0\0"
++  "\22\360\262\222#\302\220w\330\260y^\377\273h8\377\210H+\377\177\77&\377"
++  "\301z\\\377\273\203g\377\250xk\377\320\211W\377\266}Y\377\334\222U\377"
++  "\350\243e\377\340\223Z\377\335\210=\377\330u1\377\343\226`\377\312\223"
++  "r\377\207\0\0\0\0\21\262\206o7\252v`\377\242P+\377l5#\377M)\37\377\256"
++  "t]\377h5\40\377{J9\377\320}\77\377\343\251u\377\331\205J\377\323|D\377"
++  "\331\200B\377\334\202\77\377\361\274\216\377\356\247m\377\265\204h\377"
++  "\207\0\0\0\0\21\202bQ7\262\202g\377\235Q-\377U)\35\377J*\"\377nJ=\377"
++  "\257y`\377\263rA\377\344\247f\377\305}Z\377\310h,\377\332\221X\377\330"
++  "\203P\377\342\231c\377\337\217K\377\352\245v\377\211hW\351\207\0\0\0"
++  "\0\21T\77""4\34\310\232\201\311\240\\=\377Y(\30\377G$\40\377D\"\33\377"
++  "c<4\377\211[C\377\204D3\377\250R&\377\264[.\377\271c5\377\307m8\377\314"
++  "i+\377\332\202A\377\320\240\206\377\207dSZ\210\0\0\0\0\20\230s`u\315"
++  "\216m\373r;&\377E\40\32\377J'\37\377P&\36\377T\"\32\377{;#\377\204=!"
++  "\377\272m@\377\301m@\377\312k:\377\332\207Q\377\350\253x\377\240xe\277"
++  "YB7\17\211\0\0\0\0\16\367\274\234\221\266wU\377X%\31\377U)\37\377b2\37"
++  "\377^+\37\377\216M)\377\230J)\377\252T.\377\300nA\377\317yE\377\347\233"
++  "d\377\241x^\377/$\36Z\212\0\0\0\0\16\377\303\241\7\324\233{\251\303\204"
++  "^\377\215K(\377u5\36\377\207A#\377\222@\40\377\243T0\377\271a5\377\314"
++  "q=\377\325\215f\377\237t`\310D4+_K8.\1\213\0\0\0\0\13\201`P@\220kW\373"
++  "\326\222d\377\277h3\377\267e5\377\271],\377\303k:\377\327\214^\377\335"
++  "\241y\377\240yd\255\250~h\13\216\0\0\0\0\11\\E9\15\215kY~\340\250\212"
++  "\263\345\253\216\263\355\261\222\263\342\251\214\263\212hW\263\207eU"
++  ")}]M\6\234\0\0\0\0"};
++
+ #ifndef G_PLATFORM_WIN32
+ 
+ #define compare_utf8_filenames(a, b) strcmp(a, b)
+@@ -640,6 +985,143 @@
+     }
+ }
+ 
++static gchar *
++read_line_from_command (gchar *command)
++{
++  gchar *argv[] = { "/bin/sh", "-c", command, NULL };
++  gint output, pid;
++  GIOChannel *io;
++  gchar *data = NULL, *line;
++  gsize term;
++
++  if (!g_spawn_async_with_pipes (NULL, argv, NULL,
++  		G_SPAWN_SEARCH_PATH | G_SPAWN_STDERR_TO_DEV_NULL,
++  		NULL, NULL, &pid, NULL, &output, NULL, NULL))
++      return g_strdup ("");
++
++  io = g_io_channel_unix_new (output);
++  g_io_channel_set_close_on_unref (io, TRUE);
++  g_io_channel_read_line (io, &data, NULL, &term, NULL);
++  g_io_channel_unref (io);
++
++  if (!data) return NULL;
++  line = g_strndup (data, term);
++  g_free (data);
++  return line;
++}
++
++static void
++notify_show_hidden (GConfClient *client, guint cnxn_id, GConfEntry *entry, gpointer fs)
++{
++  _gtk_fnmatch_show_hidden = gconf_client_get_bool (gconf_client_get_default (),
++			gconf_hidden_key, NULL);
++  gtk_file_selection_refresh (NULL, GTK_FILE_SELECTION (fs));
++}
++
++static void
++widget_force_hide (GtkWidget *widget)
++{
++  g_signal_stop_emission_by_name (widget, "show");
++  gtk_widget_hide (widget);
++}
++
++static void bookmarks_popup_pos (GtkMenu *menu, gint *x, gint *y, gboolean push_in, GtkWidget *button);
++
++static gboolean
++handle_key_presses (GtkFileSelection *fs, GdkEventKey *event)
++{
++  if ((event->state & GDK_CONTROL_MASK) && event->keyval == GDK_l)
++    {
++      GtkCombo *combo;
++
++      combo = (GtkCombo *) g_object_get_data (G_OBJECT (fs), "__combo");
++      gtk_widget_grab_focus (combo->entry);
++    }
++  else if ((event->state & GDK_MOD1_MASK) && event->keyval == GDK_Left)
++      gtk_file_selection_back (NULL, fs);
++  else if ((event->state & GDK_MOD1_MASK) && event->keyval == GDK_Up)
++      gtk_file_selection_up (NULL, fs);
++  else if ((event->state & GDK_CONTROL_MASK) && event->keyval == GDK_r)
++      gtk_file_selection_refresh (NULL, fs);
++  else if ((event->state & GDK_MOD1_MASK) && event->keyval == GDK_Home)
++      gtk_file_selection_home (NULL, fs);
++  else if ((event->state & GDK_MOD1_MASK) && event->keyval == GDK_b)
++    {
++      GtkWidget *button, *menu;
++
++      button = (GtkWidget *) g_object_get_data (G_OBJECT (fs), "__bookmarks_button");
++      menu = (GtkWidget *) g_object_get_data (G_OBJECT (fs), "__bookmarks");
++
++      g_object_set (button, "active", TRUE, NULL);
++      gtk_menu_popup (GTK_MENU (menu), NULL, NULL,
++		      (GtkMenuPositionFunc) bookmarks_popup_pos, button,
++		      1, event->time);
++    }
++  else if ((event->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) && event->keyval == GDK_N)
++      gtk_file_selection_create_dir (NULL, fs);
++  else if ((event->state & GDK_CONTROL_MASK) && event->keyval == GDK_t)
++      gtk_file_selection_launch_terminal (NULL, fs);
++  else if ((event->state & GDK_CONTROL_MASK) && event->keyval == GDK_f)
++      gtk_file_selection_launch_fm (NULL, fs);
++  else
++      return FALSE;
++
++  return TRUE;
++}
++
++static void
++history_combo_activate (GtkEntry *entry, GtkFileSelection *fs)
++{
++  gchar *dir;
++  gint len;
++
++  if (GPOINTER_TO_INT (g_object_get_data (G_OBJECT (entry), "__busy")))
++    return;
++  g_object_set_data (G_OBJECT (entry), "__busy", GINT_TO_POINTER (TRUE));
++
++  dir = (gchar *) gtk_entry_get_text (entry);
++  if (dir[strlen (dir) - 1] != G_DIR_SEPARATOR)
++      dir = g_strdup_printf ("%s%c", dir, G_DIR_SEPARATOR);
++  else
++      dir = g_strdup (dir);
++  gtk_file_selection_populate (fs, dir, FALSE, FALSE);
++
++  g_free (dir);
++  dir = (gchar *) gtk_entry_get_text (entry);
++  len = strlen (dir);
++  if (len > 1 && dir[len - 1] == G_DIR_SEPARATOR)
++    {
++      dir = g_strndup (dir, len - 1);
++      gtk_entry_set_text (entry, dir);
++    }
++
++  if ((gpointer) gtk_window_get_focus (GTK_WINDOW (fs)) == (gpointer) entry)
++      gtk_widget_grab_focus (fs->selection_entry);
++  g_object_set_data (G_OBJECT (entry), "__busy", GINT_TO_POINTER (FALSE));
++}
++
++static void
++history_combo_selected (GtkList *list, GtkBin *item, GtkFileSelection *fs)
++{
++  GtkCombo *combo;
++  GList *nav_history;
++  const gchar *current, *entry, *selected;
++
++  if (!GTK_WIDGET_HAS_FOCUS (item))
++      return;
++
++  nav_history = (GList *) g_object_get_data (G_OBJECT (fs), "__nav_history");
++  if (!nav_history) return;
++  current = (const gchar *) g_list_last (nav_history)->data;
++
++  combo = GTK_COMBO (g_object_get_data (G_OBJECT (fs), "__combo"));
++  entry = gtk_entry_get_text (GTK_ENTRY (combo->entry));
++  selected = gtk_label_get_text (GTK_LABEL (gtk_bin_get_child (item)));
++
++  if (strcmp (entry, selected) == 0 && strcmp (entry, current) != 0)
++      history_combo_activate (GTK_ENTRY (combo->entry), fs);
++}
++
+ static gboolean
+ grab_default (GtkWidget *widget)
+ {
+@@ -648,61 +1130,640 @@
+ }
+      
+ static void
++popup_deactivate (GtkMenuShell *menu,
++		  gpointer button)
++{
++  g_object_set (button, "active", FALSE, NULL);
++}
++
++static void
++back_menu_activate (GtkWidget *item,
++		    gpointer dp)
++{
++  GtkWidget *fs;
++  GList *nav_history;
++  gint i, l, d;
++  gchar *dir;
++
++  fs = GTK_WIDGET (g_object_get_data (G_OBJECT (item), "fs"));
++  nav_history = g_object_get_data (G_OBJECT (fs), "__nav_history");
++  l = (gint) g_list_length (nav_history);
++  d = GPOINTER_TO_INT (dp);
++  dir = g_strdup_printf ("%s/", (gchar *) g_list_nth_data (nav_history, d));
++
++  for (i = l - 1; i >= d; i--)
++    {
++      GList *nth = g_list_nth (nav_history, i);
++      g_free (nth->data);
++      nav_history = g_list_remove_link (nav_history, nth);
++    }
++  g_object_set_data (G_OBJECT (fs), "__nav_history", nav_history);
++  gtk_file_selection_populate (GTK_FILE_SELECTION (fs), dir, FALSE, FALSE);
++  g_free (dir);
++}
++
++static void
++update_nav_history_popup (GtkWidget *fs)
++{
++  GList *nav_history;
++  GtkWidget *back_dropdown;
++  GtkWidget *menu;
++  guint i, l;
++
++  nav_history = g_object_get_data (G_OBJECT (fs), "__nav_history");
++  back_dropdown = g_object_get_data (G_OBJECT (fs), "__back_dropdown");
++  menu = g_object_get_data (G_OBJECT (back_dropdown), "menu");
++
++  if (menu) gtk_widget_destroy (menu);
++  menu = gtk_menu_new ();
++  l = g_list_length (nav_history);
++  for (i = l - 1; i > 0; i--)
++    {
++      GtkWidget *item;
++
++      item = gtk_menu_item_new_with_label ((gchar *) g_list_nth_data (nav_history,
++					   i - 1));
++      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
++      g_object_set_data (G_OBJECT (item), "fs", fs);
++      g_signal_connect (item, "activate", G_CALLBACK (back_menu_activate),
++			GINT_TO_POINTER ((gint) (i - 1)));
++    }
++  gtk_widget_show_all (menu);
++  g_object_set_data (G_OBJECT (back_dropdown), "menu", menu);
++
++  g_signal_connect (menu, "deactivate", G_CALLBACK (popup_deactivate),
++		    back_dropdown);
++}
++
++static void
++back_popup_pos (GtkMenu *menu,
++		gint *x,
++		gint *y,
++		gboolean push_in,
++		GtkWidget *button)
++{
++  gdk_window_get_origin (button->window, x, y);
++  *x += button->allocation.x;
++  *y += button->allocation.y + button->requisition.height - 1;
++}
++
++static gboolean
++back_menu (GtkWidget *button,
++	   GdkEventButton *event,
++	   gpointer data)
++{
++  GtkWidget *menu;
++
++  if (event->button != 1) return FALSE;
++  g_object_set (button, "active", TRUE, NULL);
++  menu = g_object_get_data (G_OBJECT (button), "menu");
++  gtk_menu_popup (GTK_MENU (menu), NULL, NULL,
++		  (GtkMenuPositionFunc) back_popup_pos, button,
++		  1, event->time);
++  return TRUE;
++}
++
++static void
++bookmarks_item_clicked (GtkWidget *widget,
++			gchar *dir)
++{
++  GtkFileSelection *fs = GTK_FILE_SELECTION (g_object_get_data (G_OBJECT (widget), "fs"));
++  gchar *realDir;
++
++  realDir = g_strdup_printf ("%s/", dir);
++  gtk_file_selection_populate (fs, realDir, FALSE, FALSE);
++  g_free (realDir);
++}
++
++static void
++bookmarks_popup_pos (GtkMenu *menu,
++		     gint *x,
++		     gint *y,
++		     gboolean push_in,
++		     GtkWidget *button)
++{
++  gdk_window_get_origin (button->window, x, y);
++  *x += button->allocation.x;
++  *y += button->allocation.y + button->requisition.height - 1;
++}
++
++static gboolean
++bookmarks_popup (GtkWidget *widget,
++		 GdkEventButton *event,
++		 GtkMenu *menu)
++{
++  if (event->button != 1) return FALSE;
++  g_object_set (widget, "active", TRUE, NULL);
++  gtk_menu_popup (menu, NULL, NULL,
++		  (GtkMenuPositionFunc) bookmarks_popup_pos, widget,
++		  1, event->time);
++  return TRUE;
++}
++
++static void
++bookmarks_add (GtkWidget *item, GtkWidget *bookmarks_button)
++{
++  GtkWidget *fs = gtk_widget_get_toplevel (bookmarks_button);
++  gchar *filename;
++  GIOChannel *io;
++
++  filename = g_strdup_printf ("%s/.gtk-bookmarks", g_get_home_dir ());
++  io = g_io_channel_new_file (filename, "a", NULL);
++  if (io)
++    {
++      GList *nav_history;
++      gchar *dir;
++
++      nav_history = g_object_get_data (G_OBJECT (fs), "__nav_history");
++      dir = (gchar *) g_list_last (nav_history)->data;
++      g_io_channel_write_chars (io, dir, strlen (dir), NULL, NULL);
++      g_io_channel_write_chars (io, "\n", strlen ("\n"), NULL, NULL);
++      g_io_channel_unref (io);
++
++      reload_bookmarks (bookmarks_button, fs);
++    }
++  else
++    {
++      GtkWidget *dialog;
++
++      dialog = gtk_message_dialog_new (GTK_WINDOW (fs),
++			      GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
++			      GTK_MESSAGE_ERROR,
++			      GTK_BUTTONS_OK,
++			      "Unable to write to %s", filename);
++      g_signal_connect (dialog, "response", G_CALLBACK (gtk_widget_destroy), NULL);
++      gtk_widget_show (dialog);
++    }
++  g_free (filename);
++}
++
++static void
++bookmarks_edit (GtkWidget *item,
++		GtkWidget *bookmarks_button)
++{
++  GtkWidget *fs = gtk_widget_get_toplevel (bookmarks_button);
++  GtkWidget *dialog;
++  gchar *filename, *prog;
++
++  filename = g_strdup_printf ("%s/.gtk-bookmarks", g_get_home_dir ());
++  prog = g_find_program_in_path ("gedit");
++  if (prog)
++    {
++      gboolean use_sn;
++      gchar *argv[] = {"gedit", NULL, NULL};
++
++      g_free (prog);
++      use_sn = (system ("gedit --version | awk '{ver=$3;if($3>2.2)exit 0;else exit 1}'") == 0);
++      argv[1] = filename;
++
++      if (!g_file_test (filename, G_FILE_TEST_EXISTS))
++        {
++          FILE *f;
++          f = fopen (filename, "w");
++          if (f) fclose (f);
++      }
++
++      if (use_sn)
++        {
++          gchar *icon = NULL;
++          GnomeProgram *app;
++
++          if (icon_theme_initialized && (app = gnome_program_get ()))
++              icon = gnome_program_locate_file (app, GNOME_FILE_DOMAIN_PIXMAP,
++              	"gedit-icon.png", FALSE, NULL);
++          else
++	    {
++	      gchar *prefix;
++
++	      prefix = read_line_from_command ("pkg-config --variable=prefix libgnomeui-2.0");
++	      if (*prefix == '\0')
++	          icon = g_strdup ("/usr/share/pixmaps/gedit-icon.png");
++	      else
++	          icon = g_strdup_printf ("%s/share/pixmaps/gedit-icon.png", prefix);
++	      g_free (prefix);
++	    }
++
++          sn_launch_app ("Text Editor", "Starting Text Editor", icon, argv);
++          if (icon) g_free (icon);
++        }
++      else
++          g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
++
++      g_free (filename);
++      return;
++    }
++
++  dialog = gtk_message_dialog_new (GTK_WINDOW (fs),
++			      GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
++			      GTK_MESSAGE_INFO,
++			      GTK_BUTTONS_OK,
++			      "The bookmark editor hasn't been implemented yet.\n"
++			      "Please open your favorite text editor and edit:\n"
++			      "%s", filename);
++  gtk_container_set_border_width (GTK_CONTAINER (dialog), 8);
++  g_signal_connect (dialog, "response", G_CALLBACK (gtk_widget_destroy), NULL);
++  gtk_widget_show (dialog);
++  g_free (filename);
++}
++
++static void
++reload_bookmarks (GtkWidget *bookmarks_button, GtkWidget *fs)
++{
++  GtkWidget *menu, *add, *edit;
++  GtkTooltips *tips = NULL;
++  gchar *filename;
++  GIOChannel *io;
++  gulong signal;
++
++  /* Destroy the previous menu */
++  menu = g_object_get_data (G_OBJECT (fs), "__bookmarks");
++  if (menu)
++      gtk_widget_destroy (menu);
++  signal = (gulong) GPOINTER_TO_INT (g_object_get_data (G_OBJECT (fs), "__bookmarks_signal"));
++  if (signal > 0)
++      g_signal_handler_disconnect (bookmarks_button, signal);
++
++
++  /* Create the menu */
++  menu = gtk_menu_new ();
++  gtk_menu_set_title (GTK_MENU (menu), _("Bookmarks"));
++  add = gtk_menu_item_new_with_mnemonic (_("_Add to bookmarks"));
++  edit = gtk_menu_item_new_with_mnemonic (_("_Edit bookmarks..."));
++  gtk_menu_shell_append (GTK_MENU_SHELL (menu), add);
++  gtk_menu_shell_append (GTK_MENU_SHELL (menu), edit);
++
++  g_signal_connect (add, "activate", G_CALLBACK (bookmarks_add),
++		    bookmarks_button);
++  g_signal_connect (edit, "activate", G_CALLBACK (bookmarks_edit),
++		    bookmarks_button);
++
++  tips = gtk_tooltips_new ();
++  g_signal_connect_swapped (menu, "destroy", G_CALLBACK (gtk_object_destroy), tips);
++
++  /* Load the bookmark file */
++  filename = g_strdup_printf ("%s/.gtk-bookmarks", g_get_home_dir ());
++  io = g_io_channel_new_file (filename, "r", NULL);
++  if (io)
++    {
++      gchar *tmp, *dir;
++      gsize term;
++
++      gtk_menu_shell_append (GTK_MENU_SHELL (menu),
++			     gtk_menu_item_new ());
++      while (g_io_channel_read_line (io, &tmp, NULL, &term, NULL) == G_IO_STATUS_NORMAL)
++        {
++	  GtkWidget *item;
++
++	  dir = g_strndup (tmp, term);
++	  g_free (tmp);
++          if (strlen (dir) == 0)
++            {
++	      g_free (dir);
++	      continue;
++            }
++
++	  item = gtk_menu_item_new_with_label (g_path_get_basename (dir));
++	  gtk_tooltips_set_tip (tips, item, dir, NULL);
++	  g_object_set_data (G_OBJECT (item), "fs", fs);
++	  g_signal_connect (item, "activate", G_CALLBACK (bookmarks_item_clicked),
++			    dir);
++	  g_signal_connect_swapped (item, "destroy", G_CALLBACK (g_free), dir);
++	  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
++        }
++
++      g_io_channel_unref (io);
++    }
++  g_free (filename);
++
++
++  gtk_widget_show_all (menu);
++  signal = g_signal_connect (bookmarks_button, "button-press-event",
++			     G_CALLBACK (bookmarks_popup), menu);
++  g_signal_connect (menu, "deactivate", G_CALLBACK (popup_deactivate),
++		    bookmarks_button);
++  g_object_set_data (G_OBJECT (fs), "__bookmarks", menu);
++  g_object_set_data (G_OBJECT (fs), "__bookmarks_signal", GINT_TO_POINTER ((int) signal));
++}
++
++static void
++sort_by_anything (GtkTreeViewColumn *column, GtkTreeView *view, gint sort_column, GtkSortType default_sort)
++{
++  GtkTreeModel *model = gtk_tree_view_get_model (view);
++  GList *list, *cols = gtk_tree_view_get_columns (view);
++  gint sort_id;
++  GtkSortType sort_type;
++
++  for (list = cols; list; list = list->next)
++    {
++      GtkTreeViewColumn *col = (GtkTreeViewColumn *) list->data;
++      gtk_tree_view_column_set_sort_indicator (col, FALSE);
++    }
++  g_list_free (cols);
++
++  gtk_tree_view_column_set_sort_indicator (column, TRUE);
++  gtk_tree_sortable_get_sort_column_id (GTK_TREE_SORTABLE (model), &sort_id, &sort_type);
++  if (sort_id == sort_column)
++    {
++      sort_type = (sort_type == GTK_SORT_ASCENDING) ? GTK_SORT_DESCENDING : GTK_SORT_ASCENDING;
++      gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (model), sort_column, sort_type);
++      gtk_tree_view_column_set_sort_order (column, sort_type);
++    }
++  else
++    {
++      gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (model), sort_column, default_sort);
++      gtk_tree_view_column_set_sort_order (column, default_sort);
++    }
++
++  /* Save sort option */
++  
++}
++
++static void
++sort_by_name (GtkTreeViewColumn *column, GtkTreeView *view)
++{
++  sort_by_anything (column, view, FILE_COLUMN, GTK_SORT_ASCENDING);
++}
++
++static void
++sort_by_type (GtkTreeViewColumn *column, GtkTreeView *view)
++{
++  sort_by_anything (column, view, TYPE_COLUMN, GTK_SORT_ASCENDING);
++}
++
++static void
++sort_by_size (GtkTreeViewColumn *column, GtkTreeView *view)
++{
++  sort_by_anything (column, view, SIZE_DATA_COLUMN, GTK_SORT_DESCENDING);
++}
++
++static void
++sort_by_date (GtkTreeViewColumn *column, GtkTreeView *view)
++{
++  sort_by_anything (column, view, DATE_DATA_COLUMN, GTK_SORT_DESCENDING);
++}
++
++static gint
++default_sort_func (GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer user_data)
++{
++  return 0;
++}
++
++static void
+ gtk_file_selection_init (GtkFileSelection *filesel)
+ {
++  GtkWidget *toolbar;
++  GtkWidget *back;
++  GtkWidget *back_dropdown;
++  GtkWidget *back_dropdown_arrow;
++  GtkWidget *bookmarks;
++  GtkWidget *bookmarks_icon;
+   GtkWidget *entry_vbox;
+   GtkWidget *label;
+   GtkWidget *list_hbox, *list_container;
+   GtkWidget *confirm_area;
+   GtkWidget *pulldown_hbox;
++  GtkWidget *combo;
+   GtkWidget *scrolled_win;
+   GtkWidget *eventbox;
+-  GtkWidget *spacer;
++  GtkWidget *vbox;
+   GtkDialog *dialog;
+ 
+   GtkListStore *model;
+   GtkTreeViewColumn *column;
++  GParamSpec *action_area_border;
++  GParamSpec *toolbar_shadow;
++  GdkPixbuf *icon;
+   
+   gtk_widget_push_composite_child ();
+ 
++  simple_mode = (g_getenv ("GTK_FILESEL_SIMPLE") && strcmp (g_getenv ("GTK_FILESEL_SIMPLE"), "1") == 0);
++
++  /* Dirty hack to use gconf, gnome-vfs and libgnomeui without depending on them */
++  if (!gnome_mod && g_module_supported ())
++    {
++      gnome_mod = g_module_open (NULL, G_MODULE_BIND_LAZY);
++      gboolean (*gnome_vfs_initialized) (void);
++      gboolean (*gnome_vfs_init) (void);
++
++      if (!gnome_mod) goto stop_mod;
++
++      if (g_module_symbol (gnome_mod, "gconf_client_get_default", (gpointer *) &gconf_client_get_default)
++       && g_module_symbol (gnome_mod, "gconf_client_dir_exists", (gpointer *) &gconf_client_dir_exists)
++       && g_module_symbol (gnome_mod, "gconf_client_get_bool", (gpointer *) &gconf_client_get_bool)
++       && g_module_symbol (gnome_mod, "gconf_client_add_dir", (gpointer *) &gconf_client_add_dir)
++       && g_module_symbol (gnome_mod, "gconf_client_notify_add", (gpointer *) &gconf_client_notify_add)
++       && g_module_symbol (gnome_mod, "gconf_client_notify_remove", (gpointer *) &gconf_client_notify_remove)
++       && gconf_client_get_default ())
++	{
++	  gconf_initialized = TRUE;
++	  if (gconf_client_dir_exists (gconf_client_get_default (), "/desktop/gnome/file_views", NULL))
++	      gconf_hidden_key = "/desktop/gnome/file_views/show_hidden_files";   /* GNOME 2.2 */
++	  else
++	      gconf_hidden_key = "/apps/nautilus/preferences/show_hidden_files";  /* GNOME 2.2 */
++
++
++	  _gtk_fnmatch_show_hidden = gconf_client_get_bool (gconf_client_get_default (),
++			gconf_hidden_key, NULL);
++	  gconf_client_add_dir (gconf_client_get_default (),
++	  			gconf_hidden_key,
++	  			GCONF_CLIENT_PRELOAD_NONE,
++	  			NULL);
++	}
++
++      if (simple_mode) goto stop_mod;
++
++      if (g_module_symbol (gnome_mod, "gnome_vfs_initialized", (gpointer *) &gnome_vfs_initialized)
++       && g_module_symbol (gnome_mod, "gnome_vfs_init", (gpointer *) &gnome_vfs_init))
++        {
++          vfs_initialized = (*gnome_vfs_initialized) ();
++          if (!vfs_initialized)
++              vfs_initialized = gnome_vfs_init ();
++
++          if (!vfs_initialized
++           || !g_module_symbol (gnome_mod, "gnome_vfs_file_info_new", (gpointer *) &gnome_vfs_file_info_new)
++           || !g_module_symbol (gnome_mod, "gnome_vfs_get_file_info", (gpointer *) &gnome_vfs_get_file_info)
++           || !g_module_symbol (gnome_mod, "gnome_vfs_file_info_get_mime_type", (gpointer *) &gnome_vfs_file_info_get_mime_type)
++           || !g_module_symbol (gnome_mod, "gnome_vfs_mime_get_description", (gpointer *) &gnome_vfs_mime_get_description)
++           || !g_module_symbol (gnome_mod, "gnome_vfs_mime_get_icon", (gpointer *) &gnome_vfs_mime_get_icon)
++           || !g_module_symbol (gnome_mod, "gnome_vfs_file_info_unref", (gpointer *) &gnome_vfs_file_info_unref))
++              vfs_initialized = FALSE;
++
++          if (vfs_initialized
++           && g_module_symbol (gnome_mod, "gnome_icon_theme_new", (gpointer *) &gnome_icon_theme_new)
++           && g_module_symbol (gnome_mod, "gnome_icon_theme_lookup_icon", (gpointer *) &gnome_icon_theme_lookup_icon)
++           && g_module_symbol (gnome_mod, "gnome_icon_theme_append_search_path", (gpointer *) &gnome_icon_theme_append_search_path))
++              icon_theme_initialized = TRUE;
++
++          if (icon_theme_initialized
++           && g_module_symbol (gnome_mod, "gnome_program_get", (gpointer *) &gnome_program_get)
++           && g_module_symbol (gnome_mod, "gnome_program_locate_file", (gpointer *) &gnome_program_locate_file))
++            {
++              GnomeProgram *app = gnome_program_get ();
++
++              if (app)
++                  gnome_program_locate_file (app, GNOME_FILE_DOMAIN_PIXMAP, "document-icons", FALSE, &icon_theme_paths);
++            }
++        }
++    }
++  stop_mod:
++
++  if (gconf_initialized)
++    {
++        guint id = gconf_client_notify_add (gconf_client_get_default (),
++	  		gconf_hidden_key,
++	  		notify_show_hidden,
++	  		filesel, NULL, NULL);
++	g_object_set_data (G_OBJECT (filesel), "__notify_show_hidden", GINT_TO_POINTER ((gint) id));
++    }
++  else
++    {
++      gchar *show_hidden;
++
++      show_hidden = read_line_from_command ("gconftool-2 --get /desktop/gnome/file_views/show_hidden_files");
++      if (strcmp (show_hidden, "") == 0)
++        {
++          /* GNOME 2.0 */
++          g_free (show_hidden);
++          show_hidden = read_line_from_command ("gconftool-2 --get /apps/nautilus/preferences/show_hidden_files");
++          _gtk_fnmatch_show_hidden = (strcmp (show_hidden, "true") == 0);
++        }
++      else
++          /* GNOME 2.2 */
++          _gtk_fnmatch_show_hidden = (strcmp (show_hidden, "true") == 0);
++      g_free (show_hidden);
++    }
++
++
+   dialog = GTK_DIALOG (filesel);
++  g_signal_connect (filesel, "key-press-event", G_CALLBACK (handle_key_presses), NULL);
+ 
+   filesel->cmpl_state = cmpl_init_state ();
+ 
+   /* The dialog-sized vertical box  */
+   filesel->main_vbox = dialog->vbox;
+-  gtk_container_set_border_width (GTK_CONTAINER (filesel), 10);
++  gtk_box_set_spacing (GTK_BOX (dialog->vbox), 6);
++  gtk_container_set_border_width (GTK_CONTAINER (filesel), 12);
++
++  /* The toolbar */
++  toolbar = gtk_toolbar_new ();
++  gtk_toolbar_set_style (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_ICONS);
++  g_object_set_data (G_OBJECT (filesel), "__toolbar", toolbar);
++  gtk_box_pack_start (GTK_BOX (filesel->main_vbox), toolbar,
++		      FALSE, FALSE, 0);
++  /* Get rid of the border shadow */
++  toolbar_shadow = gtk_widget_class_find_style_property (GTK_WIDGET_GET_CLASS (toolbar),
++  							 "shadow_type");
++  G_PARAM_SPEC_ENUM (toolbar_shadow)->default_value = GTK_SHADOW_NONE;
++  g_object_set_data (G_OBJECT (toolbar), "__force_no_shadow", GINT_TO_POINTER (TRUE));
++  
++
++  back = gtk_toolbar_insert_stock (GTK_TOOLBAR (toolbar),
++				   GTK_STOCK_GO_BACK,
++				   _("Go to the previous visited location  (Alt+Left)"), NULL,
++				   G_CALLBACK (gtk_file_selection_back), filesel, -1);
++  g_object_set_data (G_OBJECT (filesel), "__back", back);
++
++  back_dropdown = gtk_toggle_button_new ();
++  gtk_button_set_relief (GTK_BUTTON (back_dropdown), GTK_RELIEF_NONE);
++  GTK_WIDGET_UNSET_FLAGS (back_dropdown, GTK_CAN_FOCUS);
++  back_dropdown_arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_IN);
++  gtk_widget_set_size_request (back_dropdown_arrow, 10, 24);
++  gtk_container_add (GTK_CONTAINER (back_dropdown), back_dropdown_arrow);
++  gtk_toolbar_append_widget (GTK_TOOLBAR (toolbar), back_dropdown, NULL, NULL);
++  g_object_set_data (G_OBJECT (filesel), "__back_dropdown", back_dropdown);
++  g_signal_connect (back_dropdown, "button-press-event",
++		    G_CALLBACK (back_menu), NULL);
++
++  gtk_toolbar_insert_stock (GTK_TOOLBAR (toolbar),
++			   GTK_STOCK_GO_UP,
++			   _("Go to the parent directory  (Alt+Up)"), NULL,
++			   G_CALLBACK (gtk_file_selection_up), filesel, -1);
++  gtk_toolbar_insert_stock (GTK_TOOLBAR (toolbar),
++			   GTK_STOCK_REFRESH,
++			   _("Display the latest contents of the current location  (Ctrl+R)"), NULL,
++			   G_CALLBACK (gtk_file_selection_refresh), filesel, -1);
++  gtk_toolbar_insert_space (GTK_TOOLBAR (toolbar), -1);
++  gtk_toolbar_insert_stock (GTK_TOOLBAR (toolbar),
++			   GTK_STOCK_HOME,
++			   _("Go to the home location  (Alt+Home)"), NULL,
++			   G_CALLBACK (gtk_file_selection_home), filesel, -1);
++  bookmarks = gtk_toggle_button_new ();
++  g_object_set_data (G_OBJECT (filesel), "__bookmarks_button", bookmarks);
++  gtk_button_set_relief (GTK_BUTTON (bookmarks), GTK_RELIEF_NONE);
++  GTK_WIDGET_UNSET_FLAGS (bookmarks, GTK_CAN_FOCUS);
++  bookmarks_icon = gtk_image_new_from_stock (GTK_STOCK_JUMP_TO, GTK_ICON_SIZE_LARGE_TOOLBAR);
++  gtk_container_add (GTK_CONTAINER (bookmarks), bookmarks_icon);
++  gtk_toolbar_append_widget (GTK_TOOLBAR (toolbar), bookmarks, _("Bookmarks  (Alt+B)"), NULL);
++
++  gtk_toolbar_insert_space (GTK_TOOLBAR (toolbar), -1);
++
++  gtk_widget_realize (bookmarks);
++  reload_bookmarks (bookmarks, GTK_WIDGET (filesel));
++
+ 
+   /* The horizontal box containing create, rename etc. buttons */
+   filesel->button_area = gtk_hbutton_box_new ();
+   gtk_button_box_set_layout (GTK_BUTTON_BOX (filesel->button_area), GTK_BUTTONBOX_START);
+   gtk_box_set_spacing (GTK_BOX (filesel->button_area), 0);
+-  gtk_box_pack_start (GTK_BOX (filesel->main_vbox), filesel->button_area, 
+-		      FALSE, FALSE, 0);
++  gtk_toolbar_append_widget (GTK_TOOLBAR (toolbar), filesel->button_area, NULL, NULL);
+   gtk_widget_show (filesel->button_area);
++  gtk_widget_show_all (toolbar);
+   
+   gtk_file_selection_show_fileop_buttons (filesel);
++  gtk_container_set_border_width (GTK_CONTAINER (dialog), 12);
++
++
++  /* The terminal and file manager buttons */
++  gtk_toolbar_insert_space (GTK_TOOLBAR (toolbar), -1);
++
++  icon = gdk_pixbuf_new_from_inline (sizeof (terminal_icon),
++				     (const guint8 *) terminal_icon,
++				     FALSE, NULL);
++  gtk_toolbar_append_item (GTK_TOOLBAR (toolbar),
++			   _("Terminal"),
++			   _("Launch a terminal in this folder  (Ctrl+T)"), NULL,
++			   gtk_image_new_from_pixbuf (icon),
++			   G_CALLBACK (gtk_file_selection_launch_terminal), filesel);
++  icon = gdk_pixbuf_new_from_inline (sizeof (fm_icon),
++				     (const guint8 *) fm_icon,
++				     FALSE, NULL);
++  gtk_toolbar_append_item (GTK_TOOLBAR (toolbar),
++			   _("File Manager"),
++			   _("Launch a file manager in this folder  (Ctrl+F)"), NULL,
++			   gtk_image_new_from_pixbuf (icon),
++			   G_CALLBACK (gtk_file_selection_launch_fm), filesel);
++
+ 
+   /* hbox for pulldown menu */
++  vbox = gtk_vbox_new (FALSE, 12);
++  gtk_box_pack_start (GTK_BOX (filesel->main_vbox), vbox, TRUE, TRUE, 0);
+   pulldown_hbox = gtk_hbox_new (TRUE, 5);
+-  gtk_box_pack_start (GTK_BOX (filesel->main_vbox), pulldown_hbox, FALSE, FALSE, 0);
+-  gtk_widget_show (pulldown_hbox);
++  gtk_box_pack_start (GTK_BOX (vbox), pulldown_hbox, FALSE, TRUE, 0);
++  gtk_widget_show_all (vbox);
+   
+   /* Pulldown menu */
+   filesel->history_pulldown = gtk_option_menu_new ();
+-  gtk_widget_show (filesel->history_pulldown);
++  g_signal_connect (filesel->history_pulldown, "show", G_CALLBACK (widget_force_hide), NULL);
+   gtk_box_pack_start (GTK_BOX (pulldown_hbox), filesel->history_pulldown, 
+-		      FALSE, FALSE, 0);
++		      TRUE, TRUE, 0);
+     
+-  /*  The horizontal box containing the directory and file listboxes  */
++  combo = gtk_combo_new ();
++  gtk_combo_set_case_sensitive (GTK_COMBO (combo), TRUE);
++  gtk_combo_set_value_in_list (GTK_COMBO (combo), FALSE, FALSE);
++  gtk_combo_disable_activate (GTK_COMBO (combo));
++  gtk_combo_set_use_arrows (GTK_COMBO (combo), FALSE);
++  g_signal_connect (GTK_COMBO (combo)->entry, "activate",
++  		    G_CALLBACK (history_combo_activate), filesel);
++  g_signal_connect (GTK_COMBO (combo)->list, "select-child",
++  		    G_CALLBACK (history_combo_selected), filesel);
++  gtk_widget_show (combo);
++  g_object_set_data (G_OBJECT (filesel), "__combo", combo);
++  gtk_box_pack_start (GTK_BOX (pulldown_hbox), combo, TRUE, TRUE, 0);
+ 
+-  spacer = gtk_hbox_new (FALSE, 0);
+-  gtk_widget_set_size_request (spacer, -1, 5);
+-  gtk_box_pack_start (GTK_BOX (filesel->main_vbox), spacer, FALSE, FALSE, 0);
+-  gtk_widget_show (spacer);
++  /*  The horizontal box containing the directory and file listboxes  */
+   
+-  list_hbox = gtk_hbox_new (FALSE, 5);
+-  gtk_box_pack_start (GTK_BOX (filesel->main_vbox), list_hbox, TRUE, TRUE, 0);
++  list_hbox = gtk_hbox_new (FALSE, 6);
++  gtk_box_pack_start (GTK_BOX (vbox), list_hbox, TRUE, TRUE, 0);
+   gtk_widget_show (list_hbox);
+   if (WANT_HPANED)
+     list_container = g_object_new (GTK_TYPE_HPANED,
+@@ -713,11 +1774,6 @@
+   else
+     list_container = list_hbox;
+ 
+-  spacer = gtk_hbox_new (FALSE, 0);
+-  gtk_widget_set_size_request (spacer, -1, 5);
+-  gtk_box_pack_start (GTK_BOX (filesel->main_vbox), spacer, FALSE, FALSE, 0);  
+-  gtk_widget_show (spacer);
+-  
+   /* The directories list */
+ 
+   model = gtk_list_store_new (1, G_TYPE_STRING);
+@@ -734,6 +1790,12 @@
+   gtk_tree_view_column_set_widget (column, label);
+   gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+   gtk_tree_view_append_column (GTK_TREE_VIEW (filesel->dir_list), column);
++  if (!simple_mode)
++    {
++      /* The files are already being sorted by qsort when in simple mode */
++      gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (model), DIR_COLUMN, GTK_SORT_ASCENDING);
++      gtk_tree_view_column_set_sort_order (column, GTK_SORT_DESCENDING);
++    }
+ 
+   gtk_widget_set_size_request (filesel->dir_list,
+ 			       DIR_LIST_WIDTH, DIR_LIST_HEIGHT);
+@@ -749,27 +1811,64 @@
+ 				  GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+   gtk_container_set_border_width (GTK_CONTAINER (scrolled_win), 0);
+   if (GTK_IS_PANED (list_container))
+-    gtk_paned_pack1 (GTK_PANED (list_container), scrolled_win, TRUE, TRUE);
++    gtk_paned_pack1 (GTK_PANED (list_container), scrolled_win, FALSE, TRUE);
+   else
+     gtk_container_add (GTK_CONTAINER (list_container), scrolled_win);
+   gtk_widget_show (filesel->dir_list);
+   gtk_widget_show (scrolled_win);
+ 
+   /* The files list */
+-  model = gtk_list_store_new (1, G_TYPE_STRING);
++  model = gtk_list_store_new (7,
++		G_TYPE_STRING,		/* FILE_COLUMN */
++		GDK_TYPE_PIXBUF,	/* ICON_COLUMN */
++		G_TYPE_STRING,		/* TYPE_COLUMN */
++		G_TYPE_STRING,		/* SIZE_COLUMN */
++		G_TYPE_UINT,		/* SIZE_DATA_COLUMN */
++		G_TYPE_STRING,		/* DATE_COLUMN */
++		G_TYPE_UINT);		/* DATE_DATA_COLUMN */
+   filesel->file_list = gtk_tree_view_new_with_model (GTK_TREE_MODEL (model));
++  gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (filesel->file_list), !simple_mode);
++  gtk_tree_sortable_set_default_sort_func (GTK_TREE_SORTABLE (model), default_sort_func, NULL, NULL);
++  if (!simple_mode)
++      gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (filesel->file_list), TRUE);
+   g_object_unref (model);
+ 
++
++  if (g_getenv ("GTK_FILESEL_NO_ICONS") && strcmp (g_getenv ("GTK_FILESEL_NO_ICONS"), "1") == 0)
++      icon_theme_initialized = FALSE;
++  if (g_getenv ("GTK_FILESEL_NO_MIME") && strcmp (g_getenv ("GTK_FILESEL_NO_MIME"), "1") == 0)
++    {
++      vfs_initialized = FALSE;
++      icon_theme_initialized = FALSE;
++    }
++
++  if (!simple_mode && icon_theme_initialized)
++    {
++      column = gtk_tree_view_column_new_with_attributes ("",
++							 gtk_cell_renderer_pixbuf_new (),
++							 "pixbuf", ICON_COLUMN,
++							 NULL);
++      g_object_set (column, "reorderable", TRUE, NULL);
++      gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
++      gtk_tree_view_append_column (GTK_TREE_VIEW (filesel->file_list), column);
++    }
++
++
+   column = gtk_tree_view_column_new_with_attributes (_("Files"),
+ 						     gtk_cell_renderer_text_new (),
+ 						     "text", FILE_COLUMN,
+ 						     NULL);
++  g_signal_connect (column, "clicked", G_CALLBACK (sort_by_name), filesel->file_list);
+   label = gtk_label_new_with_mnemonic (_("_Files"));
+   gtk_label_set_mnemonic_widget (GTK_LABEL (label), filesel->file_list);
+   gtk_widget_show (label);
+   gtk_tree_view_column_set_widget (column, label);
+   gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+   gtk_tree_view_append_column (GTK_TREE_VIEW (filesel->file_list), column);
++  g_object_set (column, "clickable", !simple_mode, "resizable", !simple_mode, "reorderable", !simple_mode, NULL);
++  g_object_set_data (G_OBJECT (filesel), "__file_column", column);
++  //if (!simple_mode)
++  //    gtk_tree_view_column_set_sort_indicator (column, TRUE);
+ 
+   gtk_widget_set_size_request (filesel->file_list,
+ 			       FILE_LIST_WIDTH, FILE_LIST_HEIGHT);
+@@ -778,6 +1877,54 @@
+   g_signal_connect (gtk_tree_view_get_selection (GTK_TREE_VIEW (filesel->file_list)), "changed",
+ 		    G_CALLBACK (gtk_file_selection_file_changed), filesel);
+ 
++
++  if (!simple_mode && vfs_initialized)
++    {
++      column = gtk_tree_view_column_new_with_attributes (_("Type"),
++							 gtk_cell_renderer_text_new (),
++							 "text", TYPE_COLUMN,
++							 NULL);
++      g_signal_connect (column, "clicked", G_CALLBACK (sort_by_type), filesel->file_list);
++      label = gtk_label_new_with_mnemonic (_("_Type"));
++      gtk_label_set_mnemonic_widget (GTK_LABEL (label), filesel->file_list);
++      gtk_widget_show (label);
++      gtk_tree_view_column_set_widget (column, label);
++      gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
++      gtk_tree_view_append_column (GTK_TREE_VIEW (filesel->file_list), column);
++      g_object_set (column, "clickable", !simple_mode, "resizable", !simple_mode, "reorderable", !simple_mode, NULL);
++    }
++
++
++  column = gtk_tree_view_column_new_with_attributes (_("Size"),
++						     gtk_cell_renderer_text_new (),
++						     "text", SIZE_COLUMN,
++						     NULL);
++  g_signal_connect (column, "clicked", G_CALLBACK (sort_by_size), filesel->file_list);
++  label = gtk_label_new_with_mnemonic (_("_Size"));
++  gtk_label_set_mnemonic_widget (GTK_LABEL (label), filesel->file_list);
++  gtk_widget_show (label);
++  gtk_tree_view_column_set_widget (column, label);
++  gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
++  if (!simple_mode)
++      gtk_tree_view_append_column (GTK_TREE_VIEW (filesel->file_list), column);
++  g_object_set (column, "clickable", !simple_mode, "resizable", !simple_mode, "reorderable", !simple_mode, NULL);
++
++
++  column = gtk_tree_view_column_new_with_attributes (_("Last Modified"),
++						     gtk_cell_renderer_text_new (),
++						     "text", DATE_COLUMN,
++						     NULL);
++  g_signal_connect (column, "clicked", G_CALLBACK (sort_by_date), filesel->file_list);
++  label = gtk_label_new_with_mnemonic (_("Last _Modified"));
++  gtk_label_set_mnemonic_widget (GTK_LABEL (label), filesel->file_list);
++  gtk_widget_show (label);
++  gtk_tree_view_column_set_widget (column, label);
++  gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
++  if (!simple_mode)
++      gtk_tree_view_append_column (GTK_TREE_VIEW (filesel->file_list), column);
++  g_object_set (column, "clickable", !simple_mode, "resizable", !simple_mode, "reorderable", !simple_mode, NULL);
++
++
+   /* gtk_clist_column_titles_passive (GTK_CLIST (filesel->file_list)); */
+ 
+   scrolled_win = gtk_scrolled_window_new (NULL, NULL);
+@@ -798,6 +1945,10 @@
+   
+   /*  The OK/Cancel button area */
+   confirm_area = dialog->action_area;
++  action_area_border = gtk_widget_class_find_style_property (
++				GTK_WIDGET_GET_CLASS (dialog),
++				"action_area_border");
++  G_PARAM_SPEC_INT (action_area_border)->default_value = 0;  
+ 
+   /*  The Cancel button  */
+   filesel->cancel_button = gtk_dialog_add_button (dialog,
+@@ -821,7 +1972,7 @@
+   gtk_container_add (GTK_CONTAINER (eventbox), label);
+   gtk_box_pack_start (GTK_BOX (entry_vbox), eventbox, FALSE, FALSE, 0);
+   gtk_widget_show (label);
+-  gtk_widget_show (eventbox);
++  g_signal_connect (eventbox, "show", G_CALLBACK (widget_force_hide), NULL);
+ 
+   filesel->selection_entry = gtk_entry_new ();
+   g_signal_connect (filesel->selection_entry, "key_press_event",
+@@ -851,14 +2002,27 @@
+ 
+       gtk_label_set_text (GTK_LABEL (filesel->selection_text), err_buf);
+     }
++  else if (global_last_dir)
++    {
++      gchar *dir = g_strdup_printf ("%s/", global_last_dir);
++      gtk_file_selection_populate (filesel, dir, TRUE, TRUE);
++      g_free (dir);
++    }
+   else
+     {
+       gtk_file_selection_populate (filesel, "", FALSE, TRUE);
++      g_object_set_data (G_OBJECT (filesel), "__first_start", GINT_TO_POINTER (TRUE));
+     }
+ 
+   gtk_widget_grab_focus (filesel->selection_entry);
+ 
+   gtk_widget_pop_composite_child ();
++  gtk_file_selection_update_fileops (filesel);
++
++  if (simple_mode)
++      gtk_window_set_default_size (GTK_WINDOW (filesel), 500, 420);
++  else
++      gtk_window_set_default_size (GTK_WINDOW (filesel), 560, 420);
+ }
+ 
+ static gchar *
+@@ -1104,39 +2268,51 @@
+ void
+ gtk_file_selection_show_fileop_buttons (GtkFileSelection *filesel)
+ {
++  GtkToolbar *toolbar;
++
+   g_return_if_fail (GTK_IS_FILE_SELECTION (filesel));
+     
++  toolbar = GTK_TOOLBAR (g_object_get_data (G_OBJECT (filesel),
++			 "__toolbar"));
++
+   /* delete, create directory, and rename */
+   if (!filesel->fileop_c_dir) 
+     {
+-      filesel->fileop_c_dir = gtk_button_new_with_mnemonic (_("_New Folder"));
+-      g_signal_connect (filesel->fileop_c_dir, "clicked",
+-			G_CALLBACK (gtk_file_selection_create_dir),
+-			filesel);
+-      gtk_box_pack_start (GTK_BOX (filesel->button_area), 
+-			  filesel->fileop_c_dir, TRUE, TRUE, 0);
++      GdkPixbuf *icon;
++      gchar *tip;
++
++      tip = g_strdup_printf ("%s  (Shift+Ctrl+N)",
++      			     _("Create a new empty folder inside this folder"));
++
++      icon = gdk_pixbuf_new_from_inline (sizeof (new_folder_icon),
++					 (const guint8 *) new_folder_icon,
++					 FALSE, NULL);
++      filesel->fileop_c_dir = gtk_toolbar_append_item (toolbar,
++			_("New Folder"),
++			tip, NULL,
++			gtk_image_new_from_pixbuf (icon),
++			G_CALLBACK (gtk_file_selection_create_dir), filesel);
+       gtk_widget_show (filesel->fileop_c_dir);
++      g_free (tip);
+     }
+ 	
+   if (!filesel->fileop_del_file) 
+     {
+-      filesel->fileop_del_file = gtk_button_new_with_mnemonic (_("De_lete File"));
+-      g_signal_connect (filesel->fileop_del_file, "clicked",
+-			G_CALLBACK (gtk_file_selection_delete_file),
+-			filesel);
+-      gtk_box_pack_start (GTK_BOX (filesel->button_area), 
+-			  filesel->fileop_del_file, TRUE, TRUE, 0);
++      filesel->fileop_del_file = gtk_toolbar_insert_stock (toolbar,
++      			"gtk-delete",
++			_("Delete selected file"), NULL,
++      			G_CALLBACK (gtk_file_selection_delete_file), filesel,
++			-1);
+       gtk_widget_show (filesel->fileop_del_file);
+     }
+ 
+   if (!filesel->fileop_ren_file)
+     {
+-      filesel->fileop_ren_file = gtk_button_new_with_mnemonic (_("_Rename File"));
+-      g_signal_connect (filesel->fileop_ren_file, "clicked",
+-			G_CALLBACK (gtk_file_selection_rename_file),
+-			filesel);
+-      gtk_box_pack_start (GTK_BOX (filesel->button_area), 
+-			  filesel->fileop_ren_file, TRUE, TRUE, 0);
++      filesel->fileop_ren_file = gtk_toolbar_append_item (toolbar,
++      			_("Rename"), _("Rename selected file"), NULL,
++      			gtk_image_new_from_stock ("gtk-convert",
++				gtk_toolbar_get_icon_size (toolbar)),
++			G_CALLBACK (gtk_file_selection_rename_file), filesel);
+       gtk_widget_show (filesel->fileop_ren_file);
+     }
+   
+@@ -1285,7 +2461,7 @@
+ gtk_file_selection_destroy (GtkObject *object)
+ {
+   GtkFileSelection *filesel;
+-  GList *list;
++  GList *list, *nav_history;
+   HistoryCallbackArg *callback_arg;
+   
+   g_return_if_fail (GTK_IS_FILE_SELECTION (object));
+@@ -1330,6 +2506,25 @@
+       filesel->last_selected = NULL;
+     }
+ 
++  nav_history = g_object_get_data (G_OBJECT (filesel), "__nav_history");
++  if (nav_history)
++      g_list_free (nav_history);
++  g_object_set_data (G_OBJECT (filesel), "__nav_history", NULL);
++
++  if (gconf_initialized)
++    {
++      guint notify_id;
++
++      notify_id = (guint) GPOINTER_TO_INT (g_object_get_data (G_OBJECT (filesel),
++  				           "__notify_show_hidden"));
++
++      if (notify_id)
++        {
++          gconf_client_notify_remove (gconf_client_get_default (), notify_id);
++          g_object_set_data (G_OBJECT (filesel), "__notify_show_hidden", NULL);
++        }
++    }
++
+   GTK_OBJECT_CLASS (parent_class)->destroy (object);
+ }
+ 
+@@ -1337,10 +2532,20 @@
+ gtk_file_selection_map (GtkWidget *widget)
+ {
+   GtkFileSelection *filesel = GTK_FILE_SELECTION (widget);
++  GtkTreeViewColumn *column;
+ 
+   /* Refresh the contents */
++  if (GINT_TO_POINTER (g_object_get_data (G_OBJECT (filesel), "__first_start")))
++      g_object_set_data (G_OBJECT (filesel), "__first_start", GINT_TO_POINTER (FALSE));
++  else
+   gtk_file_selection_populate (filesel, "", FALSE, FALSE);
+   
++  if (!simple_mode)
++    {
++      column = (GtkTreeViewColumn *) g_object_get_data (G_OBJECT (filesel), "__file_column");
++      sort_by_anything (column, GTK_TREE_VIEW (filesel->file_list), FILE_COLUMN, GTK_SORT_ASCENDING);
++    }
++  
+   GTK_WIDGET_CLASS (parent_class)->map (widget);
+ }
+ 
+@@ -1410,6 +2615,129 @@
+ }
+ 
+ static void
++gtk_file_selection_back (GtkWidget *widget,
++			 gpointer data)
++{
++  GtkFileSelection *fs = data;
++  GList *nav_history;
++  gchar *last_dir;
++  guint l;
++
++  nav_history = g_object_get_data (G_OBJECT (fs), "__nav_history");
++  l = g_list_length (nav_history);
++  if (l >= 2)
++    {
++      last_dir = g_strdup_printf ("%s/", (gchar *) g_list_nth_data (nav_history, l - 2));
++      g_free (g_list_nth_data (nav_history, l - 1));
++      g_free (g_list_nth_data (nav_history, l - 2));
++      nav_history = g_list_remove_link (nav_history, g_list_nth (nav_history, l - 1));
++      nav_history = g_list_remove_link (nav_history, g_list_nth (nav_history, l - 2));
++
++      g_object_set_data (G_OBJECT (fs), "__nav_history", nav_history);
++      gtk_file_selection_populate (fs, last_dir, FALSE, FALSE);
++      g_free (last_dir);
++      update_nav_history_popup (GTK_WIDGET (fs));
++    }
++}
++
++static void
++gtk_file_selection_up (GtkWidget *widget,
++			 gpointer data)
++{
++  GtkFileSelection *fs = data;
++  gtk_file_selection_populate (fs, "../", FALSE, FALSE);
++}
++
++static void
++gtk_file_selection_refresh (GtkWidget *widget,
++			    gpointer data)
++{
++  GtkFileSelection *fs = data;
++  gtk_file_selection_populate (fs, "./", FALSE, FALSE);
++}
++
++static void
++gtk_file_selection_home (GtkWidget *widget,
++			 gpointer data)
++{
++  GtkFileSelection *fs = data;
++  gtk_file_selection_populate (fs, "~/", FALSE, FALSE);
++}
++
++static void
++gtk_file_selection_launch_terminal (GtkWidget *widget, GtkFileSelection *fs)
++{
++  GList *list;
++  gchar *terminal;
++
++  /* This is a little script that autodetects which desktop environment you're running on.
++     If you're running on KDE, konsole is launched. Otherwise, gnome-terminal is launched, or
++     xterm is gnome-terminal is not available. */
++  terminal = read_line_from_command ("gterm() { if ! command -v gnome-terminal >/dev/null 2>/dev/null; then echo xterm; fi; if gnome-terminal --version | grep -q 'Gnome Terminal 1'; then echo gnome1; else echo gnome2; fi }; pl=`ps auxw | grep -V '/bin/sh -c'`; if echo \"$pl\" | grep -q 'kicker'; then echo konsole; else gterm; fi");
++
++  switch (fork ())
++    {
++      case 0: /* child */
++	list = g_object_get_data (G_OBJECT (fs), "__nav_history");
++	if (g_list_last (list)->data)
++	    chdir ((gchar *) g_list_last (list)->data);
++	g_list_free (list);
++
++	if (strcmp (terminal, "konsole") == 0)
++	    execlp ("konsole", "konsole", NULL);
++	else if (strcmp (terminal, "gnome1") == 0)
++	    execlp ("gnome-terminal", "gnome-terminal", NULL);
++	else if (strcmp (terminal, "gnome2") == 0)
++	  {
++	    gchar *dir;
++
++	    dir = g_strdup_printf ("--working-directory=%s", g_get_current_dir ());
++	    execlp ("gnome-terminal", "gnome-terminal", dir, NULL);
++	  }
++	else
++	    execlp ("xterm", "xterm", NULL);
++
++	_exit (1);
++      case -1: /* error */
++	g_error ("Cannot fork()\n");
++	break;
++      default:
++  	/* Do nothing in parent */
++	break;
++    }
++
++  g_free (terminal);
++}
++
++static void
++gtk_file_selection_launch_fm (GtkWidget *widget, GtkFileSelection *fs)
++{
++  GList *list;
++
++  switch (fork ())
++  {
++  case 0: /* child */
++	list = g_object_get_data (G_OBJECT (fs), "__nav_history");
++	if (g_list_last (list)->data)
++	    chdir ((gchar *) g_list_last (list)->data);
++	g_list_free (list);
++
++	/* This is a little script that autodetects which desktop environment you're running on.
++	   If you're running on KDE, Konqueror is launched. Otherwise, Nautilus is launched. */
++	execlp ("/bin/sh", "/bin/sh", "-c", 
++		"pl=`ps auxw | grep -V '/bin/sh -c'`; if echo \"$pl\" | grep -q kicker; then exec konqueror .; else exec nautilus .; fi",
++		NULL);
++	_exit (1);
++  case -1: /* error */
++	g_error ("Cannot fork()\n");
++	break;
++  default:
++  	/* Do nothing in parent */
++	break;
++  }
++}
++
++static void
+ gtk_file_selection_create_dir_confirmed (GtkWidget *widget,
+ 					 gpointer   data)
+ {
+@@ -1465,6 +2793,7 @@
+   GtkWidget *label;
+   GtkWidget *dialog;
+   GtkWidget *vbox;
++  GtkWidget *spacer;
+   GtkWidget *button;
+ 
+   g_return_if_fail (GTK_IS_FILE_SELECTION (fs));
+@@ -1481,6 +2810,7 @@
+   gtk_window_set_title (GTK_WINDOW (dialog), _("New Folder"));
+   gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_MOUSE);
+   gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (fs));
++  gtk_container_set_border_width (GTK_CONTAINER (dialog), 12);
+ 
+   /* If file dialog is grabbed, grab option dialog */
+   /* When option dialog is closed, file dialog will be grabbed again */
+@@ -1488,7 +2818,6 @@
+       gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+ 
+   vbox = gtk_vbox_new (FALSE, 0);
+-  gtk_container_set_border_width (GTK_CONTAINER (vbox), 8);
+   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), vbox,
+ 		     FALSE, FALSE, 0);
+   gtk_widget_show( vbox);
+@@ -1502,11 +2831,16 @@
+   fs->fileop_entry = gtk_entry_new ();
+   gtk_label_set_mnemonic_widget (GTK_LABEL (label), fs->fileop_entry);
+   gtk_box_pack_start (GTK_BOX (vbox), fs->fileop_entry, 
+-		      TRUE, TRUE, 5);
++		      TRUE, TRUE, 0);
+   GTK_WIDGET_SET_FLAGS (fs->fileop_entry, GTK_CAN_DEFAULT);
+   gtk_entry_set_activates_default (GTK_ENTRY (fs->fileop_entry), TRUE); 
+   gtk_widget_show (fs->fileop_entry);
+   
++  spacer = gtk_hbox_new (FALSE, 0);
++  gtk_widget_set_size_request (spacer, -1, 12);
++  gtk_box_pack_start (GTK_BOX (vbox), spacer, FALSE, FALSE, 0);
++  gtk_widget_show (spacer);
++
+   /* buttons */
+   button = gtk_dialog_add_button (GTK_DIALOG (dialog), 
+ 				  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+@@ -1525,6 +2859,9 @@
+   g_signal_connect (fs->fileop_entry, "changed",
+                     G_CALLBACK (gtk_file_selection_fileop_entry_changed),
+ 		    button);
++  g_signal_connect_swapped (fs->fileop_entry, "activate",
++			    G_CALLBACK (gtk_button_clicked),
++			    button);
+ 
+   gtk_widget_grab_default (button);
+ 
+@@ -1624,6 +2961,8 @@
+ 		    fs);
+   gtk_window_set_title (GTK_WINDOW (dialog), _("Delete File"));
+   gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_MOUSE);
++  gtk_container_set_border_width (GTK_CONTAINER (dialog), 12);
++  gtk_box_set_spacing (GTK_BOX (GTK_DIALOG (dialog)->vbox), 12);
+   
+   /* buttons */
+   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
+@@ -1723,6 +3062,7 @@
+   GtkWidget *label;
+   GtkWidget *dialog;
+   GtkWidget *vbox;
++  GtkWidget *spacer;
+   GtkWidget *button;
+   gchar *buf;
+   
+@@ -1744,6 +3084,7 @@
+   gtk_window_set_title (GTK_WINDOW (dialog), _("Rename File"));
+   gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_MOUSE);
+   gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (fs));
++  gtk_container_set_border_width (GTK_CONTAINER (dialog), 12);  
+ 
+   /* If file dialog is grabbed, grab option dialog */
+   /* When option dialog  closed, file dialog will be grabbed again */
+@@ -1751,7 +3092,7 @@
+     gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+   
+   vbox = gtk_vbox_new (FALSE, 0);
+-  gtk_container_set_border_width (GTK_CONTAINER (vbox), 8);
++  gtk_container_set_border_width (GTK_CONTAINER (vbox), 0);
+   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), vbox,
+ 		      FALSE, FALSE, 0);
+   gtk_widget_show(vbox);
+@@ -1759,7 +3100,7 @@
+   buf = g_strdup_printf (_("Rename file \"%s\" to:"), fs->fileop_file);
+   label = gtk_label_new (buf);
+   gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.0);
+-  gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 5);
++  gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
+   gtk_widget_show (label);
+   g_free (buf);
+ 
+@@ -1775,6 +3116,11 @@
+   gtk_editable_select_region (GTK_EDITABLE (fs->fileop_entry),
+ 			      0, strlen (fs->fileop_file));
+ 
++  spacer = gtk_hbox_new (FALSE, 0);
++  gtk_widget_set_size_request (spacer, -1, 12);
++  gtk_box_pack_start (GTK_BOX (vbox), spacer, FALSE, FALSE, 0);
++  gtk_widget_show (spacer);
++
+   /* buttons */
+   button = gtk_dialog_add_button (GTK_DIALOG (dialog), 
+ 				  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+@@ -1792,6 +3138,9 @@
+   g_signal_connect (fs->fileop_entry, "changed",
+ 		    G_CALLBACK (gtk_file_selection_fileop_entry_changed),
+ 		    button);
++  g_signal_connect_swapped (fs->fileop_entry, "activate",
++			    G_CALLBACK (gtk_button_clicked),
++			    button);
+ 
+   gtk_widget_grab_default (button);
+   
+@@ -1898,16 +3247,21 @@
+ 					gchar            *current_directory)
+ {
+   HistoryCallbackArg *callback_arg;
+-  GtkWidget *menu_item;
+-  GList *list;
+-  gchar *current_dir;
++  GtkWidget *menu_item, *combo;
++  GList *list, *nav_history, *history_items;
++  gchar *current_dir, *last_dir;
+   gint dir_len;
+   gint i;
+   
+   g_return_if_fail (GTK_IS_FILE_SELECTION (fs));
+   g_return_if_fail (current_directory != NULL);
+   
++  if (GPOINTER_TO_INT (g_object_get_data (G_OBJECT (fs), "__history_busy")))
++      return;
++  g_object_set_data (G_OBJECT (fs), "__history_busy", GINT_TO_POINTER (TRUE));
++
+   list = fs->history_list;
++  history_items = NULL;
+ 
+   if (fs->history_menu) 
+     {
+@@ -1960,6 +3314,7 @@
+ 	    }
+ 	  
+ 	  fs->history_list = g_list_append (fs->history_list, callback_arg);
++	  history_items = g_list_append (history_items, g_strdup (current_dir));
+ 	  
+ 	  g_signal_connect (menu_item, "activate",
+ 			    G_CALLBACK (gtk_file_selection_history_callback),
+@@ -1969,9 +3324,22 @@
+ 	}
+     }
+ 
++  combo = (GtkWidget *) g_object_get_data (G_OBJECT (fs), "__combo");
++  gtk_combo_set_popdown_strings (GTK_COMBO (combo), history_items);
+   gtk_option_menu_set_menu (GTK_OPTION_MENU (fs->history_pulldown), 
+ 			    fs->history_menu);
+   g_free (current_dir);
++  g_list_free (history_items);
++
++  nav_history = g_object_get_data (G_OBJECT (fs), "__nav_history");
++  if (nav_history)
++      last_dir = (gchar *) g_list_last (nav_history)->data;
++  if (!nav_history || strcmp (last_dir, current_directory) != 0)
++      nav_history = g_list_append (nav_history, g_strdup (current_directory));
++  g_object_set_data (G_OBJECT (fs), "__nav_history", nav_history);
++  update_nav_history_popup (GTK_WIDGET (fs));
++
++  g_object_set_data (G_OBJECT (fs), "__history_busy", GINT_TO_POINTER (FALSE));
+ }
+ 
+ static gchar *
+@@ -2090,6 +3458,67 @@
+   return g_string_free (result, FALSE);
+ }
+ 
++static gchar *
++size_to_str (off_t st_size)
++{
++  if (st_size < 1024)
++      return g_strdup_printf ("%u bytes", (guint) st_size);
++  else if (st_size < 1024 * 1024)
++      return g_strdup_printf ("%.1f K", st_size / 1024.0);
++  else if (st_size < 1024 * 1024 * 1024)
++      return g_strdup_printf ("%.1f MB", st_size / 1024.0 / 1024.0);
++  else
++      return g_strdup_printf ("%.1f GB", st_size / 1024.0 / 1024.0 / 1024.0);
++}
++
++static GdkPixbuf *
++load_icon_theme (GnomeIconTheme *theme, const gchar *icon)
++{
++  gchar *filename;
++  GdkPixbuf *buf;
++  static GHashTable *cache = NULL;
++
++  if (!theme || !icon || !vfs_initialized || !icon_theme_initialized)
++      return NULL;
++
++  if (g_path_is_absolute (icon))
++      filename = g_strdup (icon);
++  else
++    {
++      filename = gnome_icon_theme_lookup_icon (theme, icon, 16, NULL, NULL);
++      if (!filename)
++          filename = gnome_icon_theme_lookup_icon (theme, icon, 48, NULL, NULL);
++      if (!filename && strcmp (icon, "gnome-mime-text-plain") == 0)
++          filename = gnome_icon_theme_lookup_icon (theme, "gnome-textfile", 48, NULL, NULL);
++    }
++
++  if (!filename)
++      return NULL;
++
++  if (!cache)
++      cache = g_hash_table_new (g_str_hash, g_str_equal);
++  else if ((buf = (GdkPixbuf *) g_hash_table_lookup (cache, filename)))
++    {
++      g_free (filename);
++      return buf;
++    }
++
++  buf = gdk_pixbuf_new_from_file (filename, NULL);
++  if (buf && (gdk_pixbuf_get_width (buf) != 16 || gdk_pixbuf_get_height (buf) != 16))
++    {
++      GdkPixbuf *scaled;
++
++      scaled = gdk_pixbuf_scale_simple (buf, 16, 16, GDK_INTERP_TILES);
++      g_object_unref (buf);
++      buf = scaled;
++    }
++  if (buf)
++      g_hash_table_insert (cache, filename, buf);
++  else
++      g_free (filename);
++  return buf;
++}
++
+ static void
+ gtk_file_selection_populate (GtkFileSelection *fs,
+ 			     gchar            *rel_path,
+@@ -2104,8 +3533,13 @@
+   gchar* filename;
+   gchar* rem_path = rel_path;
+   gchar* sel_text;
++  gchar* current_dir;
+   gint did_recurse = FALSE;
+   gint possible_count = 0;
++  static GnomeIconTheme *theme = NULL;
++  gboolean do_sort;
++  gint sort_id;
++  GtkSortType sort_order;
+   
+   g_return_if_fail (GTK_IS_FILE_SELECTION (fs));
+ 
+@@ -2118,6 +3552,7 @@
+       gtk_file_selection_abort (fs);
+       return;
+     }
++  current_dir = cmpl_reference_position (cmpl_state);
+ 
+   g_assert (cmpl_state->reference_dir);
+ 
+@@ -2127,11 +3562,19 @@
+   gtk_list_store_clear (dir_model);
+   gtk_list_store_clear (file_model);
+ 
+-  /* Set the dir list to include ./ and ../ */
+-  gtk_list_store_append (dir_model, &iter);
+-  gtk_list_store_set (dir_model, &iter, DIR_COLUMN, "." G_DIR_SEPARATOR_S, -1);
+-  gtk_list_store_append (dir_model, &iter);
+-  gtk_list_store_set (dir_model, &iter, DIR_COLUMN, ".." G_DIR_SEPARATOR_S, -1);
++  do_sort = gtk_tree_sortable_get_sort_column_id (GTK_TREE_SORTABLE (file_model), &sort_id, &sort_order);
++  if (do_sort && sort_id >= FILE_COLUMN)
++      gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (file_model),
++		GTK_TREE_SORTABLE_DEFAULT_SORT_COLUMN_ID, GTK_SORT_DESCENDING);
++
++  if (!simple_mode && icon_theme_initialized && !theme)
++    {
++      GSList *list;
++
++      theme = gnome_icon_theme_new ();
++      for (list = icon_theme_paths; list; list = list->next)
++          gnome_icon_theme_append_search_path (theme, (const char *) list->data);
++    }
+ 
+   while (poss)
+     {
+@@ -2150,10 +3593,99 @@
+ 		  gtk_list_store_set (dir_model, &iter, DIR_COLUMN, filename, -1);
+ 		}
+ 	    }
++          else if (simple_mode)
++            {
++              gtk_list_store_append (file_model, &iter);
++	      gtk_list_store_set (file_model, &iter,
++	      		FILE_COLUMN, filename,
++	      		-1);
++            }
+           else
+ 	    {
++	      gchar *fullname;
++	      gchar *date = NULL;
++	      gchar *size_str = g_strdup (_("0 bytes"));
++	      gchar *typename = g_strdup (_("Unknown"));
++	      const gchar *mime;
++	      GdkPixbuf *icon = NULL;
++	      struct stat buf;
++
++	      fullname = g_strdup_printf ("%s/%s", current_dir, filename);
++	      if (stat (fullname, &buf) == 0)
++	        {
++	          struct tm *lt;
++	          gchar tmp[128];
++
++	          lt = localtime (&buf.st_mtime);;
++		  strftime (tmp, sizeof (tmp) - 1, _("%B %d %G at %T"), lt);
++		  date = g_locale_to_utf8 (tmp, -1, NULL, NULL, NULL);
++		  if (!date)
++		      date = g_convert (tmp, -1, "UTF-8", "ISO-8859-1", NULL, NULL, NULL);
++
++		  size_str = size_to_str (buf.st_size);
++		}
++	      if (!date)
++	          date = g_strdup ("Unknown");
++
++	      if (vfs_initialized)
++	        {
++	          GnomeVFSFileInfo *info;
++
++	          info = gnome_vfs_file_info_new ();
++	          g_free (fullname);
++	          fullname = g_strdup_printf ("file://%s/%s", current_dir, filename);
++
++	          if (gnome_vfs_get_file_info (fullname, info, GNOME_VFS_FILE_INFO_GET_MIME_TYPE) == 0
++	           && (mime = gnome_vfs_file_info_get_mime_type (info)))
++	          {
++	              const gchar *desc;
++
++	              desc = gnome_vfs_mime_get_description (mime);
++	              if (desc)
++	                {
++	                  g_free (typename);
++	                  typename = g_strdup (desc);
++	                  typename[0] = (char) toupper (typename[0]);
++	                }
++
++	              if (icon_theme_initialized)
++	                {
++	                  gchar *iconfile = (gchar *) gnome_vfs_mime_get_icon (mime);
++
++	                  if (!iconfile)
++	                    {
++	                      /* Is gnome-vfs broken or is it just my system?
++	                         This works around the problem */
++	                      gchar *tmp;
++
++	                      iconfile = g_strdup_printf ("gnome-mime-%s", mime);
++	                      while ((tmp = strchr (iconfile, '/')))
++	                          *tmp = '-';
++	                    }
++	                  else
++	                      iconfile = g_strdup (iconfile);
++
++	                  icon = load_icon_theme (theme, (const gchar *) iconfile);
++	                  g_free (iconfile);
++	                }
++	          }
++	          gnome_vfs_file_info_unref (info);
++	        }
++
+ 	      gtk_list_store_append (file_model, &iter);
+-	      gtk_list_store_set (file_model, &iter, DIR_COLUMN, filename, -1);
++	      gtk_list_store_set (file_model, &iter,
++	      		FILE_COLUMN, filename,
++	      		ICON_COLUMN, icon,
++	      		TYPE_COLUMN, typename,
++	      		SIZE_COLUMN, size_str,
++	      		SIZE_DATA_COLUMN, (guint) buf.st_size,
++	      		DATE_COLUMN, date,
++	      		DATE_DATA_COLUMN, (guint) buf.st_mtime,
++	      		-1);
++	      g_free (size_str);
++	      g_free (typename);
++	      g_free (date);
++	      g_free (fullname);
+             }
+ 	}
+ 
+@@ -2226,10 +3758,25 @@
+ 
+       if (fs->history_pulldown) 
+ 	{
+-	  gtk_file_selection_update_history_menu (fs, cmpl_reference_position (cmpl_state));
++	  GList *nav_history;
++	  GtkWidget *back_button;
++
++	  if (global_last_dir) g_free (global_last_dir);
++	  global_last_dir = g_strdup (current_dir);
++
++	  gtk_file_selection_update_history_menu (fs, current_dir);
++	  nav_history = g_object_get_data (G_OBJECT (fs), "__nav_history");
++	  back_button = GTK_WIDGET (g_object_get_data (G_OBJECT (fs), "__back"));
++	  gtk_widget_set_sensitive (back_button, g_list_length (nav_history) >= 2);
++	  back_button = GTK_WIDGET (g_object_get_data (G_OBJECT (fs), "__back_dropdown"));
++	  gtk_widget_set_sensitive (back_button, g_list_length (nav_history) >= 2);
+ 	}
+       
+     }
++
++  if (do_sort && GTK_WIDGET_MAPPED (fs) && sort_id >= FILE_COLUMN)
++      gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (file_model),
++  		sort_id, sort_order);
+ }
+ 
+ static void
+@@ -2517,6 +4064,182 @@
+   return selections;
+ }
+ 
++/********************* Startup notification *********************/
++
++void
++sn_internal_broadcast_xmessage (const char *message_type,
++				const char *message_type_begin,
++				const char *message)
++{
++	Atom type_atom;
++	Atom type_atom_begin;
++	Window xwindow;
++	Display *xdisplay;
++	int screen;
++	XSetWindowAttributes attrs;
++
++	g_return_if_fail (g_utf8_validate (message, -1, NULL));
++
++	xdisplay = gdk_x11_display_get_xdisplay (gdk_display_get_default ());
++	screen = gdk_x11_screen_get_screen_number (gdk_screen_get_default ());
++
++	attrs.override_redirect = True;
++	attrs.event_mask = PropertyChangeMask | StructureNotifyMask;
++	xwindow = XCreateWindow (xdisplay,
++		RootWindow (xdisplay, 0),
++		-100, -100, 1, 1,
++		0,
++		CopyFromParent,
++		CopyFromParent,
++		CopyFromParent,
++		CWOverrideRedirect | CWEventMask,
++		&attrs);
++
++	type_atom = XInternAtom (xdisplay, message_type, False);
++	type_atom_begin = XInternAtom (xdisplay, message_type_begin, False);
++
++	{
++		XEvent xevent;
++		const char *src;
++		const char *src_end;
++		char *dest;
++		char *dest_end;
++
++		xevent.xclient.type = ClientMessage;
++		xevent.xclient.message_type = type_atom_begin;
++		xevent.xclient.display = xdisplay;
++		xevent.xclient.window = xwindow;
++		xevent.xclient.format = 8;
++
++		src = message;
++		src_end = message + strlen (message) + 1; /* +1 to include nul byte */
++
++		while (src != src_end)
++		{
++			dest = &xevent.xclient.data.b[0];
++			dest_end = dest + 20;				
++
++			while (dest != dest_end &&
++				src != src_end)
++			{
++				*dest = *src;
++				++dest;
++				++src;
++			}
++
++			XSendEvent (xdisplay,
++				RootWindow (xdisplay, screen),
++				False,
++				PropertyChangeMask,
++				&xevent);
++
++			xevent.xclient.message_type = type_atom;
++		}
++	}
++
++	XDestroyWindow (xdisplay, xwindow);
++	XFlush (xdisplay);
++}
++
++static void
++setup_child (gpointer value)
++{
++	gchar *env;
++
++	env = g_strdup_printf ("DESKTOP_STARTUP_ID=%s", (gchar *) value);
++	putenv (env);
++}
++
++
++static void
++sn_replace_all (gchar **str, gchar *from, gchar *to)
++{
++	GString *newstr;
++	gchar *found;
++
++	g_return_if_fail (str != NULL);
++	g_return_if_fail (from != NULL);
++	g_return_if_fail (to != NULL);
++
++	newstr = g_string_new (*str);
++	found = strstr (newstr->str, from);
++	while (found != NULL)
++	{
++		gint pos;
++
++		pos = GPOINTER_TO_INT (found) - GPOINTER_TO_INT (newstr->str);
++		g_string_erase (newstr, pos, strlen (from));
++		g_string_insert (newstr, pos, to);
++		found = GINT_TO_POINTER (GPOINTER_TO_INT (found) + strlen (to));
++		found = strstr (found, from);
++	}
++
++	g_free (*str);
++	*str = newstr->str;
++	g_string_free (newstr, FALSE);
++}
++
++static void
++sn_append_escaped (GString *str, const gchar *name, const gchar *value)
++{
++	gchar *tmp = g_strdup (value);
++	sn_replace_all (&tmp, "\\", "\\\\");
++	sn_replace_all (&tmp, "\"", "\\\"");
++	sn_replace_all (&tmp, " ", "\\ ");
++	g_string_append_printf (str, " %s=%s", name, tmp);
++	g_free (tmp);
++}
++
++static gboolean
++sn_launch_app (const gchar *name, const gchar *description, const gchar *icon, gchar **argv)
++{
++	static gint sequence_number = 0;
++	gchar hostname[255];
++	gchar *id, *launchee;
++	GString *message;
++	gint i, len;
++	gboolean result;
++
++	g_return_val_if_fail (argv != NULL, FALSE);
++	g_return_val_if_fail (argv[0] != NULL, FALSE);
++
++	launchee = g_strdup (argv[0]);
++	len = strlen (launchee);
++	for (i = 0; i < len; i++)
++		if (launchee[i] == '/') launchee[i] = '|';
++
++	if (gethostname (hostname, sizeof (hostname) - 1) != 0)
++		hostname[0] = '\0';
++
++	id = g_strdup_printf ("%s/%s/%lu/%d-%d-%s",
++		g_get_prgname (), launchee, (unsigned long) GDK_CURRENT_TIME,
++		(int) getpid (), (int) sequence_number, hostname);
++	g_free (launchee);
++	sequence_number++;
++
++	message = g_string_new ("new: ID=");
++	g_string_append_printf (message, "%s SCREEN=%d", id,
++		gdk_x11_screen_get_screen_number (gdk_screen_get_default ()));
++
++	if (name)
++		sn_append_escaped (message, "NAME", name);
++	if (description)
++		sn_append_escaped (message, "DESCRIPTION", description);
++	if (icon)
++		sn_append_escaped (message, "ICON", icon);
++
++	sn_internal_broadcast_xmessage ("_NET_STARTUP_INFO",
++		"_NET_STARTUP_INFO_BEGIN",
++		message->str);
++	g_string_free (message, TRUE);
++
++	result = g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH, setup_child,
++		id, NULL, NULL);
++	g_free (id);
++
++	return result;
++}
++
+ /**********************************************************************/
+ /*			  External Interface                          */
+ /**********************************************************************/
+@@ -3171,6 +4894,7 @@
+   
+   g_free (sys_dir_name);
+   g_string_free (path, TRUE);
++  if (simple_mode)
+   qsort (sent->entries, sent->entry_count, sizeof (CompletionDirEntry), compare_cmpl_dir);
+ 
+   g_dir_close (directory);
+diff -Nuard gtk+-2.2.4.orig/po/pl.po gtk+-2.2.4/po/pl.po
+--- gtk+-2.2.4.orig/po/pl.po	2003-09-04 19:18:00.000000000 +0200
++++ gtk+-2.2.4/po/pl.po	2003-09-19 20:10:02.000000000 +0200
+@@ -9,14 +9,14 @@
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: gtk+\n"
+-"POT-Creation-Date: 2003-09-04 18:34+0200\n"
++"Report-Msgid-Bugs-To: \n"
++"POT-Creation-Date: 2003-09-19 19:36+0200\n"
+ "PO-Revision-Date: 2003-07-01 07:33+0100\n"
+ "Last-Translator: Gnome PL Team <translators@gnome.pl>\n"
+ "Language-Team: Polish <pl@li.org>\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+ "Content-Transfer-Encoding: 8bit\n"
+-"Report-Msgid-Bugs-To: \n"
+ 
+ #: gdk-pixbuf/gdk-pixbuf-animation.c:147 gdk-pixbuf/gdk-pixbuf-io.c:737
+ #, c-format
+@@ -1202,7 +1202,7 @@
+ msgid "The stock ID of the stock icon to render"
+ msgstr "ID renderowanej typowej ikony"
+ 
+-#: gtk/gtkcellrendererpixbuf.c:167
++#: gtk/gtkcellrendererpixbuf.c:167 gtk/gtkfilesel.c:1898
+ msgid "Size"
+ msgstr "Rozmiar"
+ 
+@@ -1966,54 +1966,128 @@
+ msgid "_Insert Unicode control character"
+ msgstr "_Wstaw znak kontrolny Unicode"
+ 
+-#: gtk/gtkfilesel.c:556 gtk/gtkimage.c:167
++#: gtk/gtkfilesel.c:901 gtk/gtkimage.c:167
+ msgid "Filename"
+ msgstr "Nazwa pliku"
+ 
+-#: gtk/gtkfilesel.c:557
++#: gtk/gtkfilesel.c:902
+ msgid "The currently selected filename"
+ msgstr "Aktualnie wybrana nazwa pliku"
+ 
+-#: gtk/gtkfilesel.c:563
++#: gtk/gtkfilesel.c:908
+ msgid "Show file operations"
+ msgstr "Wyświetlanie operacji na plikach"
+ 
+-#: gtk/gtkfilesel.c:564
++#: gtk/gtkfilesel.c:909
+ msgid "Whether buttons for creating/manipulating files should be displayed"
+ msgstr ""
+ "Określa, czy powinny być wyświetlane przyciski, pozwalające na wykonywanie "
+ "operacji na plikach lub na ich tworzenie"
+ 
+-#: gtk/gtkfilesel.c:571
++#: gtk/gtkfilesel.c:916
+ msgid "Select multiple"
+ msgstr "Zaznaczanie wielu"
+ 
+-#: gtk/gtkfilesel.c:572
++#: gtk/gtkfilesel.c:917
+ msgid "Whether to allow multiple files to be selected"
+ msgstr "Określa, czy dopuszczalne jest zaznaczanie wielu plików"
+ 
+-#: gtk/gtkfilesel.c:727
++#: gtk/gtkfilesel.c:1389
++msgid "Bookmarks"
++msgstr "Zakładki"
++
++#: gtk/gtkfilesel.c:1390
++msgid "_Add to bookmarks"
++msgstr "_Dodaj zakładkę"
++
++#: gtk/gtkfilesel.c:1391
++msgid "_Edit bookmarks..."
++msgstr "_Modyfikuj zakładki..."
++
++#: gtk/gtkfilesel.c:1662
++msgid "Go to the previous visited location  (Alt+Left)"
++msgstr "Wróć (Alt+Lewo)"
++
++#: gtk/gtkfilesel.c:1679
++msgid "Go to the parent directory  (Alt+Up)"
++msgstr "Przejdź do katalogu wyżej (Alt+Góra)"
++
++#: gtk/gtkfilesel.c:1683
++msgid "Display the latest contents of the current location  (Ctrl+R)"
++msgstr "Odśwież (Ctrl+R)"
++
++#: gtk/gtkfilesel.c:1688
++msgid "Go to the home location  (Alt+Home)"
++msgstr "Katalog domowy (Alt+Home)"
++
++#: gtk/gtkfilesel.c:1696
++msgid "Bookmarks  (Alt+B)"
++msgstr "Zakładki (Alt+B)"
++
++#: gtk/gtkfilesel.c:1723
++msgid "Terminal"
++msgstr "Terminal"
++
++#: gtk/gtkfilesel.c:1724
++msgid "Launch a terminal in this folder  (Ctrl+T)"
++msgstr "Uruchom terminal w tym katalogu (Ctrl+T)"
++
++#: gtk/gtkfilesel.c:1731
++#, fuzzy
++msgid "File Manager"
++msgstr "Nazwa pliku"
++
++#: gtk/gtkfilesel.c:1732
++msgid "Launch a file manager in this folder  (Ctrl+F)"
++msgstr "Uruchom menadżera plików w tym katalogu (Ctrl+F)"
++
++#: gtk/gtkfilesel.c:1783
+ msgid "Folders"
+ msgstr "Foldery"
+ 
+-#: gtk/gtkfilesel.c:731
++#: gtk/gtkfilesel.c:1787
+ msgid "Fol_ders"
+ msgstr "_Foldery"
+ 
+-#: gtk/gtkfilesel.c:763
++#: gtk/gtkfilesel.c:1857
+ msgid "Files"
+ msgstr "Pliki"
+ 
+-#: gtk/gtkfilesel.c:767
++#: gtk/gtkfilesel.c:1862
+ msgid "_Files"
+ msgstr "_Pliki"
+ 
+-#: gtk/gtkfilesel.c:850 gtk/gtkfilesel.c:2240
++# To będą ciut drętwe tłumaczenia, ale może ktoś dzięki temu wymyśli coś 
++# lepszego
++#: gtk/gtkfilesel.c:1883
++#, fuzzy
++msgid "Type"
++msgstr "Sugestia typu"
++
++#: gtk/gtkfilesel.c:1888
++#, fuzzy
++msgid "_Type"
++msgstr "_Góra"
++
++#: gtk/gtkfilesel.c:1903
++#, fuzzy
++msgid "_Size"
++msgstr "Rozmiar"
++
++#: gtk/gtkfilesel.c:1913
++msgid "Last Modified"
++msgstr "Ostatnio zmodyfikowane"
++
++#: gtk/gtkfilesel.c:1918
++msgid "Last _Modified"
++msgstr "Ostatnio z_modyfikowane"
++
++#: gtk/gtkfilesel.c:2001 gtk/gtkfilesel.c:3787
+ #, c-format
+ msgid "Folder unreadable: %s"
+ msgstr "Nie można odczytać folderu: %s"
+ 
+-#: gtk/gtkfilesel.c:981
++#: gtk/gtkfilesel.c:2145
+ #, c-format
+ msgid ""
+ "The file \"%s\" resides on another machine (called %s) and may not be "
+@@ -2024,19 +2098,30 @@
+ "niedostępny dla tego programu.\n"
+ "Czy na pewno chcesz go wybrać?"
+ 
+-#: gtk/gtkfilesel.c:1112
+-msgid "_New Folder"
+-msgstr "_Nowy folder"
++#: gtk/gtkfilesel.c:2285
++msgid "Create a new empty folder inside this folder"
++msgstr "Utwórz nowy katalog w bieżącym katalogu"
+ 
+-#: gtk/gtkfilesel.c:1123
+-msgid "De_lete File"
+-msgstr "_Usuń plik"
++#: gtk/gtkfilesel.c:2291 gtk/gtkfilesel.c:2810
++msgid "New Folder"
++msgstr "Nowy folder"
+ 
+-#: gtk/gtkfilesel.c:1134
+-msgid "_Rename File"
+-msgstr "_Zmień nazwę pliku"
++#: gtk/gtkfilesel.c:2303
++#, fuzzy
++msgid "Delete selected file"
++msgstr "Aktualnie wybrana nazwa pliku"
+ 
+-#: gtk/gtkfilesel.c:1436
++#: gtk/gtkfilesel.c:2312
++#, fuzzy
++msgid "Rename"
++msgstr "Zmień _nazwę"
++
++#: gtk/gtkfilesel.c:2312
++#, fuzzy
++msgid "Rename selected file"
++msgstr "Zmiana nazwy pliku"
++
++#: gtk/gtkfilesel.c:2764
+ #, c-format
+ msgid ""
+ "The folder name \"%s\" contains symbols that are not allowed in filenames"
+@@ -2044,7 +2129,7 @@
+ "Nazwa folderu \"%s\" zawiera symbole, które nie są dopuszczalne w nazwach "
+ "plików"
+ 
+-#: gtk/gtkfilesel.c:1438
++#: gtk/gtkfilesel.c:2766
+ #, c-format
+ msgid ""
+ "Error creating folder \"%s\": %s\n"
+@@ -2053,35 +2138,31 @@
+ "Błąd przy tworzeniu folderu \"%s\": %s\n"
+ "%s"
+ 
+-#: gtk/gtkfilesel.c:1439 gtk/gtkfilesel.c:1675
++#: gtk/gtkfilesel.c:2767 gtk/gtkfilesel.c:3014
+ msgid "You probably used symbols not allowed in filenames."
+ msgstr ""
+ "Prawdopodobnie użyto symboli, które nie są dopuszczalne w nazwach plików."
+ 
+-#: gtk/gtkfilesel.c:1447
++#: gtk/gtkfilesel.c:2775
+ #, c-format
+ msgid "Error creating folder \"%s\": %s\n"
+ msgstr "Błąd przy tworzeniu folderu \"%s\": %s\n"
+ 
+-#: gtk/gtkfilesel.c:1481
+-msgid "New Folder"
+-msgstr "Nowy folder"
+-
+-#: gtk/gtkfilesel.c:1496
++#: gtk/gtkfilesel.c:2825
+ msgid "_Folder name:"
+ msgstr "Nazwa f_olderu:"
+ 
+-#: gtk/gtkfilesel.c:1520
++#: gtk/gtkfilesel.c:2854
+ msgid "C_reate"
+ msgstr "U_twórz"
+ 
+-#: gtk/gtkfilesel.c:1563
++#: gtk/gtkfilesel.c:2900
+ #, c-format
+ msgid "The filename \"%s\" contains symbols that are not allowed in filenames"
+ msgstr ""
+ "Nazwa \"%s\" zawiera symbole, które nie są dopuszczalne w nazwach plików"
+ 
+-#: gtk/gtkfilesel.c:1566
++#: gtk/gtkfilesel.c:2903
+ #, c-format
+ msgid ""
+ "Error deleting file \"%s\": %s\n"
+@@ -2090,32 +2171,32 @@
+ "Błąd przy usuwaniu pliku \"%s\": %s\n"
+ "%s"
+ 
+-#: gtk/gtkfilesel.c:1568 gtk/gtkfilesel.c:1689
++#: gtk/gtkfilesel.c:2905 gtk/gtkfilesel.c:3028
+ msgid "It probably contains symbols not allowed in filenames."
+ msgstr ""
+ "Prawdopodobnie zawiera symbole, które nie są dopuszczalne w nazwach plików."
+ 
+-#: gtk/gtkfilesel.c:1577
++#: gtk/gtkfilesel.c:2914
+ #, c-format
+ msgid "Error deleting file \"%s\": %s"
+ msgstr "Błąd przy usuwaniu pliku \"%s\": %s"
+ 
+-#: gtk/gtkfilesel.c:1620
++#: gtk/gtkfilesel.c:2957
+ #, c-format
+ msgid "Really delete file \"%s\" ?"
+ msgstr "Czy na pewno usunąć plik \"%s\"?"
+ 
+-#: gtk/gtkfilesel.c:1625
++#: gtk/gtkfilesel.c:2962
+ msgid "Delete File"
+ msgstr "Usunięcie pliku"
+ 
+-#: gtk/gtkfilesel.c:1671 gtk/gtkfilesel.c:1685
++#: gtk/gtkfilesel.c:3010 gtk/gtkfilesel.c:3024
+ #, c-format
+ msgid "The file name \"%s\" contains symbols that are not allowed in filenames"
+ msgstr ""
+ "Nazwa \"%s\" zawiera symbole, które nie są dopuszczalne w nazwach plików"
+ 
+-#: gtk/gtkfilesel.c:1673
++#: gtk/gtkfilesel.c:3012
+ #, c-format
+ msgid ""
+ "Error renaming file to \"%s\": %s\n"
+@@ -2124,7 +2205,7 @@
+ "Błąd przy zmienianiu nazwy pliku na \"%s\": %s\n"
+ "%s"
+ 
+-#: gtk/gtkfilesel.c:1687
++#: gtk/gtkfilesel.c:3026
+ #, c-format
+ msgid ""
+ "Error renaming file \"%s\": %s\n"
+@@ -2133,29 +2214,42 @@
+ "Błąd przy zmianie nazwy pliku \"%s\": %s\n"
+ "%s"
+ 
+-#: gtk/gtkfilesel.c:1697
++#: gtk/gtkfilesel.c:3036
+ #, c-format
+ msgid "Error renaming file \"%s\" to \"%s\": %s"
+ msgstr "Błąd przy zmianie nazwy pliku \"%s\" na \"%s\": %s"
+ 
+-#: gtk/gtkfilesel.c:1744
++#: gtk/gtkfilesel.c:3084
+ msgid "Rename File"
+ msgstr "Zmiana nazwy pliku"
+ 
+-#: gtk/gtkfilesel.c:1759
++#: gtk/gtkfilesel.c:3100
+ #, c-format
+ msgid "Rename file \"%s\" to:"
+ msgstr "Zmiana nazwy pliku \"%s\" na:"
+ 
+-#: gtk/gtkfilesel.c:1788
++#: gtk/gtkfilesel.c:3134
+ msgid "_Rename"
+ msgstr "Zmień _nazwę"
+ 
+-#: gtk/gtkfilesel.c:2220
++#: gtk/gtkfilesel.c:3607
++msgid "0 bytes"
++msgstr "0 bajtów"
++
++#: gtk/gtkfilesel.c:3608
++#, fuzzy
++msgid "Unknown"
++msgstr "(nieznane)"
++
++#: gtk/gtkfilesel.c:3620
++msgid "%B %d %G at %T"
++msgstr "%B %d %G w %T"
++
++#: gtk/gtkfilesel.c:3752
+ msgid "_Selection: "
+ msgstr "_Wybór: "
+ 
+-#: gtk/gtkfilesel.c:3136
++#: gtk/gtkfilesel.c:4859
+ #, c-format
+ msgid ""
+ "The filename \"%s\" couldn't be converted to UTF-8 (try setting the "
+@@ -2164,15 +2258,15 @@
+ "Nie można przekonwertować nazwy pliku \"%s\" na UTF-8 (spróbuj ustawić "
+ "zmienną środowiskową G_BROKEN_FILENAMES): %s"
+ 
+-#: gtk/gtkfilesel.c:3139
++#: gtk/gtkfilesel.c:4862
+ msgid "Invalid Utf-8"
+ msgstr "Niepoprawny napis UTF-8"
+ 
+-#: gtk/gtkfilesel.c:4016
++#: gtk/gtkfilesel.c:5740
+ msgid "Name too long"
+ msgstr "Zbyt długa nazwa"
+ 
+-#: gtk/gtkfilesel.c:4018
++#: gtk/gtkfilesel.c:5742
+ msgid "Couldn't convert filename"
+ msgstr "Nie można przekonwertować nazwy pliku"
+ 
+@@ -2619,44 +2713,44 @@
+ msgid "default:LTR"
+ msgstr "default:LTR"
+ 
+-#: gtk/gtkmenu.c:263
++#: gtk/gtkmenu.c:633
+ msgid "Tearoff Title"
+ msgstr "Tytuł przy oderwaniu"
+ 
+-#: gtk/gtkmenu.c:264
++#: gtk/gtkmenu.c:634
+ msgid ""
+ "A title that may be displayed by the window manager when this menu is torn-"
+ "off"
+ msgstr "Tytuł wyświetlany przez menedżera okien, kiedy menu jest oderwane"
+ 
+-#: gtk/gtkmenu.c:379
++#: gtk/gtkmenu.c:749
+ msgid "Can change accelerators"
+ msgstr "Możliwa zmiana akceleratorów"
+ 
+-#: gtk/gtkmenu.c:380
++#: gtk/gtkmenu.c:750
+ msgid ""
+ "Whether menu accelerators can be changed by pressing a key over the menu item"
+ msgstr ""
+ "Określa, czy możliwa jest zmiana akceleratorów poprzez przyciśnięcie "
+ "klawisza przy zaznaczonym elemencie menu"
+ 
+-#: gtk/gtkmenu.c:385
++#: gtk/gtkmenu.c:755
+ msgid "Delay before submenus appear"
+ msgstr "Opóźnienie pojawienia się podmenu"
+ 
+-#: gtk/gtkmenu.c:386
++#: gtk/gtkmenu.c:756
+ msgid ""
+ "Minimum time the pointer must stay over a menu item before the submenu appear"
+ msgstr ""
+ "Minimalny okres czasu, przez jaki wskaźnik musi znajdować się nad elementem, "
+ "zanim zostanie wyświetlone menu podrzędne"
+ 
+-#: gtk/gtkmenu.c:393
++#: gtk/gtkmenu.c:763
+ msgid "Delay before hiding a submenu"
+ msgstr "Opóźnienie ukrycia podmenu"
+ 
+ # to jakiś bełkot jest
+-#: gtk/gtkmenu.c:394
++#: gtk/gtkmenu.c:764
+ msgid ""
+ "The time before hiding a submenu when the pointer is moving towards the "
+ "submenu"
+@@ -2664,6 +2758,24 @@
+ "Okres czasu zanim zostanie ukryte menu podrzędne, gdy wskaźnik przemieszcza "
+ "się w jego kierunku"
+ 
++#: gtk/gtkmenu.c:771
++msgid "Display menu drop-shadow"
++msgstr ""
++
++#: gtk/gtkmenu.c:772
++#, fuzzy
++msgid "Whether menu drop-shadow should be displayed"
++msgstr "Określa, czy powinna być użyta paleta"
++
++#: gtk/gtkmenu.c:777
++#, fuzzy
++msgid "Delay before drop-shadow appear"
++msgstr "Opóźnienie pojawienia się menu rozwijanego"
++
++#: gtk/gtkmenu.c:778
++msgid "Minimum time before drop-shadow appear under the menu"
++msgstr ""
++
+ #: gtk/gtkmenubar.c:157
+ msgid "Style of bevel around the menubar"
+ msgstr "Styl kantu wokół paska menu"
+@@ -5061,3 +5173,12 @@
+ #: modules/input/gtkimcontextxim.c:331
+ msgid "How to draw the input method statusbar"
+ msgstr "Sposób rysowania paska stanu metody wejściowej"
++
++#~ msgid "_New Folder"
++#~ msgstr "_Nowy folder"
++
++#~ msgid "De_lete File"
++#~ msgstr "_Usuń plik"
++
++#~ msgid "_Rename File"
++#~ msgstr "_Zmień nazwę pliku"
