@@ -1,0 +1,46 @@
+                   Drop Shadow Effect for GTK+-2.2.x Menus
+                     Olivier Fourdan <fourdan@xfce.org>
+                     http://www.xfce.org/gtkmenu-shadow/
+
+
+Introduction
+------------
+
+The following patches are based on the work from Iain published on the GNOME
+desktop devel list in February 2003.
+(http://mail.gnome.org/archives/desktop-devel-list/2003-February/msg00641.html)
+
+I took Iain's patch and tried to fix all the issues I found, while improving
+the overall look of the drop shadow.
+
+It's not perfect (and I doubt it will ever be unless someone comes up with
+true alpha blendering on X11), it's still a hack, but it works fairly well
+(for me at least). I've tried this patch with plenty of gtk2 based software,
+like xfce4, Eclipse 2.1, gnome 2.2, Ximian evolution 1.4, Abiword-2.0 and it
+worked all right so far.
+
+The patched library should be binary compatible with an unpatched version.
+
+
+Configuration
+-------------
+
+There are a couple of parameters that can be adjusted using the gtkrc file
+(either from a theme or from $HOME/.gtkrc-2.0):
+
+  * gtk-menu-drop-shadow : When set to 0, menu shadow will be turned off.
+    Any non-zero value enables menu shadow (default value: 0)
+  * gtk-menu-shadow-delay : The delay before the shadow appears.
+    The shadow is delayed to give some time to the underlying application to
+    refresh its window. You can increase or decrease this value to adjust
+    the shadow to your system (default: 50)
+
+
+Feedback
+--------
+
+Well, I make this available, but I don't have much time to support it.
+Use it at your own risk! However, if you really want to send some feedback,
+you can mail me here:
+
+    Olivier Fourdan <fourdan@xfce.org>
