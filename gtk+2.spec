@@ -8,14 +8,15 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	1.3.13
-Release:	2
+Release:	3
 License:	LGPL
 Group:		X11/Libraries
-Group(de):	X11/Libraries
+Group(de):	X11/Bibliotheken
 Group(es):	X11/Bibliotecas
 Group(fr):	X11/Librairies
 Group(pl):	X11/Biblioteki
 Group(pt_BR):	X11/Bibliotecas
+Group(pt):	X11/Bibliotecas
 Group(ru):	X11/âÉÂÌÉÏÔÅËÉ
 Group(uk):	X11/â¦ÂÌ¦ÏÔÅËÉ
 Source0:	ftp://ftp.gtk.org/pub/gtk/v1.3/gtk+-%{version}.tar.gz
@@ -31,6 +32,7 @@ Requires:	glib2 >= %{version}
 Requires:	iconv
 Requires:	pango
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+Obsoletes:	gtk2
 
 %define		_prefix		/usr/X11R6
 %define		_mandir		%{_prefix}/man
@@ -89,7 +91,7 @@ Summary(it):	GIMP Toolkit and GIMP Drawing Kit
 Summary(pl):	Pliki nag³ówkowe i dokumentacja do Gtk+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
-Group(de):	X11/Entwicklung/Libraries
+Group(de):	X11/Entwicklung/Bibliotheken
 Group(es):	X11/Desarrollo/Bibliotecas
 Group(fr):	X11/Development/Librairies
 Group(pl):	X11/Programowanie/Biblioteki
@@ -102,6 +104,7 @@ Requires:	automake >= 1.4
 Requires:	glib2-devel >= %{version}
 Requires:	libtool  >= 1.3.2
 Requires:	%{name} = %{version}
+Obsoletes:	gtk2-devel
 
 %description devel
 Header files and development documentation for the Gtk+ libraries.
@@ -113,7 +116,7 @@ Pliki nag³ówkowe i dokumentacja do bibliotek Gtk+.
 Summary:	Gtk+ static libraries
 Summary(pl):	Biblioteki statyczne Gtk+
 Group:		X11/Development/Libraries
-Group(de):	X11/Entwicklung/Libraries
+Group(de):	X11/Entwicklung/Bibliotheken
 Group(es):	X11/Desarrollo/Bibliotecas
 Group(fr):	X11/Development/Librairies
 Group(pl):	X11/Programowanie/Biblioteki
@@ -154,7 +157,7 @@ rm -rf $RPM_BUILD_ROOT
 	m4datadir=%{_aclocaldir} \
 	pkgconfigdir=%{_pkgconfigdir}
 
-ln -sf ../../lib/gtk-2.0/immodules $RPM_BUILD_ROOT/%{_datadir}/gtk-2.0/gtk.immodules
+ln -sf ../../lib/gtk-2.0/immodules $RPM_BUILD_ROOT/%{_sysconfdir}/gtk-2.0/gtk.immodules
 
 gzip -9nf AUTHORS ChangeLog NEWS README TODO
 
@@ -178,8 +181,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_libdir}/gtk-*/immodules
 %dir %{_libdir}/gtk-*/immodules/%{version}
 %attr(755,root,root) %{_libdir}/gtk-*/immodules/%{version}/*.so
-%{_datadir}/gtk-*
-%dir %{_datadir}/themes/Default/gtk-*
+%{_sysconfdir}/gtk-*
+%dir %{_sysconfdir}/themes/Default/gtk-*
 
 %files devel
 %defattr(644,root,root,755)
