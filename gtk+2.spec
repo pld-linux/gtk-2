@@ -16,6 +16,7 @@ Release:	5
 License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.2/gtk+-%{version}.tar.bz2
+# Source0-md5:	dfd5755fddb26a46c96bfaa813280ac4
 Patch0:		%{name}-locale-sp.patch
 Patch1:		%{name}-scrollfix.patch
 # This patch adds shadow to menus and popups (taken from gnome mailing list)
