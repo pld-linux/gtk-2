@@ -136,11 +136,11 @@ Biblioteki statyczne Gtk+
 %patch4 -p1
 
 %build
-rm -f missing
 %{__libtoolize}
 glib-gettextize --copy --force
 %{__aclocal}
 %{__autoconf}
+%{__automake}
 %configure \
 	--enable-static \
 	--enable-gtk-doc \
