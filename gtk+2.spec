@@ -1,4 +1,3 @@
-#
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
@@ -28,6 +27,8 @@ Icon:		gtk+.xpm
 BuildRequires:	atk-devel >= 1.2.0
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	docbook-dtd412-xml
+BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 2.3.0
 BuildRequires:	gtk-doc >= 0.10
@@ -35,14 +36,12 @@ BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
 BuildRequires:	libtool
-BuildRequires:	pango-devel >= 1.3.0
-BuildRequires:	rpm-build >= 4.1-8.2
-BuildRequires:	pkgconfig
-BuildRequires:	xcursor-devel
 BuildRequires:	libxml2-progs
 BuildRequires:	libxslt-progs
-BuildRequires:	docbook-dtd412-xml
-BuildRequires:	docbook-style-xsl
+BuildRequires:	pango-devel >= 1.3.0
+BuildRequires:	pkgconfig
+BuildRequires:	rpm-build >= 4.1-8.2
+BuildRequires:	xcursor-devel
 Requires(post):	/sbin/ldconfig
 Requires:	glib2 >= 2.3.0
 Requires:	iconv
@@ -108,6 +107,7 @@ Requires:	atk-devel >= 1.0.0
 Requires:	glib2-devel >= 2.3.0
 Requires:	gtk-doc-common
 Requires:	pango-devel >= 1.3.0
+Requires:	xcursor-devel
 Obsoletes:	gtk2-devel
 
 %description devel
