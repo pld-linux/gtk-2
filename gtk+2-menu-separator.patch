@@ -1,0 +1,12 @@
+diff -Nuard gtk+-2.2.4.orig/gtk/gtkmenuitem.c gtk+-2.2.4/gtk/gtkmenuitem.c
+--- gtk+-2.2.4.orig/gtk/gtkmenuitem.c	2003-02-28 03:03:50.000000000 +0100
++++ gtk+-2.2.4/gtk/gtkmenuitem.c	2004-01-25 11:28:15.566203552 +0100
+@@ -687,7 +687,7 @@
+ 	  gtk_paint_hline (widget->style, widget->window, GTK_STATE_NORMAL,
+ 			   area, widget, "menuitem",
+ 			   widget->allocation.x, widget->allocation.width,
+-			   widget->allocation.y);
++			   widget->allocation.y + (widget->allocation.height - widget->style->ythickness) / 2);
+ 	}
+     }
+ }
