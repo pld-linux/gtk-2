@@ -25,7 +25,7 @@ Patch1:		%{name}-menushadow.patch
 Patch2:		%{name}-xlibs.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
-%{?with_xlibs:BuildRequires:	libXi-devel}
+%{!?with_xlibs:BuildRequires:	X11-devel >= 1:6.8.0}
 BuildRequires:	atk-devel >= 1.8.0
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
@@ -34,6 +34,8 @@ BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.6.1
 %{?with_doc:BuildRequires:	gtk-doc >= 1.0}
+%{?with_xlibs:BuildRequires:	libXfixes-devel}
+%{?with_xlibs:BuildRequires:	libXi-devel}
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
@@ -107,9 +109,12 @@ Summary(pl):	Pliki nag³ówkowe i dokumentacja do GTK+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
+%{!?with_xlibs:Requires:	X11-devel >= 1:6.8.0}
 Requires:	atk-devel >= 1.8.0
 Requires:	glib2-devel >= 1:2.6.1
 Requires:	gtk-doc-common
+%{?with_xlibs:Requires:	libXfixes-devel}
+%{?with_xlibs:Requires:	libXi-devel}
 Requires:	pango-devel >= 1:1.8.0
 Requires:	xcursor-devel
 Obsoletes:	gtk2-devel
