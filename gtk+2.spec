@@ -1,4 +1,4 @@
-%define		snap 20031110
+%define		snap 20031126
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
 Summary(de):	Der Gimp-Toolkit
@@ -15,7 +15,7 @@ License:	LGPL
 Group:		X11/Libraries
 #Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.3/gtk+-%{version}.tar.bz2
 Source0:	gtk+-%{version}.%{snap}.tar.bz2
-# Source0-md5:	f26ea6376c8dfd659bc57477c2a6764a
+# Source0-md5:	6d8de9705dfd452dba4affc31ac4fb0a
 Patch0:		%{name}-gtk_socket_focus.patch
 Patch1:		%{name}-insensitive-iain.patch
 URL:		http://www.gtk.org/
