@@ -12,7 +12,6 @@ Release:	1
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gnome.org/pub/GNOME/sources/gtk+/2.1/gtk+-%{version}.tar.bz2
-Patch0:		%{name}-gtkrc.patch
 Patch1:		%{name}-XftDrawPicture.patch
 Patch2:		%{name}-Xft2.patch
 URL:		http://www.gtk.org/
@@ -122,7 +121,6 @@ Biblioteki statyczne Gtk+
 
 %prep
 %setup -q -n gtk+-%{version}
-%patch0 -p1
 %patch1 -p0
 %patch2 -p1
 
