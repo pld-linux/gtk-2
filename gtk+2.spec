@@ -194,8 +194,10 @@ umask 022
 %{_datadir}/gtk-*
 %dir %{_sysconfdir}/gtk-*
 %ghost %{_sysconfdir}/gtk-*/*
+%dir %{_datadir}/themes/Default
 %dir %{_datadir}/themes/Default/gtk-*
 %{_datadir}/themes/Default/gtk-*/gtkrc
+%dir %{_datadir}/themes/Emacs
 %dir %{_datadir}/themes/Emacs/gtk-*
 %{_datadir}/themes/Emacs/gtk-*/gtkrc
 
@@ -203,9 +205,9 @@ umask 022
 %defattr(644,root,root,755)
 %doc ChangeLog TODO
 %attr(755,root,root) %{_bindir}/*csource
-%attr(755,root,root) %{_libdir}/lib*.la
+%{_libdir}/lib*.la
 %attr(755,root,root) %{_libdir}/lib*.so
-%attr(755,root,root) %{_libdir}/gtk-*/2.*/*/*.la
+%{_libdir}/gtk-*/2.*/*/*.la
 %{_includedir}/*
 %{_aclocaldir}/*.m4
 %{_libdir}/gtk-*/include
