@@ -11,7 +11,7 @@ Version:	2.1.0
 Release:	1
 License:	LGPL
 Group:		X11/Libraries
-Source0:	http://ftp.gnome.org/pub/gnome/sources/gtk+/2.1/gtk+-%{version}.tar.bz2
+Source0:	ftp://ftp.gnome.org/pub/GNOME/sources/gtk+/2.1/gtk+-%{version}.tar.bz2
 Patch0:		%{name}-gtkrc.patch
 Patch1:		%{name}-XftDrawPicture.patch
 Patch2:		%{name}-Xft2.patch
@@ -136,7 +136,6 @@ glib-gettextize --copy --force
 	--enable-gtk-doc \
 	--enable-shm \
 	--enable-xim \
-	--enable-fbmanager \
 	--with-xinput=xfree \
 	--with-gdktarget=x11 \
 	--with-html-path=%{_gtkdocdir}
@@ -145,6 +144,7 @@ glib-gettextize --copy --force
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -153,6 +153,8 @@ rm -rf $RPM_BUILD_ROOT
 	HTML_DIR=%{_gtkdocdir}
 
 ln -sf ../../lib/gtk-2.0/2.0.100/immodules $RPM_BUILD_ROOT/%{_sysconfdir}/gtk-2.0/gtk.immodules
+
+cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 # remove unsupported locale scheme
 rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/en@IPA
@@ -167,6 +169,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -f gtk20.lang
 %defattr(644,root,root,755)
+%doc AUTHORS NEWS README
 %attr(755,root,root) %{_bindir}/gtk-demo
 %attr(755,root,root) %{_bindir}/gtk-query*
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
@@ -184,7 +187,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog NEWS README
+%doc ChangeLog
 %attr(755,root,root) %{_bindir}/*csource
 %attr(755,root,root) %{_libdir}/lib*.la
 %attr(755,root,root) %{_libdir}/lib*.so
@@ -195,6 +198,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_pkgconfigdir}/*.pc
 %{_mandir}/man1/*
 %{_gtkdocdir}/*
+%doc %{_examplesdir}/%{name}-%{version}
 
 %files static
 %defattr(644,root,root,755)
