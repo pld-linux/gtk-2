@@ -24,6 +24,7 @@ Patch1:		%{name}-locale-names.patch
 Patch2:		%{name}-2.2.0-path-check.patch
 Patch3:		%{name}-menushadow.patch
 Patch4:		%{name}-xlibs.patch
+PAtch5:		%{name}-exportsymbols.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 %{?with_xlibs:BuildRequires:	libXi-devel}
@@ -140,6 +141,7 @@ Biblioteki statyczne Gtk+
 %patch2 -p1
 %patch3 -p1
 %{?with_xlibs:%patch4 -p1}
+%patch4 -p1
 
 mv po/{no,nb}.po
 mv po-properties/{no,nb}.po
