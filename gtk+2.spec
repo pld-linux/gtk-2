@@ -28,6 +28,7 @@ Patch3:		%{name}-toolbar-fix.patch
 Patch4:		%{name}-insensitive-iain.patch
 Patch5:		%{name}-xembed_info.patch
 Patch6:		%{name}-am18.patch
+Patch7:		%{name}-ft2build_h.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 BuildRequires:	atk-devel >= 1.2.0
@@ -137,6 +138,7 @@ Biblioteki statyczne Gtk+
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 rm -f missing
