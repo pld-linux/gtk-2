@@ -13,7 +13,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.4.13
-Release:	2
+Release:	3
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
@@ -161,7 +161,8 @@ glib-gettextize --copy --force
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk-2.0}
+install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk-2.0} \
+	$RPM_BUILD_ROOT%{_libdir}/gtk-2.0/2.4.0/filesystems
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
