@@ -1,0 +1,592 @@
+diff -urN aaa/gtk+-2.2.1/gtk/gtkmenu.c gtk+-2.2.1/gtk/gtkmenu.c
+--- aaa/gtk+-2.2.1/gtk/gtkmenu.c	Tue Dec 17 14:30:55 2002
++++ gtk+-2.2.1/gtk/gtkmenu.c	Mon Apr  7 20:42:53 2003
+@@ -74,6 +74,9 @@
+   gboolean have_position;
+   gint x;
+   gint y;
++  GdkPixbuf *west, *east, *south;
++  GdkWindow *west_shadow, *east_shadow, *south_shadow;
++  guint32 timeout_id;
+ };
+ 
+ enum {
+@@ -181,6 +184,26 @@
+ 
+ static guint menu_signals[LAST_SIGNAL] = { 0 };
+ 
++static void
++free_private_data (gpointer data)
++{
++  GtkMenuPrivate *priv = (GtkMenuPrivate *) data;
++
++  if (priv->timeout_id > 0)
++    g_source_remove (priv->timeout_id);
++ 
++  if (priv->west)
++    g_object_unref (G_OBJECT (priv->west));
++
++  if (priv->east)
++    g_object_unref (G_OBJECT (priv->east));
++
++  if (priv->south)
++    g_object_unref (G_OBJECT (priv->south));
++
++  g_free (data);
++}
++
+ GtkMenuPrivate *
+ gtk_menu_get_private (GtkMenu *menu)
+ {
+@@ -198,7 +221,7 @@
+       private->have_position = FALSE;
+       
+       g_object_set_qdata_full (G_OBJECT (menu), private_quark,
+-			       private, g_free);
++			       private, free_private_data);
+     }
+ 
+   return private;
+@@ -231,6 +254,351 @@
+   return menu_type;
+ }
+ 
++static GdkPixbuf *
++get_pixbuf (GdkDrawable *window,
++           int x,
++           int y,
++           int width,
++           int height)
++{
++  GdkPixbuf *dest, *src;
++  int ow, oh;
++ 
++  dest = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, width, height);
++
++  ow = width;
++  oh = height;
++ 
++  if (x < 0) {
++    width += x;
++    x = 0;
++  }
++
++  if (y < 0) {
++    height += y;
++    y = 0;
++  }
++
++  if (width <= 0 || height <= 0)
++    return NULL;
++
++  window = gdk_get_default_root_window ();
++
++  src = gdk_pixbuf_get_from_drawable (NULL, window, NULL, x, y, 0, 0, width, height);
++
++  /* Copy the src into the dest at the right place */
++  gdk_pixbuf_copy_area (src, 0, 0, width, height,
++                       dest, ow - width, oh - height);
++
++  g_object_unref (G_OBJECT (src));
++ 
++  return dest;
++}
++
++enum side {
++  WEST_SIDE,
++  EAST_SIDE,
++  SOUTH_SIDE
++};
++
++const double shadow_strip_l[16] = {
++  .996, .996, .992, .988, .980, .972, .956, .941, .917, .890, .858, .819, .776, .729, .678, .627
++};
++
++const double bottom_left_corner[256] = {
++  .996, .996, .992, .988, .980, .972, .956, .941, .917, .890, .858, .819, .776, .729, .678, .627,
++  .996, .996, .992, .988, .980, .972, .956, .941, .917, .890, .858, .819, .776, .729, .678, .627,
++  .996, .996, .992, .988, .980, .972, .956, .941, .917, .890, .858, .819, .776, .729, .678, .627,
++  .996, .996, .992, .988, .980, .972, .956, .941, .917, .890, .858, .819, .776, .729, .678, .627,
++  .996, .996, .992, .988, .980, .972, .956, .941, .917, .890, .858, .819, .776, .729, .678, .627,
++  1.00, .996, .992, .988, .980, .972, .960, .941, .917, .890, .858, .819, .780, .733, .670, .643,
++  1.00, .996, .992, .988, .980, .972, .960, .941, .917, .894, .858, .819, .780, .733, .670, .643,
++  1.00, .996, .992, .988, .980, .972, .960, .941, .921, .894, .862, .827, .784, .737, .690, .639,
++  1.00, .996, .992, .988, .980, .972, .960, .945, .925, .898, .870, .831, .796, .749, .701, .654,
++  1.00, .996, .992, .992, .984, .976, .964, .949, .933, .909, .882, .847, .815, .776, .733, .686,
++  1.00, .996, .992, .992, .988, .980, .972, .956, .941, .925, .901, .874, .847, .811, .780, .741,
++  1.00, 1.00, .996, .992, .992, .988, .980, .968, .956, .945, .925, .909, .886, .901, .874, .811,
++  1.00, 1.00, 1.00, .996, .992, .992, .988, .980, .976, .964, .952, .941, .929, .913, .898, .878,
++  1.00, 1.00, 1.00, 1.00, .996, .996, .996, .992, .988, .984, .976, .968, .964, .952, .945, .937,
++  1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, .996, .996, .992, .988, .984, .980, .976, .972,
++  1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, .996, .996, .996, .992, .992, .992 };
++
++const double bottom_right_corner[256] = {
++  .627, .678, .729, .776, .819, .858, .890, .917, .941, .956, .972, .980, .988, .992, .996, .996,
++  .627, .678, .729, .776, .819, .858, .890, .917, .941, .956, .972, .980, .988, .992, .996, .996,
++  .627, .678, .729, .776, .819, .858, .890, .917, .941, .956, .972, .980, .988, .992, .996, .996,
++  .627, .678, .729, .776, .819, .858, .890, .917, .941, .956, .972, .980, .988, .992, .996, .996,
++  .627, .678, .729, .776, .819, .858, .890, .917, .941, .956, .972, .980, .988, .992, .996, .996,
++  .643, .670, .733, .780, .819, .858, .890, .917, .941, .960, .972, .980, .988, .992, .996, 1.00,
++  .643, .670, .733, .780, .819, .858, .894, .917, .941, .960, .972, .980, .988, .992, .996, 1.00,
++  .639, .690, .737, .784, .827, .862, .894, .921, .941, .960, .972, .980, .988, .992, .996, 1.00,
++  .654, .701, .749, .796, .831, .870, .898, .925, .945, .960, .972, .980, .988, .992, .996, 1.00,
++  .686, .733, .776, .815, .847, .882, .909, .933, .949, .964, .976, .984, .992, .992, .996, 1.00,
++  .741, .780, .811, .847, .874, .901, .925, .941, .956, .972, .980, .988, .992, .992, .996, 1.00,
++  .811, .874, .901, .886, .909, .925, .945, .956, .968, .980, .988, .992, .992, .996, 1.00, 1.00,
++  .878, .898, .913, .929, .941, .952, .964, .976, .980, .988, .992, .992, .996, 1.00, 1.00, 1.00,
++  .937, .945, .952, .964, .968, .976, .984, .988, .992, .996, .996, .996, 1.00, 1.00, 1.00, 1.00,
++  .972, .976, .980, .984, .988, .992, .996, .996, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
++  .992, .992, .992, .996, .996, .996, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00 };
++
++const double top_right_corner[256] = {
++  .992, .992, .992, .996, .996, .996, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
++  .972, .976, .980, .984, .988, .992, .996, .996, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
++  .937, .945, .952, .964, .968, .976, .984, .988, .992, .996, .996, .996, 1.00, 1.00, 1.00, 1.00,
++  .878, .898, .913, .929, .941, .952, .964, .976, .980, .988, .992, .992, .996, 1.00, 1.00, 1.00,
++  .811, .874, .901, .886, .909, .925, .945, .956, .968, .980, .988, .992, .992, .996, 1.00, 1.00,
++  .741, .780, .811, .847, .874, .901, .925, .941, .956, .972, .980, .988, .992, .992, .996, 1.00,
++  .686, .733, .776, .815, .847, .882, .909, .933, .949, .964, .976, .984, .992, .992, .996, 1.00,
++  .654, .701, .749, .796, .831, .870, .898, .925, .945, .960, .972, .980, .988, .992, .996, 1.00,
++  .639, .690, .737, .784, .827, .862, .894, .921, .941, .960, .972, .980, .988, .992, .996, 1.00,
++  .643, .670, .733, .780, .819, .858, .894, .917, .941, .960, .972, .980, .988, .992, .996, 1.00,
++  .643, .670, .733, .780, .819, .858, .890, .917, .941, .960, .972, .980, .988, .992, .996, 1.00,
++  .627, .678, .729, .776, .819, .858, .890, .917, .941, .956, .972, .980, .988, .992, .996, .996,
++  .627, .678, .729, .776, .819, .858, .890, .917, .941, .956, .972, .980, .988, .992, .996, .996,
++  .627, .678, .729, .776, .819, .858, .890, .917, .941, .956, .972, .980, .988, .992, .996, .996,
++  .627, .678, .729, .776, .819, .858, .890, .917, .941, .956, .972, .980, .988, .992, .996, .996,
++  .627, .678, .729, .776, .819, .858, .890, .917, .941, .956, .972, .980, .988, .992, .996, .996 };
++
++const double top_left_corner[256] = {
++  1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, .996, .996, .996, .992, .992, .992,
++  1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, .996, .996, .992, .988, .984, .980, .976, .972,
++  1.00, 1.00, 1.00, 1.00, .996, .996, .996, .992, .988, .984, .976, .968, .964, .952, .945, .937,
++  1.00, 1.00, 1.00, .996, .992, .992, .988, .980, .976, .964, .952, .941, .929, .913, .898, .878,
++  1.00, 1.00, .996, .992, .992, .988, .980, .968, .956, .945, .925, .909, .886, .901, .874, .811,
++  1.00, .996, .992, .992, .988, .980, .972, .956, .941, .925, .901, .874, .847, .811, .780, .741,
++  1.00, .996, .992, .992, .984, .976, .964, .949, .933, .909, .882, .847, .815, .776, .733, .686,
++  1.00, .996, .992, .988, .980, .972, .960, .945, .925, .898, .870, .831, .796, .749, .701, .654,
++  1.00, .996, .992, .988, .980, .972, .960, .941, .921, .894, .862, .827, .784, .737, .690, .639,
++  1.00, .996, .992, .988, .980, .972, .960, .941, .917, .894, .858, .819, .780, .733, .670, .643,
++  1.00, .996, .992, .988, .980, .972, .960, .941, .917, .890, .858, .819, .780, .733, .670, .643,
++  .996, .996, .992, .988, .980, .972, .956, .941, .917, .890, .858, .819, .776, .729, .678, .627,
++  .996, .996, .992, .988, .980, .972, .956, .941, .917, .890, .858, .819, .776, .729, .678, .627,
++  .996, .996, .992, .988, .980, .972, .956, .941, .917, .890, .858, .819, .776, .729, .678, .627,
++  .996, .996, .992, .988, .980, .972, .956, .941, .917, .890, .858, .819, .776, .729, .678, .627,
++  .996, .996, .992, .988, .980, .972, .956, .941, .917, .890, .858, .819, .776, .729, .678, .627 };
++
++static void
++adjust_pixbuf (GdkPixbuf *pb,
++              enum side shadow)
++{
++  int width, rowstride, height;
++  int i;
++  guchar *pixels, *p;
++
++  width = gdk_pixbuf_get_width (pb);
++  height = gdk_pixbuf_get_height (pb);
++  rowstride = gdk_pixbuf_get_rowstride (pb);
++  pixels = gdk_pixbuf_get_pixels (pb);
++
++  switch (shadow) {
++  case WEST_SIDE:
++    if (height > 16) {
++      for (i = 0; i < 16; i++) {
++       int j, k;
++      
++       p = pixels + (i * rowstride);
++
++       for (j = 0, k = 0; j < 48; j += 3, k++) {
++         p[j] = (guchar) (p[j] * top_left_corner [i * 16 + k]);
++         p[j + 1] = (guchar) (p[j + 1] * top_left_corner [i * 16 + k]);
++         p[j + 2] = (guchar) (p[j + 2] * top_left_corner [i * 16 + k]);
++       }
++      }
++
++      i = 16;
++    } else {
++      i = 0;
++    }
++      
++    for (; i < height; i++) {
++      int j, k;
++     
++      p = pixels + (i * rowstride);
++
++      for (j = 0, k = 0; j < 48; j += 3, k++) {
++       p[j] = (guchar) (p[j] * shadow_strip_l[k]);
++       p[j + 1] = (guchar) (p[j + 1] * shadow_strip_l[k]);
++       p[j + 2] = (guchar) (p[j + 2] * shadow_strip_l[k]);
++      }
++    }
++
++    break;
++
++  case EAST_SIDE:
++    if (height > 16) {
++      for (i = 0; i < 16; i++) {
++       int j, k;
++
++       p = pixels + (i * rowstride);
++
++       for (j = 0, k = 0; j < 48; j += 3, k++) {
++         p[j] = (guchar) (p[j] * top_right_corner [i * 16 + k]);
++         p[j + 1] = (guchar) (p[j + 1] * top_right_corner [i * 16 + k]);
++         p[j + 2] = (guchar) (p[j + 2] * top_right_corner [i * 16 + k]);
++       }
++      }
++
++      i = 16;
++    } else {
++      i = 0;
++    }
++   
++    for (;i < height; i++) {
++      int j, k;
++
++      p = pixels + (i * rowstride);
++
++      for (j = 0, k = 0; j < 48; j += 3, k++) {
++       p[j] = (guchar) (p[j] * shadow_strip_l[15 - k]);
++       p[j + 1] = (guchar) (p[j + 1] * shadow_strip_l[15 - k]);
++       p[j + 2] = (guchar) (p[j + 2] * shadow_strip_l[15 - k]);
++      }
++    }
++
++    break;
++
++  case SOUTH_SIDE:
++    for (i = 0; i < 16; i++) {
++      int j, k;
++
++      p = pixels + (i * rowstride);
++
++      for (j = 0, k = 0; j < 48; j += 3, k++) {
++
++       p[j] = (guchar) (p[j] * bottom_left_corner[i * 16 + k]);
++       p[j + 1] = (guchar) (p[j + 1] * bottom_left_corner[i * 16 + k]);
++       p[j + 2] = (guchar) (p[j + 2] * bottom_left_corner[i * 16 + k]);
++      }
++
++      p = pixels + (i * rowstride) + 48;
++     
++      for (j = 0, k = 0; j < (width * 3) - 96; j += 3, k++) {
++       p[j] = (guchar) (p[j] * bottom_right_corner [i * 16]);
++       p[j + 1] = (guchar) (p[j + 1] * bottom_right_corner [i * 16]);
++       p[j + 2] = (guchar) (p[j + 2] * bottom_right_corner [i * 16]);
++      }
++
++      p = pixels + (i * rowstride) + ((width * 3) - 48);
++      for (j = 0, k = 0; j < 48; j += 3, k++) {
++       p[j] = (guchar) (p[j] * bottom_right_corner[i * 16 + k]);
++       p[j + 1] = (guchar) (p[j + 1] * bottom_right_corner[i * 16 + k]);
++       p[j + 2] = (guchar) (p[j + 2] * bottom_right_corner[i * 16 + k]);
++      }
++    }
++
++    break;
++
++  default:
++    break;
++  }
++}
++
++static gboolean
++map_shadow_windows (gpointer data)
++{
++  GtkMenu *menu = GTK_MENU (data);
++  GtkWidget *widget = GTK_WIDGET (data);
++  GtkMenuPrivate *priv = gtk_menu_get_private (menu);
++  GdkPixbuf *pixbuf;
++  int tlx, tly;
++
++  gtk_window_get_position (gtk_widget_get_toplevel (widget), &tlx, &tly);
++  pixbuf = get_pixbuf (priv->west_shadow, tlx - 16, tly,
++                      16, widget->allocation.height);
++
++  if (pixbuf != NULL) {
++    adjust_pixbuf (pixbuf, WEST_SIDE);
++    if (priv->west != NULL) {
++      g_object_unref (G_OBJECT (priv->west));
++    }
++    priv->west = pixbuf;
++  }
++ 
++  pixbuf = get_pixbuf (priv->east_shadow, tlx + widget->allocation.width,
++                      tly,
++                      16, widget->allocation.height);
++  if (pixbuf != NULL) {
++    adjust_pixbuf (pixbuf, EAST_SIDE);
++    if (priv->east != NULL) {
++      g_object_unref (G_OBJECT (priv->east));
++    }
++    priv->east = pixbuf;
++  }
++ 
++  pixbuf = get_pixbuf (priv->south_shadow, tlx - 16,
++                      tly + widget->allocation.height,
++                      widget->allocation.width + 32, 16);
++  if (pixbuf != NULL) {
++    adjust_pixbuf (pixbuf, SOUTH_SIDE);
++    if (priv->south != NULL) {
++      g_object_unref (G_OBJECT (priv->south));
++    }
++    priv->south = pixbuf;
++  }
++
++  gdk_window_show (priv->west_shadow);
++  gdk_window_show (priv->east_shadow);
++  gdk_window_show (priv->south_shadow);
++
++  priv->timeout_id = 0;
++  return FALSE;
++}
++
++static void
++gtk_menu_map (GtkWidget *widget)
++{
++  GtkMenuPrivate *priv = gtk_menu_get_private (GTK_MENU (widget));
++  /* What is this timeout for?
++     Well, its a hack inside a hack really.
++     Sometimes the parent window hasn't had time to redraw fully
++     so you get an ugly drop shadow on a half exposed window.
++     This timeout is an attempt to give the parent window a change
++     to redraw itself fully, so that the drop shadow doesn't look
++     just so ugly... */
++  priv->timeout_id = g_timeout_add (20, map_shadow_windows, widget);
++ 
++  GTK_WIDGET_CLASS (parent_class)->map (widget);
++}
++
++static void
++gtk_menu_unmap (GtkWidget *widget)
++{
++  GtkMenu *menu = GTK_MENU (widget);
++  GtkMenuPrivate *priv = gtk_menu_get_private (menu);
++
++  if (priv->timeout_id > 0) {
++    g_source_remove (priv->timeout_id);
++    priv->timeout_id = 0;
++  } else {
++    gdk_window_hide (priv->west_shadow);
++    gdk_window_hide (priv->east_shadow);
++    gdk_window_hide (priv->south_shadow);
++  }
++ 
++  GTK_WIDGET_CLASS (parent_class)->unmap (widget);
++}
++
++static gboolean
++gtk_menu_configure (GtkWidget *widget,
++                   GdkEventConfigure *event)
++{
++  GtkMenu *menu;
++  GtkMenuPrivate *priv;
++  int tlx, tly;
++ 
++  menu = GTK_MENU (widget);
++  priv = gtk_menu_get_private (menu);
++ 
++  /* Move shadows */
++  gtk_window_get_position (gtk_widget_get_toplevel (widget), &tlx, &tly);
++
++  gdk_window_move (priv->west_shadow, tlx - 16, tly);
++  gdk_window_move (priv->east_shadow, tlx + widget->allocation.width, tly);
++  gdk_window_move (priv->south_shadow, tlx - 16, tly + widget->allocation.height);
++ 
++  return FALSE;
++}
++
+ static void
+ gtk_menu_class_init (GtkMenuClass *class)
+ {
+@@ -279,8 +647,11 @@
+   widget_class->motion_notify_event = gtk_menu_motion_notify;
+   widget_class->show_all = gtk_menu_show_all;
+   widget_class->hide_all = gtk_menu_hide_all;
++  widget_class->map = gtk_menu_map;
++  widget_class->unmap = gtk_menu_unmap;
+   widget_class->enter_notify_event = gtk_menu_enter_notify;
+   widget_class->leave_notify_event = gtk_menu_leave_notify;
++  widget_class->configure_event = gtk_menu_configure;
+   widget_class->motion_notify_event = gtk_menu_motion_notify;
+   widget_class->style_set = gtk_menu_style_set;
+   widget_class->focus = gtk_menu_focus;
+@@ -1004,7 +1375,7 @@
+   GtkMenuShell *menu_shell;
+ 
+   g_return_if_fail (GTK_IS_MENU (menu));
+-  
++
+   menu_shell = GTK_MENU_SHELL (menu);
+   private = gtk_menu_get_private (menu);
+   
+@@ -1487,12 +1858,15 @@
+   gint attributes_mask;
+   gint border_width;
+   GtkMenu *menu;
++  GtkMenuPrivate *priv;
+   GtkWidget *child;
+   GList *children;
+-
++  int tlx, tly;
++ 
+   g_return_if_fail (GTK_IS_MENU (widget));
+ 
+   menu = GTK_MENU (widget);
++  priv = gtk_menu_get_private (menu);
+   
+   GTK_WIDGET_SET_FLAGS (widget, GTK_REALIZED);
+   
+@@ -1558,6 +1932,45 @@
+ 
+   gdk_window_show (menu->bin_window);
+   gdk_window_show (menu->view_window);
++
++  /* Drop shadow */
++
++  gtk_window_get_position (gtk_widget_get_toplevel (widget), &tlx, &tly);
++ 
++  /* The West drop shadow window */
++  attributes.x = tlx - 16;
++  attributes.y = tly;
++  attributes.width = 16;
++  attributes.height = widget->allocation.height;
++  attributes.window_type = GDK_WINDOW_TEMP;
++  attributes.override_redirect = TRUE;
++
++  attributes_mask |= GDK_WA_NOREDIR;
++ 
++  priv->west_shadow = gdk_window_new (NULL, &attributes, attributes_mask);
++  gdk_window_set_user_data (priv->west_shadow, menu);
++ 
++  /* East drop shadow */
++  attributes.x = tlx + widget->allocation.width;
++  attributes.y = tly;
++  attributes.width = 16;
++  attributes.height = widget->allocation.height;
++
++  priv->east_shadow = gdk_window_new (NULL, &attributes, attributes_mask);
++  gdk_window_set_user_data (priv->east_shadow, menu);
++ 
++  /* South drop shadow */
++  attributes.x = tlx - 16;
++  attributes.y = tly + widget->allocation.height;
++  attributes.width = widget->allocation.width + 32;
++  attributes.height = 16;
++
++  priv->south_shadow = gdk_window_new (NULL, &attributes, attributes_mask);
++  gdk_window_set_user_data (priv->south_shadow, menu);
++
++  gdk_window_set_back_pixmap (priv->west_shadow, NULL, FALSE);
++  gdk_window_set_back_pixmap (priv->east_shadow, NULL, FALSE);
++  gdk_window_set_back_pixmap (priv->south_shadow, NULL, FALSE);
+ }
+ 
+ static gboolean 
+@@ -1620,10 +2033,12 @@
+ gtk_menu_unrealize (GtkWidget *widget)
+ {
+   GtkMenu *menu;
++  GtkMenuPrivate *priv;
+ 
+   g_return_if_fail (GTK_IS_MENU (widget));
+ 
+   menu = GTK_MENU (widget);
++  priv = gtk_menu_get_private (menu);
+ 
+   menu_grab_transfer_window_destroy (menu);
+ 
+@@ -1635,6 +2050,11 @@
+   gdk_window_destroy (menu->bin_window);
+   menu->bin_window = NULL;
+ 
++  /* Shadows */
++  gdk_window_destroy (priv->west_shadow);
++  gdk_window_destroy (priv->east_shadow);
++  gdk_window_destroy (priv->south_shadow);
++ 
+   (* GTK_WIDGET_CLASS (parent_class)->unrealize) (widget);
+ }
+ 
+@@ -1744,6 +2164,8 @@
+   
+   if (GTK_WIDGET_REALIZED (widget))
+     {
++      GtkMenuPrivate *priv = gtk_menu_get_private (menu);
++     
+       gdk_window_move_resize (widget->window,
+ 			      allocation->x, allocation->y,
+ 			      allocation->width, allocation->height);
+@@ -1753,6 +2175,10 @@
+ 			      y,
+ 			      width,
+ 			      height);
++
++      gdk_window_resize (priv->west_shadow, 16, allocation->height);
++      gdk_window_resize (priv->east_shadow, 16, allocation->height);
++      gdk_window_resize (priv->south_shadow, 32 + allocation->width, 16);
+     }
+ 
+   if (menu_shell->children)
+@@ -1908,6 +2334,61 @@
+ 			   MENU_SCROLL_ARROW_HEIGHT - 2 * border_y - 2,
+ 			   MENU_SCROLL_ARROW_HEIGHT - 2 * border_y - 2);
+ 	}
++    } else {
++      int width, height;
++      GdkGC *gc = widget->style->black_gc;
++      GtkMenuPrivate *priv = gtk_menu_get_private (menu);
++
++      if (event->window == priv->west_shadow) {
++       if (priv->west == NULL)
++         return;
++      
++       gdk_gc_set_clip_rectangle (gc, &event->area);
++
++       width = gdk_pixbuf_get_width (priv->west);
++       height = gdk_pixbuf_get_height (priv->west);
++
++       gdk_draw_pixbuf (priv->west_shadow, gc, priv->west, 0, 0, 0, 0,
++                        width, height, GDK_RGB_DITHER_NONE, 0, 0);
++
++       gdk_gc_set_clip_rectangle (gc, NULL);
++
++       return;
++      }
++     
++      if (event->window == priv->east_shadow) {
++       if (priv->east == NULL)
++         return;
++      
++       gdk_gc_set_clip_rectangle (gc, &event->area);
++
++       width = gdk_pixbuf_get_width (priv->east);
++       height = gdk_pixbuf_get_height (priv->east);
++      
++       gdk_draw_pixbuf (priv->east_shadow, gc, priv->east, 0, 0, 0, 0,
++                        width, height, GDK_RGB_DITHER_NONE, 0, 0);
++
++       gdk_gc_set_clip_rectangle (gc, NULL);
++       return;
++      }
++      
++      if (event->window == priv->south_shadow) {
++       if (priv->south == NULL)
++         return;
++      
++       gdk_gc_set_clip_rectangle (gc, &event->area);
++
++       width = gdk_pixbuf_get_width (priv->south);
++       height = gdk_pixbuf_get_height (priv->south);
++
++       gdk_draw_pixbuf (priv->south_shadow, gc, priv->south, 0, 0, 0, 0,
++                        width, height, GDK_RGB_DITHER_NONE, 0, 0);
++
++       gdk_gc_set_clip_rectangle (gc, NULL);
++      
++       return;
++      }
++
+     }
+ }
+ 
