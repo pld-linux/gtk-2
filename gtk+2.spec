@@ -1,8 +1,8 @@
 #
 # Conditional build:
-%bcond_without 	doc	# disable gtk-doc
-%bcond_with	xlibs	# use pkgconfig to find libX11
-%bcond_with	debug
+%bcond_without 	doc		# disable gtk-doc
+%bcond_without	menushadow	# disable menu shadow feature
+%bcond_with	xlibs		# use pkgconfig to find libX11
 #
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
@@ -13,13 +13,13 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.6.4
+Version:	2.6.5
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.6/gtk+-%{version}.tar.bz2
-# Source0-md5:	4749fce7b082b784a71a076aa586dc25
+# Source0-md5:	3f52f64bdbd132eccfee2de5d2124190
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-menushadow.patch
 Patch2:		%{name}-xlibs.patch
@@ -45,11 +45,11 @@ BuildRequires:	libxslt-progs
 BuildRequires:	pango-devel >= 1:1.8.0
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
-BuildRequires:	rpmbuild(macros) >= 1.98
+BuildRequires:	rpmbuild(macros) >= 1.197
 BuildRequires:	xcursor-devel
 Requires(post,postun):	/sbin/ldconfig
 Requires:	atk >= 1.8.0
-Requires:	glib2 >= 1:2.6.3
+Requires:	glib2 >= 1:2.6.4
 Requires:	pango >= 1:1.8.0
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
@@ -140,27 +140,26 @@ Biblioteki statyczne GTK+
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
-%patch1 -p1
+%{?with_menushadow:%patch1 -p1}
 %{?with_xlibs:%patch2 -p1}
 
 %build
-gtkdocize --copy
+%{__gtkdocize}
 %{__libtoolize}
-glib-gettextize --copy --force
+%{__glib_gettextize}
 %{__aclocal}
 %{__autoheader}
 %{__autoconf}
 %{__automake}
 %configure \
-	--enable-static \
+	%{?debug:--enable-debug=yes} \
 	%{?with_doc:--enable-gtk-doc} \
+	--enable-man \
 	--enable-shm \
-	--enable-xim \
-	--with-xinput=xfree \
+	--enable-static \
 	--with-gdktarget=x11 \
 	--with-html-dir=%{_gtkdocdir} \
-	--enable-debug=%{?with_debug:yes}%{?without_debug:minium} \
-	--enable-man
+	--with-xinput=yes
 %{__make}
 
 %install
@@ -196,14 +195,14 @@ rm -r $RPM_BUILD_ROOT%{_datadir}/locale/no
 rm -rf $RPM_BUILD_ROOT
 
 %post
+%ldconfig_post
 umask 022
-/sbin/ldconfig
 %{_bindir}/gdk-pixbuf-query-loaders >%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
 %{_bindir}/gtk-query-immodules-2.0 >%{_sysconfdir}/gtk-2.0/gtk.immodules
 exit 0
 
 %postun
-/sbin/ldconfig
+%ldconfig_postun
 if [ "$1" != "0" ]; then
 	umask 022
 	%{_bindir}/gdk-pixbuf-query-loaders >%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
