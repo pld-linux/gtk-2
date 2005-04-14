@@ -1,6 +1,6 @@
 #
 # Conditional build:
-%bcond_without 	doc		# disable gtk-doc
+%bcond_without	doc		# disable gtk-doc
 %bcond_without	menushadow	# disable menu shadow feature
 %bcond_with	xlibs		# use pkgconfig to find libX11
 #
