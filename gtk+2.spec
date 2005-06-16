@@ -2,6 +2,7 @@
 # Conditional build:
 %bcond_without	doc		# disable gtk-doc
 %bcond_without	menushadow	# disable menu shadow feature
+%bcond_without	static_libs	# don't build static libarary
 %bcond_with	xlibs		# use pkgconfig to find libX11
 #
 Summary:	The Gimp Toolkit
@@ -159,7 +160,8 @@ Biblioteki statyczne GTK+
 	--enable-static \
 	--with-gdktarget=x11 \
 	--with-html-dir=%{_gtkdocdir} \
-	--with-xinput=yes
+	--with-xinput=yes \
+	%{!?with_static_libs:--disable-static}
 %{__make}
 
 %install
@@ -257,6 +259,8 @@ exit 0
 %{?with_doc:%{_gtkdocdir}/*}
 %{_examplesdir}/%{name}-%{version}
 
+%if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
+%endif
