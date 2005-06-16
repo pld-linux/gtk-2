@@ -2,7 +2,7 @@
 # Conditional build:
 %bcond_without	doc		# disable gtk-doc
 %bcond_without	menushadow	# disable menu shadow feature
-%bcond_without	static_libs	# don't build static libarary
+%bcond_without	static_libs	# don't build static library
 %bcond_with	xlibs		# use pkgconfig to find libX11
 #
 Summary:	The Gimp Toolkit
