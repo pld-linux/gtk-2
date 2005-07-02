@@ -1,7 +1,6 @@
 #
 # Conditional build:
 %bcond_without	doc		# disable gtk-doc
-%bcond_without	menushadow	# disable menu shadow feature
 %bcond_without	static_libs	# don't build static library
 %bcond_with	xlibs		# use pkgconfig to find libX11
 #
@@ -14,16 +13,15 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.6.8
+Version:	2.7.1
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.6/gtk+-%{version}.tar.bz2
-# Source0-md5:	535fa4b62d219445b99953f679b5cf8e
+Source0:	ftp://ftp.gtk.org/pub/gtk/v2.7/gtk+-%{version}.tar.bz2
+# Source0-md5:	d05a9a5b2db06960ebcc4031f9f16fa3
 Patch0:		%{name}-insensitive-iain.patch
-Patch1:		%{name}-menushadow.patch
-Patch2:		%{name}-xlibs.patch
+Patch1:		%{name}-xlibs.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 %{!?with_xlibs:BuildRequires:	X11-devel >= 1:6.8.0}
@@ -33,7 +31,7 @@ BuildRequires:	automake >= 1:1.7
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.6.3
+BuildRequires:	glib2-devel >= 1:2.7.1
 %{?with_doc:BuildRequires:	gtk-doc >= 1.0}
 %{?with_xlibs:BuildRequires:	libXfixes-devel}
 %{?with_xlibs:BuildRequires:	libXi-devel}
@@ -43,15 +41,15 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs
 BuildRequires:	libxslt-progs
-BuildRequires:	pango-devel >= 1:1.8.0
+BuildRequires:	pango-devel >= 1:1.9.0
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.197
 BuildRequires:	xcursor-devel
 Requires(post,postun):	/sbin/ldconfig
 Requires:	atk >= 1.8.0
-Requires:	glib2 >= 1:2.6.4
-Requires:	pango >= 1:1.8.0
+Requires:	glib2 >= 1:2.7.1
+Requires:	pango >= 1:1.9.0
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -141,8 +139,7 @@ Biblioteki statyczne GTK+
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
-%{?with_menushadow:%patch1 -p1}
-%{?with_xlibs:%patch2 -p1}
+%{?with_xlibs:%patch1 -p1}
 
 %build
 %{__gtkdocize}
