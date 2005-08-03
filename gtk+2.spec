@@ -13,13 +13,13 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.7.4
+Version:	2.7.5
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.7/gtk+-%{version}.tar.bz2
-# Source0-md5:	1a121264a4ba2e208c025d9eb0515d41
+# Source0-md5:	dbadc6e9272ed64fd321194089cc52cd
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-xlibs.patch
 URL:		http://www.gtk.org/
@@ -243,6 +243,9 @@ exit 0
 %dir %{_datadir}/themes/Emacs
 %dir %{_datadir}/themes/Emacs/gtk-*
 %{_datadir}/themes/Emacs/gtk-*/gtkrc
+%dir %{_datadir}/themes/Raleigh
+%dir %{_datadir}/themes/Raleigh/gtk-*
+%{_datadir}/themes/Raleigh/gtk-*/gtkrc
 
 %files devel
 %defattr(644,root,root,755)
