@@ -1,0 +1,37 @@
+diff -aurN gtk+-2.6.9.orig/gtk/gtkmenu.c gtk+-2.6.9/gtk/gtkmenu.c
+--- gtk+-2.6.9.orig/gtk/gtkmenu.c	2005-06-27 19:39:34.000000000 +0200
++++ gtk+-2.6.9/gtk/gtkmenu.c	2005-08-08 23:40:22.000000000 +0200
+@@ -174,8 +174,6 @@
+ 					    GdkEventCrossing *event);
+ static void     gtk_menu_scroll_to         (GtkMenu          *menu,
+ 					    gint              offset);
+-static void     gtk_menu_grab_notify       (GtkWidget        *widget,
+-					    gboolean          was_grabbed);
+ 
+ static void     gtk_menu_stop_scrolling        (GtkMenu  *menu);
+ static void     gtk_menu_remove_scroll_timeout (GtkMenu  *menu);
+@@ -502,7 +500,6 @@
+   widget_class->style_set = gtk_menu_style_set;
+   widget_class->focus = gtk_menu_focus;
+   widget_class->can_activate_accel = gtk_menu_real_can_activate_accel;
+-  widget_class->grab_notify = gtk_menu_grab_notify;
+ 
+   container_class->remove = gtk_menu_remove;
+   container_class->get_child_property = gtk_menu_get_child_property;
+@@ -4381,16 +4378,5 @@
+   return list;
+ }
+ 
+-static void
+-gtk_menu_grab_notify (GtkWidget *widget,
+-		      gboolean   was_grabbed)
+-{
+-  if (!was_grabbed)
+-    {
+-      if (!GTK_IS_MENU (gtk_grab_get_current ()))
+-	gtk_menu_shell_cancel (GTK_MENU_SHELL (widget));
+-    }
+-}
+-
+ #define __GTK_MENU_C__
+ #include "gtkaliasdef.c"
