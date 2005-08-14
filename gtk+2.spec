@@ -13,13 +13,13 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.7.5
+Version:	2.8.0
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
-Source0:	ftp://ftp.gtk.org/pub/gtk/v2.7/gtk+-%{version}.tar.bz2
-# Source0-md5:	dbadc6e9272ed64fd321194089cc52cd
+Source0:	ftp://ftp.gtk.org/pub/gtk/v2.8/gtk+-%{version}.tar.bz2
+# Source0-md5:	e169d35239bf9d23bdd84c473e3c4917
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-xlibs.patch
 URL:		http://www.gtk.org/
@@ -28,7 +28,7 @@ Icon:		gtk+.xpm
 BuildRequires:	atk-devel >= 1.8.0
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
-BuildRequires:	cairo-devel >= 0.5.2
+BuildRequires:	cairo-devel >= 0.9.2
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
@@ -42,16 +42,16 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs
 BuildRequires:	libxslt-progs
-BuildRequires:	pango-devel > 1:1.9.0
+BuildRequires:	pango-devel >= 1:1.9.1
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.197
 BuildRequires:	xcursor-devel
 Requires(post,postun):	/sbin/ldconfig
 Requires:	atk >= 1.8.0
-Requires:	cairo >= 0.5.2
+Requires:	cairo >= 0.9.2
 Requires:	glib2 >= 1:2.7.1
-Requires:	pango > 1:1.9.0
+Requires:	pango >= 1:1.9.1
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -116,7 +116,7 @@ Requires:	glib2-devel >= 1:2.6.3
 Requires:	gtk-doc-common
 %{?with_xlibs:Requires:	libXfixes-devel}
 %{?with_xlibs:Requires:	libXi-devel}
-Requires:	pango-devel >= 1:1.8.0
+Requires:	pango-devel >= 1:1.9.1
 Requires:	xcursor-devel
 Obsoletes:	gtk2-devel
 
