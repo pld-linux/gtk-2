@@ -22,6 +22,8 @@ Source0:	ftp://ftp.gtk.org/pub/gtk/v2.8/gtk+-%{version}.tar.bz2
 # Source0-md5:	e169d35239bf9d23bdd84c473e3c4917
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-xlibs.patch
+# from CVS, should disapear in the next version
+Patch2:		%{name}-colormap.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 %{!?with_xlibs:BuildRequires:	X11-devel >= 1:6.8.0}
@@ -142,6 +144,7 @@ Biblioteki statyczne GTK+
 %setup -q -n gtk+-%{version}
 %patch0 -p1
 %{?with_xlibs:%patch1 -p1}
+%patch2 -p0
 
 %build
 %{__gtkdocize}
