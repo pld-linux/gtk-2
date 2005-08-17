@@ -34,7 +34,7 @@ BuildRequires:	cairo-devel >= 0.9.2
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.7.1
+BuildRequires:	glib2-devel >= 1:2.8.0
 %{?with_doc:BuildRequires:	gtk-doc >= 1.0}
 %{?with_xlibs:BuildRequires:	libXfixes-devel}
 %{?with_xlibs:BuildRequires:	libXi-devel}
@@ -44,7 +44,7 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs
 BuildRequires:	libxslt-progs
-BuildRequires:	pango-devel >= 1:1.9.1
+BuildRequires:	pango-devel >= 1:1.10.0
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.197
@@ -52,8 +52,8 @@ BuildRequires:	xcursor-devel
 Requires(post,postun):	/sbin/ldconfig
 Requires:	atk >= 1.8.0
 Requires:	cairo >= 0.9.2
-Requires:	glib2 >= 1:2.7.1
-Requires:	pango >= 1:1.9.1
+Requires:	glib2 >= 1:2.8.0
+Requires:	pango >= 1:1.10.0
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -114,11 +114,11 @@ Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 %{!?with_xlibs:Requires:	X11-devel >= 1:6.8.0}
 Requires:	atk-devel >= 1.8.0
-Requires:	glib2-devel >= 1:2.6.3
+Requires:	glib2-devel >= 1:2.8.0
 Requires:	gtk-doc-common
 %{?with_xlibs:Requires:	libXfixes-devel}
 %{?with_xlibs:Requires:	libXi-devel}
-Requires:	pango-devel >= 1:1.9.1
+Requires:	pango-devel >= 1:1.10.0
 Requires:	xcursor-devel
 Obsoletes:	gtk2-devel
 
