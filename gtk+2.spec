@@ -13,17 +13,16 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.8.0
+Version:	2.8.1
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.8/gtk+-%{version}.tar.bz2
-# Source0-md5:	e169d35239bf9d23bdd84c473e3c4917
+# Source0-md5:	62ffb0e555dcc4eee3eba5e3214897e3
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-xlibs.patch
 # from CVS, should disapear in the next version
-Patch2:		%{name}-colormap.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 %{!?with_xlibs:BuildRequires:	X11-devel >= 1:6.8.0}
@@ -34,7 +33,7 @@ BuildRequires:	cairo-devel >= 0.9.2
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.8.0
+BuildRequires:	glib2-devel >= 1:2.8.1
 %{?with_doc:BuildRequires:	gtk-doc >= 1.0}
 %{?with_xlibs:BuildRequires:	libXfixes-devel}
 %{?with_xlibs:BuildRequires:	libXi-devel}
@@ -144,7 +143,6 @@ Biblioteki statyczne GTK+
 %setup -q -n gtk+-%{version}
 %patch0 -p1
 %{?with_xlibs:%patch1 -p1}
-%patch2 -p0
 
 %build
 %{__gtkdocize}
