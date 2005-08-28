@@ -14,17 +14,16 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.6.9
-Release:	2
+Version:	2.6.10
+Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.6/gtk+-%{version}.tar.bz2
-# Source0-md5:	26c3a0bea55353eed63348fb7be4153a
+# Source0-md5:	520090ef291e35ba93397060e20f5025
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-menushadow.patch
 Patch2:		%{name}-xlibs.patch
-Patch3:		%{name}-bug312710.patch
 URL:		http://www.gtk.org/
 Icon:		gtk+.xpm
 %{!?with_xlibs:BuildRequires:	X11-devel >= 1:6.8.0}
@@ -144,7 +143,6 @@ Biblioteki statyczne GTK+
 %patch0 -p1
 %{?with_menushadow:%patch1 -p1}
 %{?with_xlibs:%patch2 -p1}
-%patch3 -p1
 
 %build
 %{__gtkdocize}
