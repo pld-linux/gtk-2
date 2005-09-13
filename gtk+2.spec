@@ -55,6 +55,8 @@ Requires:	glib2 >= 1:2.8.0
 Requires:	pango >= 1:1.10.0
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
+# autopanog.exe crashes with gtk+2 2.8.x and libgdiplus 1.1.8
+Conflicts:	libgdiplus < 1.1.9
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
