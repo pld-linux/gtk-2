@@ -160,7 +160,7 @@ Biblioteki statyczne GTK+
 	--%{?with_apidocs:en}%{!?with_apidocs:dis}able-gtk-doc \
 	--enable-man \
 	--enable-shm \
-	--%{?with_static:en}%{!?with_static:dis}able-static \
+	--%{?with_static_libs:en}%{!?with_static_libs:dis}able-static \
 	--with-gdktarget=x11 \
 	%{?with_apidocs:--with-html-dir=%{_gtkdocdir}} \
 	--with-xinput=yes 
