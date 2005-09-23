@@ -1,6 +1,6 @@
 #
 # Conditional build:
-%bcond_without	doc		# disable gtk-doc
+%bcond_without	apidocs		# disable gtk-doc
 %bcond_without	static_libs	# don't build static library
 %bcond_with	xlibs		# use pkgconfig to find libX11
 #
@@ -34,7 +34,7 @@ BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.8.1
-%{?with_doc:BuildRequires:	gtk-doc >= 1.0}
+%{?with_apidocs:BuildRequires:	gtk-doc >= 1.0}
 %{?with_xlibs:BuildRequires:	libXfixes-devel}
 %{?with_xlibs:BuildRequires:	libXi-devel}
 BuildRequires:	libjpeg-devel
@@ -156,14 +156,13 @@ Biblioteki statyczne GTK+
 %{__automake}
 %configure \
 	%{?debug:--enable-debug=yes} \
-	%{?with_doc:--enable-gtk-doc} \
+	--%{?with_apidocs:en}%{!?with_apidocs:dis}nable-gtk-doc \
 	--enable-man \
 	--enable-shm \
-	--enable-static \
+	--%{?with_static:en}%{!?with_static:dis}able-static \
 	--with-gdktarget=x11 \
-	--with-html-dir=%{_gtkdocdir} \
-	--with-xinput=yes \
-	%{!?with_static_libs:--disable-static}
+	%{?with_apidocs:--with-html-dir=%{_gtkdocdir}} \
+	--with-xinput=yes 
 %{__make}
 
 %install
@@ -261,7 +260,7 @@ exit 0
 %{_libdir}/gtk-*/include
 %{_pkgconfigdir}/*.pc
 %{_mandir}/man1/*
-%{?with_doc:%{_gtkdocdir}/*}
+%{?with_apidocs:%{_gtkdocdir}/*}
 %{_examplesdir}/%{name}-%{version}
 
 %if %{with static_libs}
