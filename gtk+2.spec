@@ -147,7 +147,7 @@ Biblioteki statyczne GTK+
 %{?with_xlibs:%patch1 -p1}
 
 %build
-%{__gtkdocize}
+%{?with_apidocs:%{__gtkdocize}}
 %{__libtoolize}
 %{__glib_gettextize}
 %{__aclocal}
