@@ -35,6 +35,7 @@ BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.8.1
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.0}
+BuildRequires:	gtk-doc-automake >= 1.0
 %{?with_xlibs:BuildRequires:	libXfixes-devel}
 %{?with_xlibs:BuildRequires:	libXi-devel}
 BuildRequires:	libjpeg-devel
@@ -156,7 +157,7 @@ Biblioteki statyczne GTK+
 %{__automake}
 %configure \
 	%{?debug:--enable-debug=yes} \
-	--%{?with_apidocs:en}%{!?with_apidocs:dis}nable-gtk-doc \
+	--%{?with_apidocs:en}%{!?with_apidocs:dis}able-gtk-doc \
 	--enable-man \
 	--enable-shm \
 	--%{?with_static:en}%{!?with_static:dis}able-static \
