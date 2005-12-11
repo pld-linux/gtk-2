@@ -1,0 +1,11 @@
+--- gtk+-2.8.8/po/pl.po~	2005-11-28 18:03:19.000000000 +0100
++++ gtk+-2.8.8/po/pl.po	2005-12-11 15:51:15.000000000 +0100
+@@ -1241,7 +1241,7 @@
+ #: gtk/gtkcellrendererprogress.c:237 gtk/gtkcellrendererprogress.c:295
+ #, c-format
+ msgid "progress bar label|%d %%"
+-msgstr "progress bar label|%d %%"
++msgstr "%d %%"
+ 
+ #: gtk/gtkcolorbutton.c:221 gtk/gtkcolorbutton.c:578
+ msgid "Pick a Color"
