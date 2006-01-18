@@ -14,7 +14,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.8.10
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
@@ -143,6 +143,30 @@ GTK+ static libraries.
 %description static -l pl
 Biblioteki statyczne GTK+
 
+%package apidocs
+Summary:	GTK+ API documentation
+Summary(pl):	Dokumentacja API GTK+
+Group:		Documentation
+Requires:	gtk-doc-common
+
+%description apidocs
+GTK+ API documentation.
+
+%description apidocs -l pl
+Dokumentacja API GTK+.
+
+%package examples
+Summary:	GTK+ - example programs                                                                                  
+Summary(pl):	GTK+ - programy przyk³adowe                                                                              
+Group:		X11/Development/Libraries                                                                               
+Requires:	%{name}-devel = %{version}-%{release}
+
+%description examples
+GTK+ - example programs.
+
+%description examples -l pl
+GTK+ - przyk³adowe programy.
+
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
@@ -165,7 +189,7 @@ Biblioteki statyczne GTK+
 	--%{?with_static_libs:en}%{!?with_static_libs:dis}able-static \
 	--with-gdktarget=x11 \
 	%{?with_apidocs:--with-html-dir=%{_gtkdocdir}} \
-	--with-xinput=yes 
+	--with-xinput=yes
 %{__make}
 
 %install
@@ -263,11 +287,19 @@ exit 0
 %{_libdir}/gtk-*/include
 %{_pkgconfigdir}/*.pc
 %{_mandir}/man1/*
-%{?with_apidocs:%{_gtkdocdir}/*}
-%{_examplesdir}/%{name}-%{version}
 
 %if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
 %endif
+
+%if %{with apidocs}
+%files apidocs
+%defattr(644,root,root,755)
+%{_gtkdocdir}/*
+%endif
+
+%files examples
+%defattr(644,root,root,755)
+%{_examplesdir}/%{name}-%{version}
