@@ -25,7 +25,6 @@ Patch1:		%{name}-xlibs.patch
 # from CVS, should disapear in the next version
 Patch2:		%{name}-pl.po.patch
 URL:		http://www.gtk.org/
-Icon:		gtk+.xpm
 %{!?with_xlibs:BuildRequires:	X11-devel >= 1:6.8.0}
 BuildRequires:	atk-devel >= 1.8.0
 BuildRequires:	autoconf >= 2.54
