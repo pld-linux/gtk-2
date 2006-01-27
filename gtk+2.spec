@@ -13,13 +13,13 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.8.10
-Release:	3
+Version:	2.8.11
+Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.8/gtk+-%{version}.tar.bz2
-# Source0-md5:	c2c0318d4dcd64315486850907b8e78d
+# Source0-md5:	921ba85da341e52f0994f8fb569f1c61
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-xlibs.patch
 # from CVS, should disapear in the next version
