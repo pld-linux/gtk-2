@@ -14,7 +14,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.8.10
-Release:	2
+Release:	3
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
@@ -158,7 +158,7 @@ Dokumentacja API GTK+.
 Summary:	GTK+ - example programs                                                                                  
 Summary(pl):	GTK+ - programy przyk³adowe                                                                              
 Group:		X11/Development/Libraries                                                                               
-Requires:	%{name}-devel = %{version}-%{release}
+Requires:	%{name}-devel = %{epoch}:%{version}-%{release}
 
 %description examples
 GTK+ - example programs.
