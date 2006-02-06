@@ -2,7 +2,6 @@
 # Conditional build:
 %bcond_without	apidocs		# disable gtk-doc
 %bcond_without	static_libs	# don't build static library
-%bcond_with	xlibs		# use pkgconfig to find libX11
 #
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
@@ -14,18 +13,16 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.8.11
-Release:	1
+Release:	1.0
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.8/gtk+-%{version}.tar.bz2
 # Source0-md5:	921ba85da341e52f0994f8fb569f1c61
 Patch0:		%{name}-insensitive-iain.patch
-Patch1:		%{name}-xlibs.patch
 # from CVS, should disapear in the next version
-Patch2:		%{name}-pl.po.patch
+Patch1:		%{name}-pl.po.patch
 URL:		http://www.gtk.org/
-%{!?with_xlibs:BuildRequires:	X11-devel >= 1:6.8.0}
 BuildRequires:	atk-devel >= 1.8.0
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
@@ -36,8 +33,6 @@ BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.8.5
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.0}
 BuildRequires:	gtk-doc-automake >= 1.0
-%{?with_xlibs:BuildRequires:	libXfixes-devel}
-%{?with_xlibs:BuildRequires:	libXi-devel}
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
@@ -48,8 +43,13 @@ BuildRequires:	pango-devel >= 1:1.10.0
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.197
-BuildRequires:	xcursor-devel
-Requires(post,postun):	/sbin/ldconfig
+BuildRequires:	xorg-lib-libX11-devel
+BuildRequires:	xorg-lib-libXcursor-devel
+BuildRequires:	xorg-lib-libXext-devel
+BuildRequires:	xorg-lib-libXft-devel
+BuildRequires:	xorg-lib-libXinerama-devel
+BuildRequires:	xorg-lib-libXrandr-devel
+BuildRequires:	xorg-lib-libXrender-devel
 Requires:	atk >= 1.8.0
 Requires:	cairo >= 0.9.2
 Requires:	glib2 >= 1:2.8.5
@@ -114,14 +114,17 @@ Summary(pl):	Pliki nag³ówkowe i dokumentacja do GTK+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-%{!?with_xlibs:Requires:	X11-devel >= 1:6.8.0}
 Requires:	atk-devel >= 1.8.0
 Requires:	glib2-devel >= 1:2.8.0
 Requires:	gtk-doc-common
-%{?with_xlibs:Requires:	libXfixes-devel}
-%{?with_xlibs:Requires:	libXi-devel}
 Requires:	pango-devel >= 1:1.10.0
-Requires:	xcursor-devel
+Requires:	xorg-lib-libX11-devel
+Requires:	xorg-lib-libXcursor-devel
+Requires:	xorg-lib-libXext-devel
+Requires:	xorg-lib-libXft-devel
+Requires:	xorg-lib-libXinerama-devel
+Requires:	xorg-lib-libXrandr-devel
+Requires:	xorg-lib-libXrender-devel
 Obsoletes:	gtk2-devel
 
 %description devel
@@ -169,8 +172,7 @@ GTK+ - przyk³adowe programy.
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
-%{?with_xlibs:%patch1 -p1}
-%patch2 -p1
+%patch1 -p1
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
