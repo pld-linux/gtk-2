@@ -13,19 +13,19 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.8.9
-Release:	1
+Version:	2.8.11
+Release:	2
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.8/gtk+-%{version}.tar.bz2
-# Source0-md5:	e7a94132ae6353106c80cd4a1106a368
+# Source0-md5:	921ba85da341e52f0994f8fb569f1c61
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-xlibs.patch
 # from CVS, should disapear in the next version
 Patch2:		%{name}-pl.po.patch
+Patch3:		%{name}-cairo-repeat-pattern-workaround.diff
 URL:		http://www.gtk.org/
-Icon:		gtk+.xpm
 %{!?with_xlibs:BuildRequires:	X11-devel >= 1:6.8.0}
 BuildRequires:	atk-devel >= 1.8.0
 BuildRequires:	autoconf >= 2.54
@@ -34,7 +34,7 @@ BuildRequires:	cairo-devel >= 1.0.0
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.8.1
+BuildRequires:	glib2-devel >= 1:2.8.5
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.0}
 BuildRequires:	gtk-doc-automake >= 1.0
 %{?with_xlibs:BuildRequires:	libXfixes-devel}
@@ -53,7 +53,7 @@ BuildRequires:	xcursor-devel
 Requires(post,postun):	/sbin/ldconfig
 Requires:	atk >= 1.8.0
 Requires:	cairo >= 0.9.2
-Requires:	glib2 >= 1:2.8.0
+Requires:	glib2 >= 1:2.8.5
 Requires:	pango >= 1:1.10.0
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
@@ -143,11 +143,36 @@ GTK+ static libraries.
 %description static -l pl
 Biblioteki statyczne GTK+
 
+%package apidocs
+Summary:	GTK+ API documentation
+Summary(pl):	Dokumentacja API GTK+
+Group:		Documentation
+Requires:	gtk-doc-common
+
+%description apidocs
+GTK+ API documentation.
+
+%description apidocs -l pl
+Dokumentacja API GTK+.
+
+%package examples
+Summary:	GTK+ - example programs                                                                                  
+Summary(pl):	GTK+ - programy przyk³adowe                                                                              
+Group:		X11/Development/Libraries                                                                               
+Requires:	%{name}-devel = %{epoch}:%{version}-%{release}
+
+%description examples
+GTK+ - example programs.
+
+%description examples -l pl
+GTK+ - przyk³adowe programy.
+
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
 %{?with_xlibs:%patch1 -p1}
 %patch2 -p1
+%patch3 -p1
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
@@ -165,7 +190,7 @@ Biblioteki statyczne GTK+
 	--%{?with_static_libs:en}%{!?with_static_libs:dis}able-static \
 	--with-gdktarget=x11 \
 	%{?with_apidocs:--with-html-dir=%{_gtkdocdir}} \
-	--with-xinput=yes 
+	--with-xinput=yes
 %{__make}
 
 %install
@@ -263,11 +288,19 @@ exit 0
 %{_libdir}/gtk-*/include
 %{_pkgconfigdir}/*.pc
 %{_mandir}/man1/*
-%{?with_apidocs:%{_gtkdocdir}/*}
-%{_examplesdir}/%{name}-%{version}
 
 %if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
 %endif
+
+%if %{with apidocs}
+%files apidocs
+%defattr(644,root,root,755)
+%{_gtkdocdir}/*
+%endif
+
+%files examples
+%defattr(644,root,root,755)
+%{_examplesdir}/%{name}-%{version}
