@@ -24,6 +24,7 @@ Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-xlibs.patch
 # from CVS, should disapear in the next version
 Patch2:		%{name}-pl.po.patch
+Patch3:		%{name}-tree_selection_emit_changed.patch
 URL:		http://www.gtk.org/
 %{!?with_xlibs:BuildRequires:	X11-devel >= 1:6.8.0}
 BuildRequires:	atk-devel >= 1.8.0
@@ -171,6 +172,7 @@ GTK+ - przyk³adowe programy.
 %patch0 -p1
 %{?with_xlibs:%patch1 -p1}
 %patch2 -p1
+%patch3 -p1
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
