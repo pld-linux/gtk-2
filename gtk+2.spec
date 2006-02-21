@@ -3,6 +3,7 @@
 %bcond_without	apidocs		# disable gtk-doc
 %bcond_without	static_libs	# don't build static library
 %bcond_with	xlibs		# use pkgconfig to find libX11
+%bcond_with	arch_confdir	# build with architecture-dependant config dir
 #
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
@@ -25,6 +26,7 @@ Patch1:		%{name}-xlibs.patch
 # from CVS, should disapear in the next version
 Patch2:		%{name}-pl.po.patch
 Patch3:		%{name}-tree_selection_emit_changed.patch
+Patch4:		%{name}-arch_confdir.patch
 URL:		http://www.gtk.org/
 %{!?with_xlibs:BuildRequires:	X11-devel >= 1:6.8.0}
 BuildRequires:	atk-devel >= 1.8.0
@@ -60,6 +62,12 @@ Conflicts:	gtk2-engines < 1:2.2.0-6
 # autopanog.exe crashes with gtk+2 2.8.x and libgdiplus 1.1.8
 Conflicts:	libgdiplus < 1.1.9
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%if %{with arch_confdir}
+%define	_confdir_suf	-%{_target_cpu}
+%else
+%define	_confdir_suf	%{nil}
+%endif
 
 %description
 GTK+, which stands for the Gimp ToolKit, is a library for creating
@@ -173,6 +181,7 @@ GTK+ - przyk³adowe programy.
 %{?with_xlibs:%patch1 -p1}
 %patch2 -p1
 %patch3 -p1
+%{?with_arch_confdir:%patch4 -p1}
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
@@ -195,7 +204,7 @@ GTK+ - przyk³adowe programy.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk-2.0} \
+install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk-2.0%{_confdir_suf}} \
 	$RPM_BUILD_ROOT%{_libdir}/gtk-2.0/2.4.0/filesystems
 
 %{__make} install \
@@ -203,8 +212,8 @@ install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk
 	m4datadir=%{_aclocaldir} \
 	pkgconfigdir=%{_pkgconfigdir}
 
-touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
-touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gtk.immodules
+touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gdk-pixbuf.loaders
+touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gtk.immodules
 
 cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
@@ -228,23 +237,23 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /sbin/ldconfig
 umask 022
-%{_bindir}/gdk-pixbuf-query-loaders >%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
-%{_bindir}/gtk-query-immodules-2.0 >%{_sysconfdir}/gtk-2.0/gtk.immodules
+%{_bindir}/gdk-pixbuf-query-loaders >%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gdk-pixbuf.loaders
+%{_bindir}/gtk-query-immodules-2.0 >%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gtk.immodules
 exit 0
 
 %postun
 /sbin/ldconfig
 if [ "$1" != "0" ]; then
 	umask 022
-	%{_bindir}/gdk-pixbuf-query-loaders >%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
-	%{_bindir}/gtk-query-immodules-2.0 >%{_sysconfdir}/gtk-2.0/gtk.immodules
+	%{_bindir}/gdk-pixbuf-query-loaders >%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gdk-pixbuf.loaders
+	%{_bindir}/gtk-query-immodules-2.0 >%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gtk.immodules
 fi
 exit 0
 
 %triggerpostun -- gtk+2 < 2:2.4.0
 umask 022
-%{_bindir}/gdk-pixbuf-query-loaders >%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
-%{_bindir}/gtk-query-immodules-2.0 >%{_sysconfdir}/gtk-2.0/gtk.immodules
+%{_bindir}/gdk-pixbuf-query-loaders >%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gdk-pixbuf.loaders
+%{_bindir}/gtk-query-immodules-2.0 >%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gtk.immodules
 exit 0
 
 %files -f %{name}.lang
