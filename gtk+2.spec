@@ -164,9 +164,9 @@ GTK+ API documentation.
 Dokumentacja API GTK+.
 
 %package examples
-Summary:	GTK+ - example programs                                                                                  
-Summary(pl):	GTK+ - programy przyk³adowe                                                                              
-Group:		X11/Development/Libraries                                                                               
+Summary:	GTK+ - example programs
+Summary(pl):	GTK+ - programy przyk³adowe
+Group:		X11/Development/Libraries
 Requires:	%{name}-devel = %{epoch}:%{version}-%{release}
 
 %description examples
