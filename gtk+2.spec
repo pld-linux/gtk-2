@@ -21,10 +21,11 @@ Source0:	ftp://ftp.gtk.org/pub/gtk/v2.8/gtk+-%{version}.tar.bz2
 # Source0-md5:	6dea9b6f546bd858401729d12bbd5919
 Patch0:		%{name}-insensitive-iain.patch
 URL:		http://www.gtk.org/
-BuildRequires:	atk-devel >= 1.8.0
+BuildRequires:	X11-devel >= 1:6.8.0
+BuildRequires:	atk-devel >= 1.11.3
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
-BuildRequires:	cairo-devel >= 1.0.0
+BuildRequires:	cairo-devel >= 1.0.4
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
@@ -37,22 +38,14 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs
 BuildRequires:	libxslt-progs
-BuildRequires:	pango-devel >= 1:1.10.0
+BuildRequires:	pango-devel >= 1:1.12.0
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.197
-BuildRequires:	xorg-lib-libX11-devel
-BuildRequires:	xorg-lib-libXcursor-devel
-BuildRequires:	xorg-lib-libXext-devel
-BuildRequires:	xorg-lib-libXft-devel
-BuildRequires:	xorg-lib-libXi-devel
-BuildRequires:	xorg-lib-libXinerama-devel
-BuildRequires:	xorg-lib-libXrandr-devel
-BuildRequires:	xorg-lib-libXrender-devel
-Requires:	atk >= 1.8.0
-Requires:	cairo >= 0.9.2
+Requires:	atk >= 1.11.3
+Requires:	cairo >= 1.0.4
 Requires:	glib2 >= 1:2.10.1
-Requires:	pango >= 1:1.10.0
+Requires:	pango >= 1:1.12.0
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
 # autopanog.exe crashes with gtk+2 2.8.x and libgdiplus 1.1.8
@@ -113,18 +106,11 @@ Summary(pl):	Pliki nag³ówkowe i dokumentacja do GTK+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	atk-devel >= 1.8.0
-Requires:	glib2-devel >= 1:2.8.0
+Requires:	X11-devel >= 1:6.8.0
+Requires:	atk-devel >= 1.11.3
+Requires:	glib2-devel >= 1:2.10.1
 Requires:	gtk-doc-common
-Requires:	pango-devel >= 1:1.10.0
-Requires:	xorg-lib-libX11-devel
-Requires:	xorg-lib-libXcursor-devel
-Requires:	xorg-lib-libXext-devel
-Requires:	xorg-lib-libXft-devel
-Requires:	xorg-lib-libXi-devel
-Requires:	xorg-lib-libXinerama-devel
-Requires:	xorg-lib-libXrandr-devel
-Requires:	xorg-lib-libXrender-devel
+Requires:	pango-devel >= 1:1.12.0
 Obsoletes:	gtk2-devel
 
 %description devel
