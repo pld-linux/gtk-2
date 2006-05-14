@@ -14,19 +14,17 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.8.12
+Version:	2.8.17
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.8/gtk+-%{version}.tar.bz2
-# Source0-md5:	bdd3b950e4a3c65d61bceed9149888a9
+# Source0-md5:	6d2deb63a5444808d2aeb7dcfffaa2f4
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-xlibs.patch
-# from CVS, should disapear in the next version
-Patch2:		%{name}-pl.po.patch
-Patch3:		%{name}-tree_selection_emit_changed.patch
-Patch4:		%{name}-arch_confdir.patch
+Patch2:		%{name}-tree_selection_emit_changed.patch
+Patch3:		%{name}-arch_confdir.patch
 URL:		http://www.gtk.org/
 %{!?with_xlibs:BuildRequires:	X11-devel >= 1:6.8.0}
 BuildRequires:	atk-devel >= 1.8.0
@@ -36,7 +34,7 @@ BuildRequires:	cairo-devel >= 1.0.0
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.8.5
+BuildRequires:	glib2-devel >= 1:2.10.1
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.0}
 BuildRequires:	gtk-doc-automake >= 1.0
 %{?with_xlibs:BuildRequires:	libXfixes-devel}
@@ -55,7 +53,7 @@ BuildRequires:	xcursor-devel
 Requires(post,postun):	/sbin/ldconfig
 Requires:	atk >= 1.8.0
 Requires:	cairo >= 0.9.2
-Requires:	glib2 >= 1:2.8.5
+Requires:	glib2 >= 1:2.10.1
 Requires:	pango >= 1:1.10.0
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
@@ -180,8 +178,7 @@ GTK+ - przyk³adowe programy.
 %patch0 -p1
 %{?with_xlibs:%patch1 -p1}
 %patch2 -p1
-%patch3 -p1
-%{?with_arch_confdir:%patch4 -p1}
+%{?with_arch_confdir:%patch3 -p1}
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
