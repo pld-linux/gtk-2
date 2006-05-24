@@ -12,23 +12,24 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.8.17
+Version:	2.9.1
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
-Source0:	ftp://ftp.gtk.org/pub/gtk/v2.8/gtk+-%{version}.tar.bz2
-# Source0-md5:	6d2deb63a5444808d2aeb7dcfffaa2f4
+Source0:	ftp://ftp.gtk.org/pub/gtk/v2.9/gtk+-%{version}.tar.bz2
+# Source0-md5:	1bc1ae050239bab9b525e143c07d1e8f
 Patch0:		%{name}-insensitive-iain.patch
 URL:		http://www.gtk.org/
-BuildRequires:	atk-devel >= 1.8.0
+BuildRequires:	atk-devel >= 1.11.4
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
-BuildRequires:	cairo-devel >= 1.0.0
+BuildRequires:	cairo-devel >= 1.1.6
+BuildRequires:	cups-devel
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.10.1
+BuildRequires:	glib2-devel >= 1:2.11.1
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.0}
 BuildRequires:	gtk-doc-automake >= 1.0
 BuildRequires:	libjpeg-devel
@@ -37,7 +38,7 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs
 BuildRequires:	libxslt-progs
-BuildRequires:	pango-devel >= 1:1.10.0
+BuildRequires:	pango-devel >= 1:1.13.1
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.197
@@ -49,15 +50,17 @@ BuildRequires:	xorg-lib-libXi-devel
 BuildRequires:	xorg-lib-libXinerama-devel
 BuildRequires:	xorg-lib-libXrandr-devel
 BuildRequires:	xorg-lib-libXrender-devel
-Requires:	atk >= 1.8.0
-Requires:	cairo >= 0.9.2
-Requires:	glib2 >= 1:2.10.1
-Requires:	pango >= 1:1.10.0
+Requires:	atk >= 1.11.4
+Requires:	cairo >= 1.1.6
+Requires:	glib2 >= 1:2.11.1
+Requires:	pango >= 1:1.13.1
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
 # autopanog.exe crashes with gtk+2 2.8.x and libgdiplus 1.1.8
 Conflicts:	libgdiplus < 1.1.9
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define		abivers	2.10.0
 
 %description
 GTK+, which stands for the Gimp ToolKit, is a library for creating
@@ -113,10 +116,10 @@ Summary(pl):	Pliki nag³ówkowe i dokumentacja do GTK+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	atk-devel >= 1.8.0
-Requires:	glib2-devel >= 1:2.8.0
+Requires:	atk-devel >= 1.11.4
+Requires:	glib2-devel >= 1:2.11.1
 Requires:	gtk-doc-common
-Requires:	pango-devel >= 1:1.10.0
+Requires:	pango-devel >= 1:1.13.1
 Requires:	xorg-lib-libX11-devel
 Requires:	xorg-lib-libXcursor-devel
 Requires:	xorg-lib-libXext-devel
@@ -195,7 +198,7 @@ GTK+ - przyk³adowe programy.
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk-2.0} \
-	$RPM_BUILD_ROOT%{_libdir}/gtk-2.0/2.4.0/filesystems
+	$RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/filesystems
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -214,10 +217,8 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*/*/*.{a,la}
 
 # for various GTK+2 modules
 install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*)/modules
-# for GTK+2 theme engines
-install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*)/engines
 
-rm -r $RPM_BUILD_ROOT%{_datadir}/locale/no
+rm -r $RPM_BUILD_ROOT%{_datadir}/locale/zh_HK
 
 %find_lang %{name} --all-name
 
@@ -254,16 +255,20 @@ exit 0
 %attr(755,root,root) %{_bindir}/gtk-update-icon-cache
 %attr(755,root,root) %{_bindir}/gdk-pixbuf-query-loaders
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
+
 %dir %{_libdir}/gtk-*
 %dir %{_libdir}/gtk-*/modules
-%dir %{_libdir}/gtk-*/2.*
-%dir %{_libdir}/gtk-*/2.*/engines
-%attr(755,root,root) %{_libdir}/gtk-*/2.*/engines/libpixmap.so
-%dir %{_libdir}/gtk-*/2.*/filesystems
-%dir %{_libdir}/gtk-*/2.*/loaders
-%attr(755,root,root) %{_libdir}/gtk-*/2.*/loaders/*.so
-%dir %{_libdir}/gtk-*/2.*/immodules
-%attr(755,root,root) %{_libdir}/gtk-*/2.*/immodules/*.so
+%dir %{_libdir}/gtk-*/%{abivers}
+%dir %{_libdir}/gtk-*/%{abivers}/engines
+%dir %{_libdir}/gtk-*/%{abivers}/filesystems
+%dir %{_libdir}/gtk-*/%{abivers}/immodules
+%dir %{_libdir}/gtk-*/%{abivers}/loaders
+%dir %{_libdir}/gtk-*/%{abivers}/printbackends
+%attr(755,root,root) %{_libdir}/gtk-*/%{abivers}/engines/libpixmap.so
+%attr(755,root,root) %{_libdir}/gtk-*/%{abivers}/immodules/*.so
+%attr(755,root,root) %{_libdir}/gtk-*/%{abivers}/loaders/*.so
+%attr(755,root,root) %{_libdir}/gtk-*/%{abivers}/printbackends/*.so
+
 %{_datadir}/gtk-*
 %dir %{_sysconfdir}/gtk-*
 %ghost %{_sysconfdir}/gtk-*/*
