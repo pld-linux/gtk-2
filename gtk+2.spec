@@ -2,7 +2,6 @@
 # Conditional build:
 %bcond_without	apidocs		# disable gtk-doc
 %bcond_without	static_libs	# don't build static library
-%bcond_with	xlibs		# use pkgconfig to find libX11
 %bcond_with	arch_confdir	# build with architecture-dependant config dir
 #
 Summary:	The Gimp Toolkit
@@ -14,31 +13,28 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.8.17
+Version:	2.8.18
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.8/gtk+-%{version}.tar.bz2
-# Source0-md5:	6d2deb63a5444808d2aeb7dcfffaa2f4
+# Source0-md5:	0d27a026428732337676d47d22e5e23c
 Patch0:		%{name}-insensitive-iain.patch
-Patch1:		%{name}-xlibs.patch
-Patch2:		%{name}-tree_selection_emit_changed.patch
-Patch3:		%{name}-arch_confdir.patch
+Patch1:		%{name}-tree_selection_emit_changed.patch
+Patch2:		%{name}-arch_confdir.patch
 URL:		http://www.gtk.org/
-%{!?with_xlibs:BuildRequires:	X11-devel >= 1:6.8.0}
+BuildRequires:	X11-devel >= 1:6.8.0
 BuildRequires:	atk-devel >= 1.8.0
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
-BuildRequires:	cairo-devel >= 1.0.0
+BuildRequires:	cairo-devel >= 1.0.4
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.10.1
+BuildRequires:	glib2-devel >= 1:2.10.3
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.0}
 BuildRequires:	gtk-doc-automake >= 1.0
-%{?with_xlibs:BuildRequires:	libXfixes-devel}
-%{?with_xlibs:BuildRequires:	libXi-devel}
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
@@ -51,10 +47,10 @@ BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.197
 BuildRequires:	xcursor-devel
 Requires(post,postun):	/sbin/ldconfig
-Requires:	atk >= 1.8.0
-Requires:	cairo >= 0.9.2
-Requires:	glib2 >= 1:2.10.1
-Requires:	pango >= 1:1.10.0
+Requires:	atk >= 1.11.4
+Requires:	cairo >= 1.0.4
+Requires:	glib2 >= 1:2.10.3
+Requires:	pango >= 1:1.12.3
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
 # autopanog.exe crashes with gtk+2 2.8.x and libgdiplus 1.1.8
@@ -121,12 +117,10 @@ Summary(pl):	Pliki nag³ówkowe i dokumentacja do GTK+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-%{!?with_xlibs:Requires:	X11-devel >= 1:6.8.0}
-Requires:	atk-devel >= 1.8.0
-Requires:	glib2-devel >= 1:2.8.0
+Requires:	X11-devel >= 1:6.8.0
+Requires:	atk-devel >= 1.11.4
+Requires:	glib2-devel >= 1:2.10.3
 Requires:	gtk-doc-common
-%{?with_xlibs:Requires:	libXfixes-devel}
-%{?with_xlibs:Requires:	libXi-devel}
 Requires:	pango-devel >= 1:1.10.0
 Requires:	xcursor-devel
 Obsoletes:	gtk2-devel
@@ -176,9 +170,8 @@ GTK+ - przyk³adowe programy.
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
-%{?with_xlibs:%patch1 -p1}
-%patch2 -p1
-%{?with_arch_confdir:%patch3 -p1}
+%patch1 -p1
+%{?with_arch_confdir:%patch2 -p1}
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
