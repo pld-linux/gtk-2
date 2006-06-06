@@ -12,13 +12,13 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.9.1
+Version:	2.9.2
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.9/gtk+-%{version}.tar.bz2
-# Source0-md5:	1bc1ae050239bab9b525e143c07d1e8f
+# Source0-md5:	c63e7d0cf7c4e983206c3088a0fb8862
 Patch0:		%{name}-insensitive-iain.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1.11.4
@@ -29,7 +29,7 @@ BuildRequires:	cups-devel
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.11.1
+BuildRequires:	glib2-devel >= 1:2.11.2
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.0}
 BuildRequires:	gtk-doc-automake >= 1.0
 BuildRequires:	libjpeg-devel
@@ -52,7 +52,7 @@ BuildRequires:	xorg-lib-libXrandr-devel
 BuildRequires:	xorg-lib-libXrender-devel
 Requires:	atk >= 1.11.4
 Requires:	cairo >= 1.1.6
-Requires:	glib2 >= 1:2.11.1
+Requires:	glib2 >= 1:2.11.2
 Requires:	pango >= 1:1.13.1
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
