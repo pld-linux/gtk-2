@@ -1,0 +1,22 @@
+Index: gtk/gtkprintoperationpreview.c
+===================================================================
+RCS file: /cvs/gnome/gtk+/gtk/gtkprintoperationpreview.c,v
+retrieving revision 1.2
+diff -u -p -r1.2 gtkprintoperationpreview.c
+--- gtk/gtkprintoperationpreview.c	5 Jun 2006 18:39:20 -0000	1.2
++++ gtk/gtkprintoperationpreview.c	14 Jun 2006 16:49:54 -0000
+@@ -72,12 +72,12 @@ gtk_print_operation_preview_base_init (g
+ 		    NULL, NULL,
+ 		    g_cclosure_marshal_VOID__OBJECT,
+ 		    G_TYPE_NONE, 1,
+-		    G_TYPE_OBJECT);
++		    GTK_TYPE_PRINT_CONTEXT);
+ 
+       g_signal_new (I_("got-page-size"),
+ 		    GTK_TYPE_PRINT_OPERATION_PREVIEW,
+ 		    G_SIGNAL_RUN_LAST,
+-		    G_STRUCT_OFFSET (GtkPrintOperationPreviewIface, ready),
++		    G_STRUCT_OFFSET (GtkPrintOperationPreviewIface, got_page_size),
+ 		    NULL, NULL,
+ 		    _gtk_marshal_VOID__OBJECT_OBJECT,
+ 		    G_TYPE_NONE, 2,

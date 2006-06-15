@@ -1,0 +1,25 @@
+Index: gtk/gtkprintjob.h
+===================================================================
+RCS file: /cvs/gnome/gtk+/gtk/gtkprintjob.h,v
+retrieving revision 1.8
+diff -p -u -u -p -r1.8 gtkprintjob.h
+--- gtk/gtkprintjob.h	12 Jun 2006 16:47:41 -0000	1.8
++++ gtk/gtkprintjob.h	13 Jun 2006 14:19:32 -0000
+@@ -66,13 +66,13 @@ struct _GtkPrintJob
+   GtkPrintPages print_pages;
+   GtkPageRange *page_ranges;
+   gint num_page_ranges;
+-  gboolean rotate_to_orientation;
+   
+   GtkPageSet page_set;
+   gint num_copies;
+-  gboolean collate;
+-  gboolean reverse;
+-  gdouble scale;
++  double scale;
++  guint rotate_to_orientation : 1;
++  guint collate : 1;
++  guint reverse : 1;
+ };
+ 
+ struct _GtkPrintJobClass
