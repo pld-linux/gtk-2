@@ -12,23 +12,19 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.9.3
+Version:	2.9.4
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.9/gtk+-%{version}.tar.bz2
-# Source0-md5:	d73039a3b5847c352f5740ac908be7d2
+# Source0-md5:	c06cf2cfa66485600d90789c9e58f27c
 Patch0:		%{name}-insensitive-iain.patch
-Patch1:		%{name}-bug344743.patch
-Patch2:		%{name}-bug344765.patch
-Patch3:		%{name}-bug344867.patch
-Patch4:		%{name}-bug344891.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1.11.4
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
-BuildRequires:	cairo-devel >= 1.1.8
+BuildRequires:	cairo-devel >= 1.1.10
 BuildRequires:	cups-devel
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
@@ -55,8 +51,8 @@ BuildRequires:	xorg-lib-libXinerama-devel
 BuildRequires:	xorg-lib-libXrandr-devel
 BuildRequires:	xorg-lib-libXrender-devel
 Requires:	atk >= 1.11.4
-Requires:	cairo >= 1.1.8
-Requires:	glib2 >= 1:2.11.3
+Requires:	cairo >= 1.1.10
+Requires:	glib2 >= 1:2.11.4
 Requires:	pango >= 1:1.13.2
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
@@ -121,7 +117,7 @@ Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1.11.4
-Requires:	glib2-devel >= 1:2.11.3
+Requires:	glib2-devel >= 1:2.11.4
 Requires:	gtk-doc-common
 Requires:	pango-devel >= 1:1.13.2
 Requires:	xorg-lib-libX11-devel
@@ -179,10 +175,6 @@ GTK+ - przyk³adowe programy.
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
-%patch1 -p0
-%patch2 -p0
-%patch3 -p0
-%patch4 -p0
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
