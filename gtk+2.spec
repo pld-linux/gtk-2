@@ -12,24 +12,24 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.9.4
-Release:	2
+Version:	2.10.0
+Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
-Source0:	ftp://ftp.gtk.org/pub/gtk/v2.9/gtk+-%{version}.tar.bz2
-# Source0-md5:	c06cf2cfa66485600d90789c9e58f27c
+Source0:	ftp://ftp.gtk.org/pub/gtk/v2.10/gtk+-%{version}.tar.bz2
+# Source0-md5:	37cdf73719e8b2af6b0d065df6236542
 Patch0:		%{name}-insensitive-iain.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1.11.4
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
-BuildRequires:	cairo-devel >= 1.1.10
+BuildRequires:	cairo-devel >= 1.2.0
 BuildRequires:	cups-devel
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.11.3
+BuildRequires:	glib2-devel >= 1:2.12.0
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.6}
 BuildRequires:	gtk-doc-automake >= 1.6
 BuildRequires:	libjpeg-devel
@@ -51,8 +51,8 @@ BuildRequires:	xorg-lib-libXinerama-devel
 BuildRequires:	xorg-lib-libXrandr-devel
 BuildRequires:	xorg-lib-libXrender-devel
 Requires:	atk >= 1.11.4
-Requires:	cairo >= 1.1.10
-Requires:	glib2 >= 1:2.11.4
+Requires:	cairo >= 1.2.0
+Requires:	glib2 >= 1:2.12.0
 Requires:	pango >= 1:1.13.2
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
@@ -117,7 +117,7 @@ Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1.11.4
-Requires:	glib2-devel >= 1:2.11.4
+Requires:	glib2-devel >= 1:2.12.0
 Requires:	gtk-doc-common
 Requires:	pango-devel >= 1:1.13.2
 Requires:	xorg-lib-libX11-devel
