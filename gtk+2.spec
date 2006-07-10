@@ -13,7 +13,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.10.0
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
@@ -184,6 +184,7 @@ GTK+ - przyk³adowe programy.
 %{__autoheader}
 %{__autoconf}
 %{__automake}
+LDFLAGS="%{rpmldflags} -Wl,--as-needed"
 %configure \
 	%{?debug:--enable-debug=yes} \
 	--%{?with_apidocs:en}%{!?with_apidocs:dis}able-gtk-doc \
