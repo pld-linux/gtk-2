@@ -1,6 +1,7 @@
 #
 # Conditional build:
 %bcond_without	apidocs		# disable gtk-doc
+%bcond_without	cups		# disable CUPS support
 %bcond_without	static_libs	# don't build static library
 #
 Summary:	The Gimp Toolkit
@@ -25,7 +26,7 @@ BuildRequires:	atk-devel >= 1.11.4
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
 BuildRequires:	cairo-devel >= 1.2.0
-BuildRequires:	cups-devel
+%{?with_cups:BuildRequires:	cups-devel}
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
@@ -186,6 +187,7 @@ GTK+ - przyk³adowe programy.
 %{__automake}
 LDFLAGS="%{rpmldflags} -Wl,--as-needed"
 %configure \
+	%{!?with_cups:ac_cv_path_CUPS_CONFIG=no} \
 	%{?debug:--enable-debug=yes} \
 	--%{?with_apidocs:en}%{!?with_apidocs:dis}able-gtk-doc \
 	--enable-man \
