@@ -13,33 +13,33 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.10.1
-Release:	2
+Version:	2.10.2
+Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.10/gtk+-%{version}.tar.bz2
-# Source0-md5:	7f1d39031d50de8228211aa3230d4acd
+# Source0-md5:	9039804dfd115e40a70a6ba096f418a2
 Patch0:		%{name}-insensitive-iain.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1.12.1
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
-BuildRequires:	cairo-devel >= 1.2.0
+BuildRequires:	cairo-devel >= 1.2.2
 %{?with_cups:BuildRequires:	cups-devel}
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.12.1
-%{?with_apidocs:BuildRequires:	gtk-doc >= 1.6}
-BuildRequires:	gtk-doc-automake >= 1.6
+BuildRequires:	glib2-devel >= 1:2.12.2
+%{?with_apidocs:BuildRequires:	gtk-doc >= 1.7}
+BuildRequires:	gtk-doc-automake >= 1.7
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs >= 1:2.6.26
 BuildRequires:	libxslt-progs >= 1.1.17
-BuildRequires:	pango-devel >= 1:1.13.3
+BuildRequires:	pango-devel >= 1:1.14.0
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.197
@@ -52,9 +52,9 @@ BuildRequires:	xorg-lib-libXinerama-devel
 BuildRequires:	xorg-lib-libXrandr-devel
 BuildRequires:	xorg-lib-libXrender-devel
 Requires:	atk >= 1.12.1
-Requires:	cairo >= 1.2.0
-Requires:	glib2 >= 1:2.12.1
-Requires:	pango >= 1:1.13.3
+Requires:	cairo >= 1.2.2
+Requires:	glib2 >= 1:2.12.2
+Requires:	pango >= 1:1.14.0
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
 # autopanog.exe crashes with gtk+2 2.8.x and libgdiplus 1.1.8
@@ -118,9 +118,8 @@ Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1.12.1
-Requires:	glib2-devel >= 1:2.12.1
-Requires:	gtk-doc-common
-Requires:	pango-devel >= 1:1.13.3
+Requires:	glib2-devel >= 1:2.12.2
+Requires:	pango-devel >= 1:1.14.0
 Requires:	xorg-lib-libX11-devel
 Requires:	xorg-lib-libXcursor-devel
 Requires:	xorg-lib-libXext-devel
