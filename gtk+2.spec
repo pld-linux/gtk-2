@@ -13,13 +13,13 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.10.3
+Version:	2.10.4
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 Source0:	ftp://ftp.gtk.org/pub/gtk/v2.10/gtk+-%{version}.tar.bz2
-# Source0-md5:	c662ca204e204edfd8b8b917b9a852aa
+# Source0-md5:	ecfcbdc0d23eb7a596b1d58b48838b18
 Patch0:		%{name}-insensitive-iain.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1.12.2
@@ -39,7 +39,7 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs >= 1:2.6.26
 BuildRequires:	libxslt-progs >= 1.1.17
-BuildRequires:	pango-devel >= 1:1.14.3
+BuildRequires:	pango-devel >= 1:1.14.4
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.197
@@ -54,7 +54,7 @@ BuildRequires:	xorg-lib-libXrender-devel
 Requires:	atk >= 1.12.2
 Requires:	cairo >= 1.2.4
 Requires:	glib2 >= 1:2.12.3
-Requires:	pango >= 1:1.14.3
+Requires:	pango >= 1:1.14.4
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
 # autopanog.exe crashes with gtk+2 2.8.x and libgdiplus 1.1.8
@@ -119,7 +119,7 @@ Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1.12.2
 Requires:	glib2-devel >= 1:2.12.3
-Requires:	pango-devel >= 1:1.14.3
+Requires:	pango-devel >= 1:1.14.4
 Requires:	xorg-lib-libX11-devel
 Requires:	xorg-lib-libXcursor-devel
 Requires:	xorg-lib-libXext-devel
