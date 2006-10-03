@@ -24,7 +24,7 @@ Source0:	http://ftp.gnome.org/pub/gnome/sources/gtk+/2.10/gtk+-%{version}.tar.bz
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-build_fix.patch
 URL:		http://www.gtk.org/
-BuildRequires:	atk-devel >= 1.12.3
+BuildRequires:	atk-devel >= 1:1.12.3
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
 BuildRequires:	cairo-devel >= 1.2.4
@@ -53,7 +53,7 @@ BuildRequires:	xorg-lib-libXi-devel
 BuildRequires:	xorg-lib-libXinerama-devel
 BuildRequires:	xorg-lib-libXrandr-devel
 BuildRequires:	xorg-lib-libXrender-devel
-Requires:	atk >= 1.12.3
+Requires:	atk >= 1:1.12.3
 Requires:	cairo >= 1.2.4
 Requires:	glib2 >= 1:2.12.4
 Requires:	pango >= 1:1.14.4
@@ -119,7 +119,7 @@ Summary(pl):	Pliki nag³ówkowe i dokumentacja do GTK+
 Summary(tr):	GIMP araç takýmý ve çizim takýmý
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	atk-devel >= 1.12.3
+Requires:	atk-devel >= 1:1.12.3
 Requires:	glib2-devel >= 1:2.12.4
 Requires:	pango-devel >= 1:1.14.4
 Requires:	xorg-lib-libX11-devel
