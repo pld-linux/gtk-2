@@ -13,16 +13,15 @@ Summary(it):	Il toolkit per Gimp
 Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
-Version:	2.10.5
+Version:	2.10.6
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 #Source0:	ftp://ftp.gtk.org/pub/gtk/v2.10/gtk+-%{version}.tar.bz2
 Source0:	http://ftp.gnome.org/pub/gnome/sources/gtk+/2.10/gtk+-%{version}.tar.bz2
-# Source0-md5:	af15a744c3e90d41021a5d3c9f364ba2
+# Source0-md5:	13c62b610c910255934452d0617403f7
 Patch0:		%{name}-insensitive-iain.patch
-Patch1:		%{name}-build_fix.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.12.3
 BuildRequires:	autoconf >= 2.54
@@ -41,7 +40,7 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs >= 1:2.6.26
 BuildRequires:	libxslt-progs >= 1.1.17
-BuildRequires:	pango-devel >= 1:1.14.4
+BuildRequires:	pango-devel >= 1:1.14.5
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.197
@@ -56,7 +55,7 @@ BuildRequires:	xorg-lib-libXrender-devel
 Requires:	atk >= 1:1.12.3
 Requires:	cairo >= 1.2.4
 Requires:	glib2 >= 1:2.12.4
-Requires:	pango >= 1:1.14.4
+Requires:	pango >= 1:1.14.5
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
 # autopanog.exe crashes with gtk+2 2.8.x and libgdiplus 1.1.8
@@ -121,7 +120,7 @@ Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1:1.12.3
 Requires:	glib2-devel >= 1:2.12.4
-Requires:	pango-devel >= 1:1.14.4
+Requires:	pango-devel >= 1:1.14.5
 Requires:	xorg-lib-libX11-devel
 Requires:	xorg-lib-libXcursor-devel
 Requires:	xorg-lib-libXext-devel
@@ -177,7 +176,6 @@ GTK+ - przyk³adowe programy.
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
-%patch1 -p1
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
