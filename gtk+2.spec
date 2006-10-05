@@ -220,7 +220,7 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*/*/*.{a,la}
 # for various GTK+2 modules
 install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*)/modules
 
-rm -r $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,tk,uz@Latn}
+rm -r $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,uz@Latn}
 
 %find_lang %{name} --all-name
 
