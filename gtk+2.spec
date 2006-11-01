@@ -1,5 +1,6 @@
 #
 # Conditional build:
+%bcond_with	macmenu		# experimental mac/kde-like
 %bcond_without	apidocs		# disable gtk-doc
 %bcond_without	cups		# disable CUPS support
 %bcond_without	static_libs	# don't build static library
@@ -22,6 +23,7 @@ Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/gnome/sources/gtk+/2.10/gtk+-%{version}.tar.bz2
 # Source0-md5:	13c62b610c910255934452d0617403f7
 Patch0:		%{name}-insensitive-iain.patch
+Patch1:		%{name}-menu-mac.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.12.3
 BuildRequires:	autoconf >= 2.54
@@ -176,6 +178,7 @@ GTK+ - przyk³adowe programy.
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
+%{?with_macmenu:%patch1 -p0}
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
