@@ -6,13 +6,13 @@
 %bcond_without	static_libs	# don't build static library
 #
 Summary:	The Gimp Toolkit
-Summary(cs.UTF-8):   Sada nástrojů pro Gimp
-Summary(de.UTF-8):   Der Gimp-Toolkit
-Summary(fi.UTF-8):   Gimp-työkalukokoelma
-Summary(fr.UTF-8):   Le toolkit de Gimp
-Summary(it.UTF-8):   Il toolkit per Gimp
-Summary(pl.UTF-8):   Gimp Toolkit
-Summary(tr.UTF-8):   Gimp ToolKit arayüz kitaplığı
+Summary(cs.UTF-8):	Sada nástrojů pro Gimp
+Summary(de.UTF-8):	Der Gimp-Toolkit
+Summary(fi.UTF-8):	Gimp-työkalukokoelma
+Summary(fr.UTF-8):	Le toolkit de Gimp
+Summary(it.UTF-8):	Il toolkit per Gimp
+Summary(pl.UTF-8):	Gimp Toolkit
+Summary(tr.UTF-8):	Gimp ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.10.9
 Release:	2
@@ -111,14 +111,14 @@ programlarca da kullanılmaktadır.
 
 %package devel
 Summary:	GTK+ header files and development documentation
-Summary(cs.UTF-8):   Sada nástrojů GIMP a kreslící kit GIMP
-Summary(da.UTF-8):   GIMP Toolkit og GIMP Tegnings-værktøj
-Summary(de.UTF-8):   GIMP Toolkit und GIMP Drawing Kit
-Summary(fi.UTF-8):   Gimp-työkalukokoelma ja Gimp-piirtotyökalut
-Summary(fr.UTF-8):   Toolkit de GIMP (GTK) et Kit de dessin de GIMP (GDK)
-Summary(it.UTF-8):   GIMP Toolkit and GIMP Drawing Kit
-Summary(pl.UTF-8):   Pliki nagłówkowe i dokumentacja do GTK+
-Summary(tr.UTF-8):   GIMP araç takımı ve çizim takımı
+Summary(cs.UTF-8):	Sada nástrojů GIMP a kreslící kit GIMP
+Summary(da.UTF-8):	GIMP Toolkit og GIMP Tegnings-værktøj
+Summary(de.UTF-8):	GIMP Toolkit und GIMP Drawing Kit
+Summary(fi.UTF-8):	Gimp-työkalukokoelma ja Gimp-piirtotyökalut
+Summary(fr.UTF-8):	Toolkit de GIMP (GTK) et Kit de dessin de GIMP (GDK)
+Summary(it.UTF-8):	GIMP Toolkit and GIMP Drawing Kit
+Summary(pl.UTF-8):	Pliki nagłówkowe i dokumentacja do GTK+
+Summary(tr.UTF-8):	GIMP araç takımı ve çizim takımı
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1:1.12.4
@@ -142,7 +142,7 @@ Pliki nagłówkowe i dokumentacja do bibliotek GTK+.
 
 %package static
 Summary:	GTK+ static libraries
-Summary(pl.UTF-8):   Biblioteki statyczne GTK+
+Summary(pl.UTF-8):	Biblioteki statyczne GTK+
 Group:		X11/Development/Libraries
 Requires:	%{name}-devel = %{epoch}:%{version}-%{release}
 
@@ -154,7 +154,7 @@ Biblioteki statyczne GTK+
 
 %package apidocs
 Summary:	GTK+ API documentation
-Summary(pl.UTF-8):   Dokumentacja API GTK+
+Summary(pl.UTF-8):	Dokumentacja API GTK+
 Group:		Documentation
 Requires:	gtk-doc-common
 
@@ -166,7 +166,7 @@ Dokumentacja API GTK+.
 
 %package examples
 Summary:	GTK+ - example programs
-Summary(pl.UTF-8):   GTK+ - programy przykładowe
+Summary(pl.UTF-8):	GTK+ - programy przykładowe
 Group:		X11/Development/Libraries
 Requires:	%{name}-devel = %{epoch}:%{version}-%{release}
 
