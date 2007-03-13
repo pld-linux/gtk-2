@@ -24,8 +24,7 @@ Source0:	http://ftp.gnome.org/pub/gnome/sources/gtk+/2.10/gtk+-%{version}.tar.bz
 # Source0-md5:	73967e62a2e2e588ace772ac9db1bc32
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-menu-mac.patch
-Patch2:		%{name}-xim.patch
-Patch3:		%{name}-compose-table.patch.bz2
+Patch2:		%{name}-compose-table.patch.bz2
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.18.0
 BuildRequires:	autoconf >= 2.54
@@ -181,8 +180,7 @@ GTK+ - przykładowe programy.
 %setup -q -n gtk+-%{version}
 %patch0 -p1
 %{?with_macmenu:%patch1 -p0}
-%patch2 -p0
-%patch3 -p1
+%patch2 -p1
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
