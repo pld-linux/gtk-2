@@ -14,14 +14,14 @@ Summary(it.UTF-8):	Il toolkit per Gimp
 Summary(pl.UTF-8):	Gimp Toolkit
 Summary(tr.UTF-8):	Gimp ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.10.11
+Version:	2.10.12
 Release:	1
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
 #Source0:	ftp://ftp.gtk.org/pub/gtk/v2.10/gtk+-%{version}.tar.bz2
 Source0:	http://ftp.gnome.org/pub/gnome/sources/gtk+/2.10/gtk+-%{version}.tar.bz2
-# Source0-md5:	3b32eab43bf5195d981867d25ba55d66
+# Source0-md5:	cf969c62134c662ff07e64613ed6c11f
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-menu-mac.patch
 Patch2:		%{name}-compose-table.patch.bz2
@@ -34,16 +34,16 @@ BuildRequires:	cairo-devel >= 1.4.0
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.12.11
+BuildRequires:	glib2-devel >= 1:2.12.12
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.8}
 BuildRequires:	gtk-doc-automake >= 1.8
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
-BuildRequires:	libxml2-progs >= 1:2.6.27
+BuildRequires:	libxml2-progs >= 1:2.6.28
 BuildRequires:	libxslt-progs >= 1.1.20
-BuildRequires:	pango-devel >= 1:1.16.1
+BuildRequires:	pango-devel >= 1:1.16.2
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.197
@@ -57,8 +57,8 @@ BuildRequires:	xorg-lib-libXrandr-devel
 BuildRequires:	xorg-lib-libXrender-devel
 Requires:	atk >= 1:1.18.0
 Requires:	cairo >= 1.4.0
-Requires:	glib2 >= 1:2.12.11
-Requires:	pango >= 1:1.16.1
+Requires:	glib2 >= 1:2.12.12
+Requires:	pango >= 1:1.16.2
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
 # autopanog.exe crashes with gtk+2 2.8.x and libgdiplus 1.1.8
@@ -122,8 +122,8 @@ Summary(tr.UTF-8):	GIMP araç takımı ve çizim takımı
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1:1.18.0
-Requires:	glib2-devel >= 1:2.12.11
-Requires:	pango-devel >= 1:1.16.1
+Requires:	glib2-devel >= 1:2.12.12
+Requires:	pango-devel >= 1:1.16.2
 Requires:	xorg-lib-libX11-devel
 Requires:	xorg-lib-libXcursor-devel
 Requires:	xorg-lib-libXext-devel
