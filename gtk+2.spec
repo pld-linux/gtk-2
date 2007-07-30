@@ -17,7 +17,7 @@ Name:		gtk+2
 Version:	2.10.14
 Release:	1
 Epoch:		2
-License:	LGPL
+License:	LGPL v2+
 Group:		X11/Libraries
 #Source0:	ftp://ftp.gtk.org/pub/gtk/v2.10/gtk+-%{version}.tar.bz2
 Source0:	http://ftp.gnome.org/pub/gnome/sources/gtk+/2.10/gtk+-%{version}.tar.bz2
