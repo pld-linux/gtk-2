@@ -14,19 +14,19 @@ Summary(it.UTF-8):	Il toolkit per Gimp
 Summary(pl.UTF-8):	Gimp Toolkit
 Summary(tr.UTF-8):	Gimp ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.10.14
+Version:	2.12.0
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 #Source0:	ftp://ftp.gtk.org/pub/gtk/v2.10/gtk+-%{version}.tar.bz2
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.10/gtk+-%{version}.tar.bz2
-# Source0-md5:	018d7dd0fa7de01cfdb77c7c55e7ba26
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.12/gtk+-%{version}.tar.bz2
+# Source0-md5:	e9c280afec29b11772af5a7c807abf41
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-menu-mac.patch
 Patch2:		%{name}-compose-table.patch.bz2
 URL:		http://www.gtk.org/
-BuildRequires:	atk-devel >= 1:1.18.0
+BuildRequires:	atk-devel >= 1:1.19.6
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
 BuildRequires:	cairo-devel >= 1.4.0
@@ -34,16 +34,16 @@ BuildRequires:	cairo-devel >= 1.4.0
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.12.12
+BuildRequires:	glib2-devel >= 1:2.14.0
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.8}
 BuildRequires:	gtk-doc-automake >= 1.8
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
-BuildRequires:	libxml2-progs >= 1:2.6.28
+BuildRequires:	libxml2-progs >= 1:2.6.30
 BuildRequires:	libxslt-progs >= 1.1.20
-BuildRequires:	pango-devel >= 1:1.16.2
+BuildRequires:	pango-devel >= 1:1.18.1
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.197
@@ -55,10 +55,10 @@ BuildRequires:	xorg-lib-libXi-devel
 BuildRequires:	xorg-lib-libXinerama-devel
 BuildRequires:	xorg-lib-libXrandr-devel
 BuildRequires:	xorg-lib-libXrender-devel
-Requires:	atk >= 1:1.18.0
+Requires:	atk >= 1:1.19.6
 Requires:	cairo >= 1.4.0
-Requires:	glib2 >= 1:2.12.12
-Requires:	pango >= 1:1.16.2
+Requires:	glib2 >= 1:2.14.0
+Requires:	pango >= 1:1.18.1
 Obsoletes:	gtk2
 Conflicts:	gtk2-engines < 1:2.2.0-6
 # autopanog.exe crashes with gtk+2 2.8.x and libgdiplus 1.1.8
@@ -121,9 +121,9 @@ Summary(pl.UTF-8):	Pliki nagłówkowe i dokumentacja do GTK+
 Summary(tr.UTF-8):	GIMP araç takımı ve çizim takımı
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	atk-devel >= 1:1.18.0
-Requires:	glib2-devel >= 1:2.12.12
-Requires:	pango-devel >= 1:1.16.2
+Requires:	atk-devel >= 1:1.19.6
+Requires:	glib2-devel >= 1:2.14.0
+Requires:	pango-devel >= 1:1.18.1
 Requires:	xorg-lib-libX11-devel
 Requires:	xorg-lib-libXcursor-devel
 Requires:	xorg-lib-libXext-devel
@@ -225,7 +225,7 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*/*/*.{a,la}
 # for various GTK+2 modules
 install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*)/modules
 
-rm -r $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,uz@Latn}
+rm -r $RPM_BUILD_ROOT%{_datadir}/locale/az_IR
 
 %find_lang %{name} --all-name
 
@@ -291,6 +291,7 @@ exit 0
 %files devel
 %defattr(644,root,root,755)
 %doc ChangeLog
+%attr(755,root,root) %{_bindir}/gtk-builder-convert
 %attr(755,root,root) %{_bindir}/*csource
 %attr(755,root,root) %{_libdir}/lib*.so
 %{_libdir}/lib*.la
