@@ -204,7 +204,7 @@ GTK+ - przykładowe programy.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk-2.0} \
+install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version} \
 	$RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/filesystems
 
 %{__make} install \
@@ -220,10 +220,10 @@ cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 # remove unsupported locale scheme
 rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/en@IPA
 # shut up check-files (static modules and *.la for modules)
-rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*/*/*.{a,la}
+rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/*/*.{a,la}
 
 # for various GTK+2 modules
-install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*)/modules
+install -d $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules
 
 rm -r $RPM_BUILD_ROOT%{_datadir}/locale/az_IR
 
@@ -263,22 +263,26 @@ exit 0
 %attr(755,root,root) %{_bindir}/gdk-pixbuf-query-loaders
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 
-%dir %{_libdir}/gtk-*
-%dir %{_libdir}/gtk-*/modules
-%dir %{_libdir}/gtk-*/%{abivers}
-%dir %{_libdir}/gtk-*/%{abivers}/engines
-%dir %{_libdir}/gtk-*/%{abivers}/filesystems
-%dir %{_libdir}/gtk-*/%{abivers}/immodules
-%dir %{_libdir}/gtk-*/%{abivers}/loaders
-%dir %{_libdir}/gtk-*/%{abivers}/printbackends
-%attr(755,root,root) %{_libdir}/gtk-*/%{abivers}/engines/libpixmap.so
-%attr(755,root,root) %{_libdir}/gtk-*/%{abivers}/immodules/*.so
-%attr(755,root,root) %{_libdir}/gtk-*/%{abivers}/loaders/*.so
-%attr(755,root,root) %{_libdir}/gtk-*/%{abivers}/printbackends/*.so
+%dir %{_libdir}/gtk-2
+%dir %{_libdir}/gtk-2/modules
+%dir %{_libdir}/gtk-2/%{abivers}
+%dir %{_libdir}/gtk-2/%{abivers}/engines
+%dir %{_libdir}/gtk-2/%{abivers}/filesystems
+%dir %{_libdir}/gtk-2/%{abivers}/immodules
+%dir %{_libdir}/gtk-2/%{abivers}/loaders
+%dir %{_libdir}/gtk-2/%{abivers}/printbackends
+%attr(755,root,root) %{_libdir}/gtk-2/%{abivers}/engines/libpixmap.so
+%attr(755,root,root) %{_libdir}/gtk-2/%{abivers}/immodules/*.so
+%attr(755,root,root) %{_libdir}/gtk-2/%{abivers}/loaders/*.so
+%attr(755,root,root) %{_libdir}/gtk-2/%{abivers}/printbackends/*.so
 
-%{_datadir}/gtk-*
-%dir %{_sysconfdir}/gtk-*
-%ghost %{_sysconfdir}/gtk-*/*
+# XXX: just demo data - move to examples?
+%{_datadir}/gtk-2
+
+%dir %{_sysconfdir}/gtk-2
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/gtk-2/im-multipress.conf
+%ghost %{_sysconfdir}/gtk-2/gdk-pixbuf.loaders
+%ghost %{_sysconfdir}/gtk-2/gtk.immodules
 %dir %{_datadir}/themes/Default/gtk-*
 %{_datadir}/themes/Default/gtk-*/gtkrc
 %dir %{_datadir}/themes/Emacs
@@ -297,7 +301,7 @@ exit 0
 %{_libdir}/lib*.la
 %{_includedir}/*
 %{_aclocaldir}/*.m4
-%{_libdir}/gtk-*/include
+%{_libdir}/gtk-2/include
 %{_pkgconfigdir}/*.pc
 %{_mandir}/man1/*
 
