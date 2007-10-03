@@ -15,7 +15,7 @@ Summary(pl.UTF-8):	Gimp Toolkit
 Summary(tr.UTF-8):	Gimp ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.12.0
-Release:	3
+Release:	4
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
@@ -26,6 +26,7 @@ Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-menu-mac.patch
 Patch2:		%{name}-compose-table.patch.bz2
 Patch3:		%{name}-objective-c++.patch
+Patch4:		%{name}-swt-tooltips.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.19.6
 BuildRequires:	autoconf >= 2.54
@@ -183,6 +184,7 @@ GTK+ - przykładowe programy.
 %{?with_macmenu:%patch1 -p0}
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
