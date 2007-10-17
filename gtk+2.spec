@@ -15,7 +15,7 @@ Summary(pl.UTF-8):	Gimp Toolkit
 Summary(tr.UTF-8):	Gimp ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.12.1
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
@@ -220,7 +220,7 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gtk.immodules
 cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 # remove unsupported locale scheme
-rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/en@IPA
+rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/{en@IPA,io}
 # shut up check-files (static modules and *.la for modules)
 rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/*/*.{a,la}
 
