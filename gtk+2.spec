@@ -2,7 +2,7 @@
 # Conditional build:
 %bcond_without	apidocs		# disable gtk-doc
 %bcond_without	static_libs	# don't build static library
-%bcond_with	arch_confdir	# build with architecture-dependant config dir
+%bcond_without	arch_confdir	# build with architecture-dependant config dir
 #
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
@@ -14,7 +14,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.8.20
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
