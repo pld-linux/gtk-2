@@ -14,7 +14,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.8.20
-Release:	2
+Release:	3
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
@@ -227,23 +227,23 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /sbin/ldconfig
 umask 022
-%{_bindir}/gdk-pixbuf-query-loaders >%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gdk-pixbuf.loaders
-%{_bindir}/gtk-query-immodules-2.0 >%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gtk.immodules
+%{_bindir}/gdk-pixbuf-query-loaders > %{_sysconfdir}/gtk-2.0%{_confdir_suf}/gdk-pixbuf.loaders
+%{_bindir}/gtk-query-immodules-2.0 > %{_sysconfdir}/gtk-2.0%{_confdir_suf}/gtk.immodules
 exit 0
 
 %postun
 /sbin/ldconfig
-if [ "$1" != "0" ]; then
+if [ "$1" = "0" ]; then
 	umask 022
-	%{_bindir}/gdk-pixbuf-query-loaders >%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gdk-pixbuf.loaders
-	%{_bindir}/gtk-query-immodules-2.0 >%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gtk.immodules
+	%{_bindir}/gdk-pixbuf-query-loaders > %{_sysconfdir}/gtk-2.0%{_confdir_suf}/gdk-pixbuf.loaders
+	%{_bindir}/gtk-query-immodules-2.0 > %{_sysconfdir}/gtk-2.0%{_confdir_suf}/gtk.immodules
 fi
 exit 0
 
 %triggerpostun -- gtk+2 < 2:2.4.0
 umask 022
-%{_bindir}/gdk-pixbuf-query-loaders >%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gdk-pixbuf.loaders
-%{_bindir}/gtk-query-immodules-2.0 >%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gtk.immodules
+%{_bindir}/gdk-pixbuf-query-loaders > %{_sysconfdir}/gtk-2.0%{_confdir_suf}/gdk-pixbuf.loaders
+%{_bindir}/gtk-query-immodules-2.0 > %{_sysconfdir}/gtk-2.0%{_confdir_suf}/gtk.immodules
 exit 0
 
 %files -f %{name}.lang
