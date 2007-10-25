@@ -243,7 +243,7 @@ exit 0
 
 %postun
 /sbin/ldconfig
-if [ "$1" = "0" ]; then
+if [ "$1" != "0" ]; then
 	umask 022
 	%{_bindir}/gdk-pixbuf-query-loaders > %{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
 	%{_bindir}/gtk-query-immodules-2.0 > %{_sysconfdir}/gtk-2.0/gtk.immodules
