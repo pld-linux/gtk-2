@@ -15,7 +15,7 @@ Summary(pl.UTF-8):	Gimp Toolkit
 Summary(tr.UTF-8):	Gimp ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.12.1
-Release:	3
+Release:	4
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
@@ -61,6 +61,8 @@ Requires:	cairo >= 1.4.0
 Requires:	glib2 >= 1:2.14.2
 Requires:	pango >= 1:1.18.3
 Obsoletes:	gtk2
+# sr@Latn vs. sr@latin
+Conflicts:	glibc-misc < 6:2.7
 Conflicts:	gtk2-engines < 1:2.2.0-6
 # autopanog.exe crashes with gtk+2 2.8.x and libgdiplus 1.1.8
 Conflicts:	libgdiplus < 1.1.9
@@ -228,7 +230,8 @@ rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/*/*.{a,la}
 install -d $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules
 
 rm -r $RPM_BUILD_ROOT%{_datadir}/locale/az_IR
-
+[ -d $RPM_BUILD_ROOT%{_datadir}/locale/sr@latin ] || \
+	mv -f $RPM_BUILD_ROOT%{_datadir}/locale/sr@{Latn,latin}
 %find_lang %{name} --all-name
 
 %clean
