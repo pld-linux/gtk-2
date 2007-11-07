@@ -26,6 +26,7 @@ Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-menu-mac.patch
 Patch2:		%{name}-compose-table.patch.bz2
 Patch3:		%{name}-objective-c++.patch
+Patch4:		%{name}-firefox-printpreview.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.20.0
 BuildRequires:	autoconf >= 2.54
@@ -185,6 +186,7 @@ GTK+ - przykładowe programy.
 %{?with_macmenu:%patch1 -p0}
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
