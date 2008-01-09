@@ -266,11 +266,18 @@ exit 0
 %files -f %{name}.lang
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README
-%attr(755,root,root) %{_bindir}/gtk-demo
-%attr(755,root,root) %{_bindir}/gtk-query*
-%attr(755,root,root) %{_bindir}/gtk-update-icon-cache
 %attr(755,root,root) %{_bindir}/gdk-pixbuf-query-loaders
-%attr(755,root,root) %{_libdir}/lib*.so.*.*
+%attr(755,root,root) %{_bindir}/gtk-demo
+%attr(755,root,root) %{_bindir}/gtk-query-immodules-2.0
+%attr(755,root,root) %{_bindir}/gtk-update-icon-cache
+%attr(755,root,root) %{_libdir}/libgdk-x11-2.0.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libgdk-x11-2.0.so.0
+%attr(755,root,root) %{_libdir}/libgdk_pixbuf-2.0.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libgdk_pixbuf-2.0.so.0
+%attr(755,root,root) %{_libdir}/libgdk_pixbuf_xlib-2.0.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libgdk_pixbuf_xlib-2.0.so.0
+%attr(755,root,root) %{_libdir}/libgtk-x11-2.0.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libgtk-x11-2.0.so.0
 
 %dir %{_libdir}/gtk-2.0
 %dir %{_libdir}/gtk-2.0/modules
@@ -281,9 +288,9 @@ exit 0
 %dir %{_libdir}/gtk-2.0/%{abivers}/loaders
 %dir %{_libdir}/gtk-2.0/%{abivers}/printbackends
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/engines/libpixmap.so
-%attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/immodules/*.so
-%attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/loaders/*.so
-%attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/*.so
+%attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/immodules/im-*.so
+%attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/loaders/libpixbufloader-*.so
+%attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/libprintbackend-*.so
 
 # XXX: just demo data - move to examples?
 %{_datadir}/gtk-2.0
@@ -300,30 +307,52 @@ exit 0
 %dir %{_datadir}/themes/Raleigh
 %dir %{_datadir}/themes/Raleigh/gtk-*
 %{_datadir}/themes/Raleigh/gtk-*/gtkrc
+%{_mandir}/man1/gdk-pixbuf-query-loaders.1*
+%{_mandir}/man1/gtk-query-immodules-2.0.1*
+%{_mandir}/man1/gtk-update-icon-cache.1*
 
 %files devel
 %defattr(644,root,root,755)
 %doc ChangeLog
+%attr(755,root,root) %{_bindir}/gdk-pixbuf-csource
 %attr(755,root,root) %{_bindir}/gtk-builder-convert
-%attr(755,root,root) %{_bindir}/*csource
-%attr(755,root,root) %{_libdir}/lib*.so
-%{_libdir}/lib*.la
-%{_includedir}/*
-%{_aclocaldir}/*.m4
+%attr(755,root,root) %{_libdir}/libgdk-x11-2.0.so
+%attr(755,root,root) %{_libdir}/libgdk_pixbuf-2.0.so
+%attr(755,root,root) %{_libdir}/libgdk_pixbuf_xlib-2.0.so
+%attr(755,root,root) %{_libdir}/libgtk-x11-2.0.so
+%{_libdir}/libgdk-x11-2.0.la
+%{_libdir}/libgdk_pixbuf-2.0.la
+%{_libdir}/libgdk_pixbuf_xlib-2.0.la
+%{_libdir}/libgtk-x11-2.0.la
+%{_includedir}/gtk-2.0
+%{_includedir}/gtk-unix-print-2.0
+%{_aclocaldir}/gtk-2.0.m4
 %{_libdir}/gtk-2.0/include
-%{_pkgconfigdir}/*.pc
-%{_mandir}/man1/*
+%{_pkgconfigdir}/gdk-2.0.pc
+%{_pkgconfigdir}/gdk-pixbuf-2.0.pc
+%{_pkgconfigdir}/gdk-pixbuf-xlib-2.0.pc
+%{_pkgconfigdir}/gdk-x11-2.0.pc
+%{_pkgconfigdir}/gtk+-2.0.pc
+%{_pkgconfigdir}/gtk+-unix-print-2.0.pc
+%{_pkgconfigdir}/gtk+-x11-2.0.pc
+%{_mandir}/man1/gdk-pixbuf-csource.1*
+%{_mandir}/man1/gtk-builder-convert.1*
 
 %if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
-%{_libdir}/lib*.a
+%{_libdir}/libgdk-x11-2.0.a
+%{_libdir}/libgdk_pixbuf-2.0.a
+%{_libdir}/libgdk_pixbuf_xlib-2.0.a
+%{_libdir}/libgtk-x11-2.0.a
 %endif
 
 %if %{with apidocs}
 %files apidocs
 %defattr(644,root,root,755)
-%{_gtkdocdir}/*
+%{_gtkdocdir}/gdk
+%{_gtkdocdir}/gdk-pixbuf
+%{_gtkdocdir}/gtk
 %endif
 
 %files examples
