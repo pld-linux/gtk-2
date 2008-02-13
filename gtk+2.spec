@@ -62,6 +62,10 @@ Requires:	atk >= 1:1.20.0
 Requires:	cairo >= 1.4.0
 Requires:	glib2 >= 1:2.14.2
 Requires:	pango >= 1:1.18.3
+%if %{with cups}
+# cups is used by default if gtk+ is built with cups
+Suggests:	%{name}-cups = %{epoch}:%{version}-%{release}
+%endif
 Obsoletes:	gtk2
 # sr@Latn vs. sr@latin
 Conflicts:	glibc-misc < 6:2.7
@@ -181,6 +185,18 @@ GTK+ - example programs.
 %description examples -l pl.UTF-8
 GTK+ - przykładowe programy.
 
+%package cups
+Summary:	CUPS printing module for GTK+
+Summary(pl.UTF-8):	Moduł GTK+ do drukowania przez CUPS
+Group:		X11/Libraries
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+
+%description cups
+CUPS printing module for GTK+.
+
+%description cups -l pl.UTF-8
+Moduł GTK+ do drukowania przez CUPS.
+
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
@@ -290,7 +306,8 @@ exit 0
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/engines/libpixmap.so
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/immodules/im-*.so
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/loaders/libpixbufloader-*.so
-%attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/libprintbackend-*.so
+%attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/libprintbackend-file.so
+%attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/libprintbackend-lpr.so
 
 # XXX: just demo data - move to examples?
 %{_datadir}/gtk-2.0
@@ -358,3 +375,9 @@ exit 0
 %files examples
 %defattr(644,root,root,755)
 %{_examplesdir}/%{name}-%{version}
+
+%if %{with cups}
+%files cups
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/libprintbackend-cups.so
+%endif
