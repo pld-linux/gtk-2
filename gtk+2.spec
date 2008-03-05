@@ -222,7 +222,7 @@ Moduł GTK+ do drukowania przez CUPS.
 	--enable-shm \
 	--%{?with_static_libs:en}%{!?with_static_libs:dis}able-static \
 	--with-gdktarget=x11 \
-	%{?with_apidocs:--with-html-dir=%{_gtkdocdir}} \
+	--with-html-dir=%{_gtkdocdir} \
 	--with-xinput=yes
 %{__make}
 
@@ -253,6 +253,8 @@ rm -r $RPM_BUILD_ROOT%{_datadir}/locale/az_IR
 [ -d $RPM_BUILD_ROOT%{_datadir}/locale/sr@latin ] || \
 	mv -f $RPM_BUILD_ROOT%{_datadir}/locale/sr@{Latn,latin}
 %find_lang %{name} --all-name
+
+%{!?with_apidocs:rm -rf $RPM_BUILD_ROOT%{_gtkdocdir}/{gdk,gdk-pixbuf,gtk}}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
