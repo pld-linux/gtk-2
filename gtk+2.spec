@@ -49,6 +49,7 @@ BuildRequires:	libxslt-progs >= 1.1.20
 BuildRequires:	pango-devel >= 1:1.18.3
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
+BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.197
 BuildRequires:	xorg-lib-libX11-devel
 BuildRequires:	xorg-lib-libXcursor-devel
