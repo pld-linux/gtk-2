@@ -1,3 +1,9 @@
+# TODO
+# - solve this:
+#| /tmp/gtk+2-2.12.8-root-glen $ find -type f|xargs file|grep -i python
+#| ./usr/bin/gtk-builder-convert:                                     a python script text executable
+#| /tmp/gtk+2-2.12.8-root-glen $ head -1 ./usr/bin/gtk-builder-convert
+#| !/usr/bin/env python
 #
 # Conditional build:
 %bcond_with	macmenu		# experimental mac/kde-like
