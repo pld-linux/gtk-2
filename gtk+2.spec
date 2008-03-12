@@ -20,14 +20,14 @@ Summary(it.UTF-8):	Il toolkit per Gimp
 Summary(pl.UTF-8):	Gimp Toolkit
 Summary(tr.UTF-8):	Gimp ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.12.8
+Version:	2.12.9
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 #Source0:	ftp://ftp.gtk.org/pub/gtk/v2.10/gtk+-%{version}.tar.bz2
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.12/gtk+-%{version}.tar.bz2
-# Source0-md5:	1e0d7db0bfa210881743e1d42ee91a24
+# Source0-md5:	33499772fdc3bea569c6d5673e5831b4
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-menu-mac.patch
 Patch2:		%{name}-compose-table.patch.bz2
@@ -35,7 +35,7 @@ Patch3:		%{name}-objective-c++.patch
 Patch4:		%{name}-firefox-printpreview.patch
 Patch5:		%{name}-workaround-flashproblem.patch
 URL:		http://www.gtk.org/
-BuildRequires:	atk-devel >= 1:1.20.0
+BuildRequires:	atk-devel >= 1:1.22.0
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
 BuildRequires:	cairo-devel >= 1.4.0
@@ -43,16 +43,16 @@ BuildRequires:	cairo-devel >= 1.4.0
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.14.2
+BuildRequires:	glib2-devel >= 1:2.16.1
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.8}
 BuildRequires:	gtk-doc-automake >= 1.8
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
-BuildRequires:	libxml2-progs >= 1:2.6.30
+BuildRequires:	libxml2-progs >= 1:2.6.31
 BuildRequires:	libxslt-progs >= 1.1.20
-BuildRequires:	pango-devel >= 1:1.18.3
+BuildRequires:	pango-devel >= 1:1.20.0
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-pythonprov
@@ -65,10 +65,10 @@ BuildRequires:	xorg-lib-libXi-devel
 BuildRequires:	xorg-lib-libXinerama-devel
 BuildRequires:	xorg-lib-libXrandr-devel
 BuildRequires:	xorg-lib-libXrender-devel
-Requires:	atk >= 1:1.20.0
+Requires:	atk >= 1:1.22.0
 Requires:	cairo >= 1.4.0
-Requires:	glib2 >= 1:2.14.2
-Requires:	pango >= 1:1.18.3
+Requires:	glib2 >= 1:2.16.1
+Requires:	pango >= 1:1.20.0
 %if %{with cups}
 # cups is used by default if gtk+ is built with cups
 Suggests:	%{name}-cups = %{epoch}:%{version}-%{release}
@@ -137,9 +137,9 @@ Summary(pl.UTF-8):	Pliki nagłówkowe i dokumentacja do GTK+
 Summary(tr.UTF-8):	GIMP araç takımı ve çizim takımı
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	atk-devel >= 1:1.20.0
-Requires:	glib2-devel >= 1:2.14.2
-Requires:	pango-devel >= 1:1.18.3
+Requires:	atk-devel >= 1:1.22.0
+Requires:	glib2-devel >= 1:2.16.1
+Requires:	pango-devel >= 1:1.20.0
 Requires:	xorg-lib-libX11-devel
 Requires:	xorg-lib-libXcursor-devel
 Requires:	xorg-lib-libXext-devel
