@@ -2,7 +2,7 @@
 # - solve this:
 #| /tmp/gtk+2-2.12.8-root-glen $ find -type f|xargs file|grep -i python
 #| ./usr/bin/gtk-builder-convert:                                     a python script text executable
-#| /tmp/gtk+2-2.12.8-root-glen $ head -1 ./usr/bin/gtk-builder-convert
+#| /tmp/gtk+2-2.12.8-root-glen $ head -n 1 ./usr/bin/gtk-builder-convert
 #| !/usr/bin/env python
 #
 # Conditional build:
@@ -34,6 +34,7 @@ Patch2:		%{name}-compose-table.patch.bz2
 Patch3:		%{name}-objective-c++.patch
 Patch4:		%{name}-firefox-printpreview.patch
 Patch5:		%{name}-workaround-flashproblem.patch
+Patch6:		%{name}-lt.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.22.0
 BuildRequires:	autoconf >= 2.54
@@ -212,6 +213,7 @@ Moduł GTK+ do drukowania przez CUPS.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
