@@ -112,7 +112,7 @@ käytetään nyt myös useissa muissakin ohjelmissa.
 Libreria X scritta per GIMP. Viene usata da diversi programmi.
 
 %description -l pl.UTF-8
-GTK+, która to biblioteka stała się podstawą programu Gimp zawiera
+GTK+, która to biblioteka stała się podstawą programu Gimp, zawiera
 funkcje do tworzenia graficznego interfejsu użytkownika pod X Window.
 Była tworzona z założeniem żeby była mała, efektywna i wygodna. GTK+
 jest napisane w C z podejściem zorientowanym bardzo obiektowo. GDK
