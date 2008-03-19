@@ -2,7 +2,6 @@
 # Conditional build:
 %bcond_without	apidocs		# disable gtk-doc
 %bcond_without	static_libs	# don't build static library
-%bcond_without	arch_confdir	# build with architecture-dependant config dir
 #
 Summary:	The Gimp Toolkit
 Summary(cs):	Sada nástrojù pro Gimp
@@ -14,7 +13,7 @@ Summary(pl):	Gimp Toolkit
 Summary(tr):	Gimp ToolKit arayüz kitaplýðý
 Name:		gtk+2
 Version:	2.8.20
-Release:	3
+Release:	4
 Epoch:		2
 License:	LGPL
 Group:		X11/Libraries
@@ -57,10 +56,13 @@ Conflicts:	gtk2-engines < 1:2.2.0-6
 Conflicts:	libgdiplus < 1.1.9
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%if %{with arch_confdir}
-%define	_confdir_suf	-%{_target_cpu}
+%if "%{_lib}" != "lib"
+%define		libext		%(lib="%{_lib}"; echo ${lib#lib})
+%define		_sysconfdir	/etc/gtk-2.0%{libext}
+%define		pqext		-%{libext}
 %else
-%define	_confdir_suf	%{nil}
+%define		_sysconfdir	/etc/gtk-2.0
+%define		pqext		%{nil}
 %endif
 
 %description
@@ -171,7 +173,7 @@ GTK+ - przyk³adowe programy.
 %setup -q -n gtk+-%{version}
 %patch0 -p1
 %patch1 -p1
-%{?with_arch_confdir:%patch2 -p1}
+%patch2 -p1
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
@@ -194,7 +196,7 @@ GTK+ - przyk³adowe programy.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk-2.0%{_confdir_suf}} \
+install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}} \
 	$RPM_BUILD_ROOT%{_libdir}/gtk-2.0/2.4.0/filesystems
 
 %{__make} install \
@@ -202,8 +204,8 @@ install -d $RPM_BUILD_ROOT{%{_examplesdir}/%{name}-%{version},%{_sysconfdir}/gtk
 	m4datadir=%{_aclocaldir} \
 	pkgconfigdir=%{_pkgconfigdir}
 
-touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gdk-pixbuf.loaders
-touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0%{_confdir_suf}/gtk.immodules
+touch $RPM_BUILD_ROOT%{_sysconfdir}/gdk-pixbuf.loaders
+touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk.immodules
 
 cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
@@ -211,6 +213,16 @@ cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/en@IPA
 # shut up check-files (static modules and *.la for modules)
 rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*/*/*.{a,la}
+
+%if "%{_lib}" != "lib"
+# We need to have 32-bit and 64-bit pango-querymodules binaries
+# as they have hardcoded LIBDIR.
+# (needed when multilib is used)
+mv $RPM_BUILD_ROOT%{_bindir}/gdk-pixbuf-query-loaders{,%{pqext}}
+mv $RPM_BUILD_ROOT%{_bindir}/gtk-query-immodules-2.0{,%{pqext}}
+# fix man page too
+#mv $RPM_BUILD_ROOT%{_mandir}/man1/pango-querymodules{,%{pqext}}.1
+%endif
 
 # for various GTK+2 modules
 install -d $(echo $RPM_BUILD_ROOT%{_libdir}/gtk-*)/modules
@@ -227,23 +239,23 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /sbin/ldconfig
 umask 022
-%{_bindir}/gdk-pixbuf-query-loaders > %{_sysconfdir}/gtk-2.0%{_confdir_suf}/gdk-pixbuf.loaders
-%{_bindir}/gtk-query-immodules-2.0 > %{_sysconfdir}/gtk-2.0%{_confdir_suf}/gtk.immodules
+%{_bindir}/gdk-pixbuf-query-loaders%{pqext} > %{_sysconfdir}/gdk-pixbuf.loaders
+%{_bindir}/gtk-query-immodules-2.0%{pqext} > %{_sysconfdir}/gtk.immodules
 exit 0
 
 %postun
 /sbin/ldconfig
 if [ "$1" = "0" ]; then
 	umask 022
-	%{_bindir}/gdk-pixbuf-query-loaders > %{_sysconfdir}/gtk-2.0%{_confdir_suf}/gdk-pixbuf.loaders
-	%{_bindir}/gtk-query-immodules-2.0 > %{_sysconfdir}/gtk-2.0%{_confdir_suf}/gtk.immodules
+	%{_bindir}/gdk-pixbuf-query-loaders%{pqext} > %{_sysconfdir}/gdk-pixbuf.loaders
+	%{_bindir}/gtk-query-immodules-2.0%{pqext} > %{_sysconfdir}/gtk.immodules
 fi
 exit 0
 
 %triggerpostun -- gtk+2 < 2:2.4.0
 umask 022
-%{_bindir}/gdk-pixbuf-query-loaders > %{_sysconfdir}/gtk-2.0%{_confdir_suf}/gdk-pixbuf.loaders
-%{_bindir}/gtk-query-immodules-2.0 > %{_sysconfdir}/gtk-2.0%{_confdir_suf}/gtk.immodules
+%{_bindir}/gdk-pixbuf-query-loaders%{pqext} > %{_sysconfdir}/gdk-pixbuf.loaders
+%{_bindir}/gtk-query-immodules-2.0%{pqext} > %{_sysconfdir}/gtk.immodules
 exit 0
 
 %files -f %{name}.lang
@@ -265,8 +277,8 @@ exit 0
 %dir %{_libdir}/gtk-*/2.*/immodules
 %attr(755,root,root) %{_libdir}/gtk-*/2.*/immodules/*.so
 %{_datadir}/gtk-*
-%dir %{_sysconfdir}/gtk-*
-%ghost %{_sysconfdir}/gtk-*/*
+%dir %{_sysconfdir}
+%ghost %{_sysconfdir}/*
 %dir %{_datadir}/themes/Default/gtk-*
 %{_datadir}/themes/Default/gtk-*/gtkrc
 %dir %{_datadir}/themes/Emacs
