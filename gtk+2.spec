@@ -58,7 +58,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %if "%{_lib}" != "lib"
 %define		libext		%(lib="%{_lib}"; echo ${lib#lib})
-%define		_sysconfdir	/etc/gtk-2.0%{libext}
+%define		_sysconfdir	/etc/gtk%{libext}-2.0
 %define		pqext		-%{libext}
 %else
 %define		_sysconfdir	/etc/gtk-2.0
@@ -215,13 +215,10 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/en@IPA
 rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-*/2.*/*/*.{a,la}
 
 %if "%{_lib}" != "lib"
-# We need to have 32-bit and 64-bit pango-querymodules binaries
-# as they have hardcoded LIBDIR.
+# We need to have 32-bit and 64-bit binaries as they have hardcoded LIBDIR.
 # (needed when multilib is used)
 mv $RPM_BUILD_ROOT%{_bindir}/gdk-pixbuf-query-loaders{,%{pqext}}
 mv $RPM_BUILD_ROOT%{_bindir}/gtk-query-immodules-2.0{,%{pqext}}
-# fix man page too
-#mv $RPM_BUILD_ROOT%{_mandir}/man1/pango-querymodules{,%{pqext}}.1
 %endif
 
 # for various GTK+2 modules
@@ -264,7 +261,7 @@ exit 0
 %attr(755,root,root) %{_bindir}/gtk-demo
 %attr(755,root,root) %{_bindir}/gtk-query*
 %attr(755,root,root) %{_bindir}/gtk-update-icon-cache
-%attr(755,root,root) %{_bindir}/gdk-pixbuf-query-loaders
+%attr(755,root,root) %{_bindir}/gdk-pixbuf-query-loaders%{pqext}
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 %dir %{_libdir}/gtk-*
 %dir %{_libdir}/gtk-*/modules
