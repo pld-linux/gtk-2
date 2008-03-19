@@ -1,17 +1,3 @@
-diff -Nur gtk+-2.8.12/configure.in gtk+-2.8.12.arch_confdir/configure.in
---- gtk+-2.8.12/configure.in	2006-01-27 18:47:04.000000000 +0100
-+++ gtk+-2.8.12.arch_confdir/configure.in	2006-02-20 22:07:36.000000000 +0100
-@@ -93,6 +93,9 @@
- AC_SUBST(LT_VERSION_INFO)
- AC_SUBST(LT_CURRENT_MINUS_AGE)
- 
-+ARCH=${CC%%-*}
-+AC_SUBST(ARCH)
-+AC_DEFINE_UNQUOTED(ARCH, "${ARCH}", [Architecture])
- 
- #
- # gdk-pixbuf gets versioned separately, and for now, using standard
-diff -Nur gtk+-2.8.12/gdk-pixbuf/gdk-pixbuf-io.c gtk+-2.8.12.arch_confdir/gdk-pixbuf/gdk-pixbuf-io.c
 --- gtk+-2.8.12/gdk-pixbuf/gdk-pixbuf-io.c	2005-10-03 17:11:49.000000000 +0200
 +++ gtk+-2.8.12.arch_confdir/gdk-pixbuf/gdk-pixbuf-io.c	2006-02-20 22:10:52.000000000 +0100
 @@ -276,7 +276,7 @@
@@ -19,29 +5,20 @@ diff -Nur gtk+-2.8.12/gdk-pixbuf/gdk-pixbuf-io.c gtk+-2.8.12.arch_confdir/gdk-pi
  
    if (!result)
 -	  result = g_build_filename (GTK_SYSCONFDIR, "gtk-2.0", "gdk-pixbuf.loaders", NULL);
-+	  result = g_build_filename (GTK_SYSCONFDIR, "gtk-2.0-" ARCH, "gdk-pixbuf.loaders", NULL);
++	  result = g_build_filename (GTK_SYSCONFDIR, "gdk-pixbuf.loaders", NULL);
  
    return result;
  }
-diff -Nur gtk+-2.8.12/gdk-pixbuf/Makefile.am gtk+-2.8.12.arch_confdir/gdk-pixbuf/Makefile.am
 --- gtk+-2.8.12/gdk-pixbuf/Makefile.am	2005-10-26 20:13:22.000000000 +0200
 +++ gtk+-2.8.12.arch_confdir/gdk-pixbuf/Makefile.am	2006-02-20 22:10:21.000000000 +0100
-@@ -279,6 +279,7 @@
- 	$(INCLUDED_LOADER_DEFINE) 		\
- 	$(GTK_DEBUG_FLAGS)			\
- 	$(GDK_PIXBUF_DEP_CFLAGS)		\
-+	-DARCH=\"$(ARCH)\"			\
- 	-DGDK_PIXBUF_ENABLE_BACKEND
- 
- AM_CPPFLAGS = "-DPIXBUF_LIBDIR=\"$(loaderdir)\"" "-DBUILT_MODULES_DIR=\"$(srcdir)/.libs\""
 @@ -467,8 +468,8 @@
  # after the libraries are installed in their final locations.
  install-data-hook: install-ms-lib install-def-file
  	@if $(RUN_QUERY_LOADER_TEST) ; then \
 -	  $(mkinstalldirs) $(DESTDIR)$(sysconfdir)/gtk-2.0 ; \
 -	  $(top_builddir)/gdk-pixbuf/gdk-pixbuf-query-loaders > $(DESTDIR)$(sysconfdir)/gtk-2.0/gdk-pixbuf.loaders ; \
-+	  $(mkinstalldirs) $(DESTDIR)$(sysconfdir)/gtk-2.0-$(ARCH) ; \
-+	  $(top_builddir)/gdk-pixbuf/gdk-pixbuf-query-loaders > $(DESTDIR)$(sysconfdir)/gtk-2.0-$(ARCH)/gdk-pixbuf.loaders ; \
++	  $(mkinstalldirs) $(DESTDIR)$(sysconfdir); \
++	  $(top_builddir)/gdk-pixbuf/gdk-pixbuf-query-loaders > $(DESTDIR)$(sysconfdir)/gdk-pixbuf.loaders ; \
  	else \
  	  echo "***" ; \
  	  echo "*** Warning: gdk-pixbuf.loaders not built" ; \
@@ -50,11 +27,10 @@ diff -Nur gtk+-2.8.12/gdk-pixbuf/Makefile.am gtk+-2.8.12.arch_confdir/gdk-pixbuf
  
  uninstall-local: uninstall-ms-lib uninstall-def-file
 -	rm -f $(DESTDIR)$(sysconfdir)/gtk-2.0/gdk-pixbuf.loaders
-+	rm -f $(DESTDIR)$(sysconfdir)/gtk-2.0-$(ARCH)/gdk-pixbuf.loaders
++	rm -f $(DESTDIR)$(sysconfdir)/gdk-pixbuf.loaders
  
  if CROSS_COMPILING
  else
-diff -Nur gtk+-2.8.12/gtk/gtkrc.c gtk+-2.8.12.arch_confdir/gtk/gtkrc.c
 --- gtk+-2.8.12/gtk/gtkrc.c	2005-11-23 15:24:51.000000000 +0100
 +++ gtk+-2.8.12.arch_confdir/gtk/gtkrc.c	2006-02-20 22:14:36.000000000 +0100
 @@ -364,7 +364,7 @@
@@ -62,48 +38,27 @@ diff -Nur gtk+-2.8.12/gtk/gtkrc.c gtk+-2.8.12.arch_confdir/gtk/gtkrc.c
  	result = g_strdup (im_module_file);
        else
 -	result = g_build_filename (GTK_SYSCONFDIR, "gtk-2.0", "gtk.immodules", NULL);
-+	result = g_build_filename (GTK_SYSCONFDIR, "gtk-2.0-" ARCH, "gtk.immodules", NULL);
++	result = g_build_filename (GTK_SYSCONFDIR, "gtk.immodules", NULL);
      }
  
    return result;
-diff -Nur gtk+-2.8.12/gtk/Makefile.am gtk+-2.8.12.arch_confdir/gtk/Makefile.am
---- gtk+-2.8.12/gtk/Makefile.am	2005-10-26 20:13:22.000000000 +0200
-+++ gtk+-2.8.12.arch_confdir/gtk/Makefile.am	2006-02-20 22:15:10.000000000 +0100
-@@ -9,6 +9,7 @@
- DIST_SUBDIRS=stock-icons theme-bits xdgmime
- 
- INCLUDES =						\
-+	-DARCH=\"$(ARCH)\"				\
- 	-DG_LOG_DOMAIN=\"Gtk\"				\
- 	-DGTK_LIBDIR=\"$(libdir)\"			\
- 	-DGTK_DATADIR=\"$(datadir)\"			\
-diff -Nur gtk+-2.8.12/gtk-zip.sh.in gtk+-2.8.12.arch_confdir/gtk-zip.sh.in
---- gtk+-2.8.12/gtk-zip.sh.in	2006-02-07 23:57:06.000000000 +0100
-+++ gtk+-2.8.12.arch_confdir/gtk-zip.sh.in	2006-02-20 22:12:22.000000000 +0100
-@@ -9,9 +9,9 @@
- 
- zip $ZIP -@ <<EOF
- COPYING.LIB-2
--etc/gtk-2.0/gdk-pixbuf.loaders
--etc/gtk-2.0/gtkrc
--etc/gtk-2.0/gtk.immodules
-+etc/gtk-2.0-@ARCH@/gdk-pixbuf.loaders
-+etc/gtk-2.0-@ARCH@/gtkrc
-+etc/gtk-2.0-@ARCH@/gtk.immodules
- bin/libgdk_pixbuf-@GTK_API_VERSION@-@LT_CURRENT_MINUS_AGE@.dll
- bin/libgdk-win32-@GTK_API_VERSION@-@LT_CURRENT_MINUS_AGE@.dll
- bin/libgtk-win32-@GTK_API_VERSION@-@LT_CURRENT_MINUS_AGE@.dll
-diff -Nur gtk+-2.8.12/modules/input/Makefile.am gtk+-2.8.12.arch_confdir/modules/input/Makefile.am
+#--- gtk+-2.8.12/gtk-zip.sh.in	2006-02-07 23:57:06.000000000 +0100
+#+++ gtk+-2.8.12.arch_confdir/gtk-zip.sh.in	2006-02-20 22:12:22.000000000 +0100
+#@@ -9,9 +9,9 @@
+# 
+# zip $ZIP -@ <<EOF
+# COPYING.LIB-2
+#-etc/gtk-2.0/gdk-pixbuf.loaders
+#-etc/gtk-2.0/gtkrc
+#-etc/gtk-2.0/gtk.immodules
+#+etc/gtk-2.0-@ARCH@/gdk-pixbuf.loaders
+#+etc/gtk-2.0-@ARCH@/gtkrc
+#+etc/gtk-2.0-@ARCH@/gtk.immodules
+# bin/libgdk_pixbuf-@GTK_API_VERSION@-@LT_CURRENT_MINUS_AGE@.dll
+# bin/libgdk-win32-@GTK_API_VERSION@-@LT_CURRENT_MINUS_AGE@.dll
+# bin/libgtk-win32-@GTK_API_VERSION@-@LT_CURRENT_MINUS_AGE@.dll
 --- gtk+-2.8.12/modules/input/Makefile.am	2005-06-05 00:08:50.000000000 +0200
 +++ gtk+-2.8.12.arch_confdir/modules/input/Makefile.am	2006-02-20 22:14:07.000000000 +0100
-@@ -8,6 +8,7 @@
- 	-I$(top_srcdir) 				\
- 	-I$(top_srcdir)/gdk				\
- 	-I$(top_builddir)/gdk				\
-+	-DARCH=\"$(ARCH)\"				\
- 	-DG_DISABLE_DEPRECATED	 			\
- 	-DGDK_PIXBUF_DISABLE_DEPRECATED			\
- 	-DGDK_DISABLE_DEPRECATED			\
 @@ -101,10 +102,10 @@
  # after the libraries are installed in their final locations.
  install-data-hook:
@@ -112,10 +67,10 @@ diff -Nur gtk+-2.8.12/modules/input/Makefile.am gtk+-2.8.12.arch_confdir/modules
 -	  $(mkinstalldirs) $(DESTDIR)$(sysconfdir)/gtk-2.0 ; \
 -	  echo "$(top_builddir)/gtk/gtk-query-immodules-2.0 > $(DESTDIR)$(sysconfdir)/gtk-2.0/gtk.immodules" ; \
 -	  $(top_builddir)/gtk/gtk-query-immodules-2.0 > $(DESTDIR)$(sysconfdir)/gtk-2.0/gtk.immodules ; \
-+	  echo $(mkinstalldirs) $(DESTDIR)$(sysconfdir)/gtk-2.0-$(ARCH) ; \
-+	  $(mkinstalldirs) $(DESTDIR)$(sysconfdir)/gtk-2.0-$(ARCH) ; \
-+	  echo "$(top_builddir)/gtk/gtk-query-immodules-2.0 > $(DESTDIR)$(sysconfdir)/gtk-2.0-$(ARCH)/gtk.immodules" ; \
-+	  $(top_builddir)/gtk/gtk-query-immodules-2.0 > $(DESTDIR)$(sysconfdir)/gtk-2.0-$(ARCH)/gtk.immodules ; \
++	  echo $(mkinstalldirs) $(DESTDIR)$(sysconfdir); \
++	  $(mkinstalldirs) $(DESTDIR)$(sysconfdir); \
++	  echo "$(top_builddir)/gtk/gtk-query-immodules-2.0 > $(DESTDIR)$(sysconfdir)/gtk.immodules" ; \
++	  $(top_builddir)/gtk/gtk-query-immodules-2.0 > $(DESTDIR)$(sysconfdir)/gtk.immodules ; \
  	else \
  	  echo "***" ; \
  	  echo "*** Warning: gtk.immodules not built" ; \
@@ -124,7 +79,7 @@ diff -Nur gtk+-2.8.12/modules/input/Makefile.am gtk+-2.8.12.arch_confdir/modules
  
  uninstall-local:
 -	rm -f $(DESTDIR)$(sysconfdir)/gtk-2.0/gtk.immodules
-+	rm -f $(DESTDIR)$(sysconfdir)/gtk-2.0-$(ARCH)/gtk.immodules
++	rm -f $(DESTDIR)$(sysconfdir)/gtk.immodules
  
  module_LTLIBRARIES =				\
  	$(IM_XIM_MODULE)			\
