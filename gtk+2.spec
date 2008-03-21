@@ -21,7 +21,7 @@ Summary(pl.UTF-8):	Gimp Toolkit
 Summary(tr.UTF-8):	Gimp ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.12.9
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
@@ -35,6 +35,7 @@ Patch3:		%{name}-objective-c++.patch
 Patch4:		%{name}-firefox-printpreview.patch
 Patch5:		%{name}-workaround-flashproblem.patch
 Patch6:		%{name}-lt.patch
+Patch7:		%{name}-arch_confdir.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.22.0
 BuildRequires:	autoconf >= 2.54
@@ -83,6 +84,15 @@ Conflicts:	libgdiplus < 1.1.9
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		abivers	2.10.0
+
+%if "%{_lib}" != "lib"
+%define		libext		%(lib="%{_lib}"; echo ${lib#lib})
+%define		_sysconfdir	/etc/gtk%{libext}-2.0
+%define		pqext		-%{libext}
+%else
+%define		_sysconfdir	/etc/gtk-2.0
+%define		pqext		%{nil}
+%endif
 
 %description
 GTK+, which stands for the Gimp ToolKit, is a library for creating
@@ -214,6 +224,7 @@ Moduł GTK+ do drukowania przez CUPS.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
@@ -245,8 +256,8 @@ install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version} \
 	m4datadir=%{_aclocaldir} \
 	pkgconfigdir=%{_pkgconfigdir}
 
-touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
-touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk-2.0/gtk.immodules
+touch $RPM_BUILD_ROOT%{_sysconfdir}/gdk-pixbuf.loaders
+touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk.immodules
 
 cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
@@ -254,6 +265,13 @@ cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/{en@IPA,io}
 # shut up check-files (static modules and *.la for modules)
 rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/*/*.{a,la}
+
+%if "%{_lib}" != "lib"
+# We need to have 32-bit and 64-bit binaries as they have hardcoded LIBDIR.
+# (needed when multilib is used)
+mv $RPM_BUILD_ROOT%{_bindir}/gdk-pixbuf-query-loaders{,%{pqext}}
+mv $RPM_BUILD_ROOT%{_bindir}/gtk-query-immodules-2.0{,%{pqext}}
+%endif
 
 # for various GTK+2 modules
 install -d $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules
@@ -271,23 +289,23 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /sbin/ldconfig
 umask 022
-%{_bindir}/gdk-pixbuf-query-loaders > %{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
-%{_bindir}/gtk-query-immodules-2.0 > %{_sysconfdir}/gtk-2.0/gtk.immodules
+%{_bindir}/gdk-pixbuf-query-loaders%{pqext} > %{_sysconfdir}/gdk-pixbuf.loaders
+%{_bindir}/gtk-query-immodules-2.0%{pqext} > %{_sysconfdir}/gtk.immodules
 exit 0
 
 %postun
 /sbin/ldconfig
 if [ "$1" != "0" ]; then
 	umask 022
-	%{_bindir}/gdk-pixbuf-query-loaders > %{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
-	%{_bindir}/gtk-query-immodules-2.0 > %{_sysconfdir}/gtk-2.0/gtk.immodules
+	%{_bindir}/gdk-pixbuf-query-loaders%{pqext} > %{_sysconfdir}/gdk-pixbuf.loaders
+	%{_bindir}/gtk-query-immodules-2.0%{pqext} > %{_sysconfdir}/gtk.immodules
 fi
 exit 0
 
 %triggerpostun -- gtk+2 < 2:2.4.0
 umask 022
-%{_bindir}/gdk-pixbuf-query-loaders > %{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
-%{_bindir}/gtk-query-immodules-2.0 > %{_sysconfdir}/gtk-2.0/gtk.immodules
+%{_bindir}/gdk-pixbuf-query-loaders%{pqext} > %{_sysconfdir}/gdk-pixbuf.loaders
+%{_bindir}/gtk-query-immodules-2.0%{pqext} > %{_sysconfdir}/gtk.immodules
 exit 0
 
 %files -f %{name}.lang
@@ -323,10 +341,10 @@ exit 0
 # XXX: just demo data - move to examples?
 %{_datadir}/gtk-2.0
 
-%dir %{_sysconfdir}/gtk-2.0
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/gtk-2.0/im-multipress.conf
-%ghost %{_sysconfdir}/gtk-2.0/gdk-pixbuf.loaders
-%ghost %{_sysconfdir}/gtk-2.0/gtk.immodules
+%dir %{_sysconfdir}
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/im-multipress.conf
+%ghost %{_sysconfdir}/gdk-pixbuf.loaders
+%ghost %{_sysconfdir}/gtk.immodules
 %dir %{_datadir}/themes/Default/gtk-*
 %{_datadir}/themes/Default/gtk-*/gtkrc
 %dir %{_datadir}/themes/Emacs
