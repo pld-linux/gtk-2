@@ -1,0 +1,12 @@
+--- gtk+-2.12.0/tests/Makefile.am~	2007-09-13 22:35:48.000000000 +0200
++++ gtk+-2.12.0/tests/Makefile.am	2007-09-19 10:46:42.000000000 +0200
+@@ -99,8 +99,7 @@
+ autotestkeywords_CPPFLAGS = -I$(srcdir)/dummy-headers
+ 
+ if HAVE_OBJC
+-autotestkeywords_CPPFLAGS += -DHAVE_OBJC=1
+-autotestkeywords_CXXFLAGS = -x objective-c++
++autotestkeywords_CPPFLAGS += -DHAVE_OBJC=1 -x objective-c++
+ endif
+ 
+ endif
