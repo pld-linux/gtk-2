@@ -311,9 +311,9 @@ exit 0
 %files -f %{name}.lang
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README
-%attr(755,root,root) %{_bindir}/gdk-pixbuf-query-loaders
+%attr(755,root,root) %{_bindir}/gdk-pixbuf-query-loaders%{pqext}
 %attr(755,root,root) %{_bindir}/gtk-demo
-%attr(755,root,root) %{_bindir}/gtk-query-immodules-2.0
+%attr(755,root,root) %{_bindir}/gtk-query-immodules-2.0%{pqext}
 %attr(755,root,root) %{_bindir}/gtk-update-icon-cache
 %attr(755,root,root) %{_libdir}/libgdk-x11-2.0.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libgdk-x11-2.0.so.0
