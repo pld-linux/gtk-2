@@ -83,3 +83,23 @@
  
  module_LTLIBRARIES =				\
  	$(IM_XIM_MODULE)			\
+--- gtk+-2.12.9/modules/input/Makefile.am~	2008-03-22 00:23:37.000000000 +0200
++++ gtk+-2.12.9/modules/input/Makefile.am	2008-03-22 00:57:31.244698955 +0200
+@@ -91,7 +91,7 @@
+ IM_IME_MODULE=im-ime.la 
+ endif
+ 
+-multipress_defs = -DMULTIPRESS_LOCALEDIR=\""$(mplocaledir)"\" -DMULTIPRESS_CONFDIR=\""$(sysconfdir)/gtk-2.0"\"
++multipress_defs = -DMULTIPRESS_LOCALEDIR=\""$(mplocaledir)"\" -DMULTIPRESS_CONFDIR=\""$(sysconfdir)"\"
+ im_multipress_la_CPPFLAGS = $(multipress_defs)
+ im_multipress_la_LDFLAGS = -rpath $(moduledir) -avoid-version -module $(no_undefined)
+ im_multipress_la_SOURCES =	\
+@@ -100,7 +100,7 @@
+ 	immultipress.c
+ im_multipress_la_LIBADD = $(LDADDS)
+ 
+-imconffiledir = $(sysconfdir)/gtk-2.0
++imconffiledir = $(sysconfdir)
+ dist_imconffile_DATA = im-multipress.conf
+ 
+ if CROSS_COMPILING
