@@ -21,7 +21,7 @@ Summary(pl.UTF-8):	Gimp Toolkit
 Summary(tr.UTF-8):	Gimp ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.12.9
-Release:	2
+Release:	3
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
