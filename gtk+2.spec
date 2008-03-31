@@ -37,7 +37,8 @@ Patch5:		%{name}-workaround-flashproblem.patch
 Patch6:		%{name}-lt.patch
 Patch7:		%{name}-arch_confdir.patch
 URL:		http://www.gtk.org/
-BuildRequires:	atk-devel >= 1:1.22.0
+BuildRequires:	XFree86-devel
+BuildRequires:	atk-devel >= 1:1.20.0
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
 BuildRequires:	cairo-devel >= 1.4.0
@@ -45,39 +46,29 @@ BuildRequires:	cairo-devel >= 1.4.0
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.16.1
+BuildRequires:	glib2-devel >= 1:2.14.2
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.8}
 BuildRequires:	gtk-doc-automake >= 1.8
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
-BuildRequires:	libxml2-progs >= 1:2.6.31
+BuildRequires:	libxml2-progs >= 1:2.6.30
 BuildRequires:	libxslt-progs >= 1.1.20
-BuildRequires:	pango-devel >= 1:1.20.0
+BuildRequires:	pango-devel >= 1:1.18.3
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.197
-BuildRequires:	xorg-lib-libX11-devel
-BuildRequires:	xorg-lib-libXcursor-devel
-BuildRequires:	xorg-lib-libXext-devel
-BuildRequires:	xorg-lib-libXft-devel
-BuildRequires:	xorg-lib-libXi-devel
-BuildRequires:	xorg-lib-libXinerama-devel
-BuildRequires:	xorg-lib-libXrandr-devel
-BuildRequires:	xorg-lib-libXrender-devel
-Requires:	atk >= 1:1.22.0
+Requires:	atk >= 1:1.20.0
 Requires:	cairo >= 1.4.0
-Requires:	glib2 >= 1:2.16.1
-Requires:	pango >= 1:1.20.0
+Requires:	glib2 >= 1:2.14.2
+Requires:	pango >= 1:1.18.3
 %if %{with cups}
 # cups is used by default if gtk+ is built with cups
 Suggests:	%{name}-cups = %{epoch}:%{version}-%{release}
 %endif
 Obsoletes:	gtk2
-# sr@Latn vs. sr@latin
-Conflicts:	glibc-misc < 6:2.7
 Conflicts:	gtk2-engines < 1:2.2.0-6
 # autopanog.exe crashes with gtk+2 2.8.x and libgdiplus 1.1.8
 Conflicts:	libgdiplus < 1.1.9
@@ -148,17 +139,10 @@ Summary(pl.UTF-8):	Pliki nagłówkowe i dokumentacja do GTK+
 Summary(tr.UTF-8):	GIMP araç takımı ve çizim takımı
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	atk-devel >= 1:1.22.0
-Requires:	glib2-devel >= 1:2.16.1
-Requires:	pango-devel >= 1:1.20.0
-Requires:	xorg-lib-libX11-devel
-Requires:	xorg-lib-libXcursor-devel
-Requires:	xorg-lib-libXext-devel
-Requires:	xorg-lib-libXft-devel
-Requires:	xorg-lib-libXi-devel
-Requires:	xorg-lib-libXinerama-devel
-Requires:	xorg-lib-libXrandr-devel
-Requires:	xorg-lib-libXrender-devel
+Requires:	XFree86-devel
+Requires:	atk-devel >= 1:1.20.0
+Requires:	glib2-devel >= 1:2.14.2
+Requires:	pango-devel >= 1:1.18.3
 Obsoletes:	gtk2-devel
 
 %description devel
@@ -277,8 +261,7 @@ mv $RPM_BUILD_ROOT%{_bindir}/gtk-query-immodules-2.0{,%{pqext}}
 install -d $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules
 
 rm -r $RPM_BUILD_ROOT%{_datadir}/locale/az_IR
-[ -d $RPM_BUILD_ROOT%{_datadir}/locale/sr@latin ] || \
-	mv -f $RPM_BUILD_ROOT%{_datadir}/locale/sr@{Latn,latin}
+
 %find_lang %{name} --all-name
 
 %{!?with_apidocs:rm -rf $RPM_BUILD_ROOT%{_gtkdocdir}/{gdk,gdk-pixbuf,gtk}}
