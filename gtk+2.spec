@@ -20,14 +20,14 @@ Summary(it.UTF-8):	Il toolkit per Gimp
 Summary(pl.UTF-8):	Gimp Toolkit
 Summary(tr.UTF-8):	Gimp ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.12.9
-Release:	3
+Version:	2.13.0
+Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 #Source0:	ftp://ftp.gtk.org/pub/gtk/v2.10/gtk+-%{version}.tar.bz2
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.12/gtk+-%{version}.tar.bz2
-# Source0-md5:	33499772fdc3bea569c6d5673e5831b4
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.13/gtk+-%{version}.tar.bz2
+# Source0-md5:	6c07effe4cb8055aeb93702b08d68b1e
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-menu-mac.patch
 Patch2:		%{name}-compose-table.patch.bz2
@@ -75,6 +75,8 @@ Requires:	pango >= 1:1.20.0
 # cups is used by default if gtk+ is built with cups
 Suggests:	%{name}-cups = %{epoch}:%{version}-%{release}
 %endif
+Provides:	gail = 1.23.0
+Obsoletes:	gail
 Obsoletes:	gtk2
 # sr@Latn vs. sr@latin
 Conflicts:	glibc-misc < 6:2.7
@@ -159,6 +161,8 @@ Requires:	xorg-lib-libXi-devel
 Requires:	xorg-lib-libXinerama-devel
 Requires:	xorg-lib-libXrandr-devel
 Requires:	xorg-lib-libXrender-devel
+Provides:	gail-devel = 1.23.0
+Obsoletes:	gail-devel
 Obsoletes:	gtk2-devel
 
 %description devel
@@ -171,6 +175,7 @@ Pliki nagłówkowe i dokumentacja do bibliotek GTK+.
 Summary:	GTK+ static libraries
 Summary(pl.UTF-8):	Biblioteki statyczne GTK+
 Group:		X11/Development/Libraries
+Obsoletes:	gail-static
 Requires:	%{name}-devel = %{epoch}:%{version}-%{release}
 
 %description static
@@ -184,6 +189,8 @@ Summary:	GTK+ API documentation
 Summary(pl.UTF-8):	Dokumentacja API GTK+
 Group:		Documentation
 Requires:	gtk-doc-common
+Provides:	gail-static = 1.23.0
+Obsoletes:	gail-apidocs
 
 %description apidocs
 GTK+ API documentation.
@@ -315,6 +322,8 @@ exit 0
 %attr(755,root,root) %{_bindir}/gtk-demo
 %attr(755,root,root) %{_bindir}/gtk-query-immodules-2.0%{pqext}
 %attr(755,root,root) %{_bindir}/gtk-update-icon-cache
+%attr(755,root,root) %{_libdir}/libgailutil.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libgailutil.so.18
 %attr(755,root,root) %{_libdir}/libgdk-x11-2.0.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libgdk-x11-2.0.so.0
 %attr(755,root,root) %{_libdir}/libgdk_pixbuf-2.0.so.*.*.*
@@ -332,6 +341,8 @@ exit 0
 %dir %{_libdir}/gtk-2.0/%{abivers}/immodules
 %dir %{_libdir}/gtk-2.0/%{abivers}/loaders
 %dir %{_libdir}/gtk-2.0/%{abivers}/printbackends
+%attr(755,root,root) %{_libdir}/gtk-2.0/modules/libferret.so
+%attr(755,root,root) %{_libdir}/gtk-2.0/modules/libgail.so
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/engines/libpixmap.so
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/immodules/im-*.so
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/loaders/libpixbufloader-*.so
@@ -362,18 +373,22 @@ exit 0
 %doc ChangeLog
 %attr(755,root,root) %{_bindir}/gdk-pixbuf-csource
 %attr(755,root,root) %{_bindir}/gtk-builder-convert
+%attr(755,root,root) %{_libdir}/libgailutil.so
 %attr(755,root,root) %{_libdir}/libgdk-x11-2.0.so
 %attr(755,root,root) %{_libdir}/libgdk_pixbuf-2.0.so
 %attr(755,root,root) %{_libdir}/libgdk_pixbuf_xlib-2.0.so
 %attr(755,root,root) %{_libdir}/libgtk-x11-2.0.so
+%{_libdir}/libgailutil.la
 %{_libdir}/libgdk-x11-2.0.la
 %{_libdir}/libgdk_pixbuf-2.0.la
 %{_libdir}/libgdk_pixbuf_xlib-2.0.la
 %{_libdir}/libgtk-x11-2.0.la
+%{_includedir}/gail-1.0
 %{_includedir}/gtk-2.0
 %{_includedir}/gtk-unix-print-2.0
 %{_aclocaldir}/gtk-2.0.m4
 %{_libdir}/gtk-2.0/include
+%{_pkgconfigdir}/gail.pc
 %{_pkgconfigdir}/gdk-2.0.pc
 %{_pkgconfigdir}/gdk-pixbuf-2.0.pc
 %{_pkgconfigdir}/gdk-pixbuf-xlib-2.0.pc
@@ -387,6 +402,7 @@ exit 0
 %if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
+%{_libdir}/libgailutil.a
 %{_libdir}/libgdk-x11-2.0.a
 %{_libdir}/libgdk_pixbuf-2.0.a
 %{_libdir}/libgdk_pixbuf_xlib-2.0.a
@@ -396,6 +412,7 @@ exit 0
 %if %{with apidocs}
 %files apidocs
 %defattr(644,root,root,755)
+%{_gtkdocdir}/gail-libgail-util
 %{_gtkdocdir}/gdk
 %{_gtkdocdir}/gdk-pixbuf
 %{_gtkdocdir}/gtk
