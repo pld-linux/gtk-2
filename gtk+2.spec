@@ -21,7 +21,7 @@ Summary(pl.UTF-8):	Gimp Toolkit
 Summary(tr.UTF-8):	Gimp ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.12.10
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
@@ -279,6 +279,9 @@ install -d $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules
 rm -r $RPM_BUILD_ROOT%{_datadir}/locale/az_IR
 [ -d $RPM_BUILD_ROOT%{_datadir}/locale/sr@latin ] || \
 	mv -f $RPM_BUILD_ROOT%{_datadir}/locale/sr@{Latn,latin}
+
+rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/ca@valencia
+
 %find_lang %{name} --all-name
 
 %{!?with_apidocs:rm -rf $RPM_BUILD_ROOT%{_gtkdocdir}/{gdk,gdk-pixbuf,gtk}}
