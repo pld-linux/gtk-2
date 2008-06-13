@@ -11,23 +11,23 @@
 %bcond_without	cups		# disable CUPS support
 %bcond_without	static_libs	# don't build static library
 #
-Summary:	The Gimp Toolkit
-Summary(cs.UTF-8):	Sada nástrojů pro Gimp
-Summary(de.UTF-8):	Der Gimp-Toolkit
-Summary(fi.UTF-8):	Gimp-työkalukokoelma
-Summary(fr.UTF-8):	Le toolkit de Gimp
-Summary(it.UTF-8):	Il toolkit per Gimp
-Summary(pl.UTF-8):	Gimp Toolkit
-Summary(tr.UTF-8):	Gimp ToolKit arayüz kitaplığı
+Summary:	The GIMP Toolkit
+Summary(cs.UTF-8):	Sada nástrojů pro GIMP
+Summary(de.UTF-8):	Der GIMP-Toolkit
+Summary(fi.UTF-8):	GIMP-työkalukokoelma
+Summary(fr.UTF-8):	Le toolkit de GIMP
+Summary(it.UTF-8):	Il toolkit per GIMP
+Summary(pl.UTF-8):	GIMP Toolkit
+Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.13.1
+Version:	2.13.2
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 #Source0:	ftp://ftp.gtk.org/pub/gtk/v2.10/gtk+-%{version}.tar.bz2
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.13/gtk+-%{version}.tar.bz2
-# Source0-md5:	16f57400a352aadda4b19f95aed14d0c
+# Source0-md5:	2db81ad8485e84d7a3c297fcfdf173bb
 Patch0:		%{name}-insensitive-iain.patch
 Patch1:		%{name}-menu-mac.patch
 Patch2:		%{name}-compose-table.patch.bz2
@@ -48,6 +48,7 @@ BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.16.1
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.8}
 BuildRequires:	gtk-doc-automake >= 1.8
+BuildRequires:	jasper-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
@@ -97,7 +98,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %endif
 
 %description
-GTK+, which stands for the Gimp ToolKit, is a library for creating
+GTK+, which stands for the GIMP ToolKit, is a library for creating
 graphical user interfaces for the X Window System. It is designed to
 be small, efficient, and flexible. GTK+ is written in C with a very
 object-oriented approach. GDK (part of GTK+) is a drawing toolkit
@@ -125,7 +126,7 @@ käytetään nyt myös useissa muissakin ohjelmissa.
 Libreria X scritta per GIMP. Viene usata da diversi programmi.
 
 %description -l pl.UTF-8
-GTK+, która to biblioteka stała się podstawą programu Gimp, zawiera
+GTK+, która to biblioteka stała się podstawą programu GIMP, zawiera
 funkcje do tworzenia graficznego interfejsu użytkownika pod X Window.
 Była tworzona z założeniem żeby była mała, efektywna i wygodna. GTK+
 jest napisane w C z podejściem zorientowanym bardzo obiektowo. GDK
@@ -175,8 +176,9 @@ Pliki nagłówkowe i dokumentacja do bibliotek GTK+.
 Summary:	GTK+ static libraries
 Summary(pl.UTF-8):	Biblioteki statyczne GTK+
 Group:		X11/Development/Libraries
-Obsoletes:	gail-static
 Requires:	%{name}-devel = %{epoch}:%{version}-%{release}
+Provides:	gail-static = 1.23.0
+Obsoletes:	gail-static
 
 %description static
 GTK+ static libraries.
@@ -283,7 +285,7 @@ mv $RPM_BUILD_ROOT%{_bindir}/gtk-query-immodules-2.0{,%{pqext}}
 # for various GTK+2 modules
 install -d $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules
 
-rm -r $RPM_BUILD_ROOT%{_datadir}/locale/az_IR
+rm -r $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,ca@valencia}
 [ -d $RPM_BUILD_ROOT%{_datadir}/locale/sr@latin ] || \
 	mv -f $RPM_BUILD_ROOT%{_datadir}/locale/sr@{Latn,latin}
 %find_lang %{name} --all-name
