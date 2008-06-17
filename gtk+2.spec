@@ -45,7 +45,7 @@ BuildRequires:	cairo-devel >= 1.4.0
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.16.1
+BuildRequires:	glib2-devel >= 1:2.17.1
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.8}
 BuildRequires:	gtk-doc-automake >= 1.8
 BuildRequires:	jasper-devel
