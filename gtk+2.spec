@@ -6,7 +6,6 @@
 #| !/usr/bin/env python
 #
 # Conditional build:
-%bcond_with	macmenu		# experimental mac/kde-like
 %bcond_without	apidocs		# disable gtk-doc
 %bcond_without	cups		# disable CUPS support
 %bcond_without	static_libs	# don't build static library
@@ -29,7 +28,6 @@ Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.13/gtk+-%{version}.tar.bz2
 # Source0-md5:	19a9127ec1d072444068acc90aca8085
 Patch0:		%{name}-insensitive-iain.patch
-Patch1:		%{name}-menu-mac.patch
 Patch2:		%{name}-compose-table.patch.bz2
 Patch3:		%{name}-objective-c++.patch
 Patch4:		%{name}-firefox-printpreview.patch
@@ -227,7 +225,6 @@ Moduł GTK+ do drukowania przez CUPS.
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
-%{?with_macmenu:%patch1 -p0}
 #%%patch2 -p1
 %patch3 -p1
 %patch4 -p1
