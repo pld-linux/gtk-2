@@ -19,14 +19,13 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.13.7
+Version:	2.14.1
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
-#Source0:	ftp://ftp.gtk.org/pub/gtk/v2.10/gtk+-%{version}.tar.bz2
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.13/gtk+-%{version}.tar.bz2
-# Source0-md5:	53c925985a399a68b9c0439ee18b81f3
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.14/gtk+-%{version}.tar.bz2
+# Source0-md5:	c6e66ffe92724d83391187f0af016b23
 Patch0:		%{name}-insensitive-iain.patch
 Patch2:		%{name}-compose-table.patch.bz2
 Patch3:		%{name}-objective-c++.patch
@@ -43,7 +42,7 @@ BuildRequires:	cairo-devel >= 1.6.0
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.17.3
+BuildRequires:	glib2-devel >= 1:2.18.0
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.8}
 BuildRequires:	gtk-doc-automake >= 1.8
 BuildRequires:	jasper-devel
@@ -53,7 +52,7 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs >= 1:2.6.31
 BuildRequires:	libxslt-progs >= 1.1.20
-BuildRequires:	pango-devel >= 1:1.21.3
+BuildRequires:	pango-devel >= 1:1.20.0
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-pythonprov
@@ -68,8 +67,8 @@ BuildRequires:	xorg-lib-libXrandr-devel
 BuildRequires:	xorg-lib-libXrender-devel
 Requires:	atk >= 1:1.22.0
 Requires:	cairo >= 1.6.0
-Requires:	glib2 >= 1:2.17.3
-Requires:	pango >= 1:1.21.3
+Requires:	glib2 >= 1:2.18.0
+Requires:	pango >= 1:1.20.0
 %if %{with cups}
 # cups is used by default if gtk+ is built with cups
 Suggests:	%{name}-cups = %{epoch}:%{version}-%{release}
@@ -150,8 +149,8 @@ Summary(tr.UTF-8):	GIMP araç takımı ve çizim takımı
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1:1.22.0
-Requires:	glib2-devel >= 1:2.17.3
-Requires:	pango-devel >= 1:1.21.3
+Requires:	glib2-devel >= 1:2.18.0
+Requires:	pango-devel >= 1:1.20.0
 Requires:	xorg-lib-libX11-devel
 Requires:	xorg-lib-libXcursor-devel
 Requires:	xorg-lib-libXext-devel
