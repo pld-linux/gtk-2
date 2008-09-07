@@ -6,30 +6,27 @@
 #| !/usr/bin/env python
 #
 # Conditional build:
-%bcond_with	macmenu		# experimental mac/kde-like
 %bcond_without	apidocs		# disable gtk-doc
 %bcond_without	cups		# disable CUPS support
 %bcond_without	static_libs	# don't build static library
 #
-Summary:	The Gimp Toolkit
-Summary(cs.UTF-8):	Sada nástrojů pro Gimp
-Summary(de.UTF-8):	Der Gimp-Toolkit
-Summary(fi.UTF-8):	Gimp-työkalukokoelma
-Summary(fr.UTF-8):	Le toolkit de Gimp
-Summary(it.UTF-8):	Il toolkit per Gimp
-Summary(pl.UTF-8):	Gimp Toolkit
-Summary(tr.UTF-8):	Gimp ToolKit arayüz kitaplığı
+Summary:	The GIMP Toolkit
+Summary(cs.UTF-8):	Sada nástrojů pro GIMP
+Summary(de.UTF-8):	Der GIMP-Toolkit
+Summary(fi.UTF-8):	GIMP-työkalukokoelma
+Summary(fr.UTF-8):	Le toolkit de GIMP
+Summary(it.UTF-8):	Il toolkit per GIMP
+Summary(pl.UTF-8):	GIMP Toolkit
+Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.12.11
+Version:	2.14.1
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
-#Source0:	ftp://ftp.gtk.org/pub/gtk/v2.10/gtk+-%{version}.tar.bz2
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.12/gtk+-%{version}.tar.bz2
-# Source0-md5:	f7aab88e856a813386f797aade5867ad
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.14/gtk+-%{version}.tar.bz2
+# Source0-md5:	c6e66ffe92724d83391187f0af016b23
 Patch0:		%{name}-insensitive-iain.patch
-Patch1:		%{name}-menu-mac.patch
 Patch2:		%{name}-compose-table.patch.bz2
 Patch3:		%{name}-objective-c++.patch
 Patch4:		%{name}-firefox-printpreview.patch
@@ -40,14 +37,15 @@ URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.22.0
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
-BuildRequires:	cairo-devel >= 1.4.0
+BuildRequires:	cairo-devel >= 1.6.0
 %{?with_cups:BuildRequires:	cups-devel}
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.16.1
+BuildRequires:	glib2-devel >= 1:2.18.0
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.8}
 BuildRequires:	gtk-doc-automake >= 1.8
+BuildRequires:	jasper-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
@@ -68,13 +66,15 @@ BuildRequires:	xorg-lib-libXinerama-devel
 BuildRequires:	xorg-lib-libXrandr-devel
 BuildRequires:	xorg-lib-libXrender-devel
 Requires:	atk >= 1:1.22.0
-Requires:	cairo >= 1.4.0
-Requires:	glib2 >= 1:2.16.1
+Requires:	cairo >= 1.6.0
+Requires:	glib2 >= 1:2.18.0
 Requires:	pango >= 1:1.20.0
 %if %{with cups}
 # cups is used by default if gtk+ is built with cups
 Suggests:	%{name}-cups = %{epoch}:%{version}-%{release}
 %endif
+Provides:	gail = 1.23.0
+Obsoletes:	gail
 Obsoletes:	gtk2
 # sr@Latn vs. sr@latin
 Conflicts:	glibc-misc < 6:2.7
@@ -95,7 +95,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %endif
 
 %description
-GTK+, which stands for the Gimp ToolKit, is a library for creating
+GTK+, which stands for the GIMP ToolKit, is a library for creating
 graphical user interfaces for the X Window System. It is designed to
 be small, efficient, and flexible. GTK+ is written in C with a very
 object-oriented approach. GDK (part of GTK+) is a drawing toolkit
@@ -123,7 +123,7 @@ käytetään nyt myös useissa muissakin ohjelmissa.
 Libreria X scritta per GIMP. Viene usata da diversi programmi.
 
 %description -l pl.UTF-8
-GTK+, która to biblioteka stała się podstawą programu Gimp, zawiera
+GTK+, która to biblioteka stała się podstawą programu GIMP, zawiera
 funkcje do tworzenia graficznego interfejsu użytkownika pod X Window.
 Była tworzona z założeniem żeby była mała, efektywna i wygodna. GTK+
 jest napisane w C z podejściem zorientowanym bardzo obiektowo. GDK
@@ -149,7 +149,7 @@ Summary(tr.UTF-8):	GIMP araç takımı ve çizim takımı
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1:1.22.0
-Requires:	glib2-devel >= 1:2.16.1
+Requires:	glib2-devel >= 1:2.18.0
 Requires:	pango-devel >= 1:1.20.0
 Requires:	xorg-lib-libX11-devel
 Requires:	xorg-lib-libXcursor-devel
@@ -159,6 +159,8 @@ Requires:	xorg-lib-libXi-devel
 Requires:	xorg-lib-libXinerama-devel
 Requires:	xorg-lib-libXrandr-devel
 Requires:	xorg-lib-libXrender-devel
+Provides:	gail-devel = 1.23.0
+Obsoletes:	gail-devel
 Obsoletes:	gtk2-devel
 
 %description devel
@@ -172,6 +174,8 @@ Summary:	GTK+ static libraries
 Summary(pl.UTF-8):	Biblioteki statyczne GTK+
 Group:		X11/Development/Libraries
 Requires:	%{name}-devel = %{epoch}:%{version}-%{release}
+Provides:	gail-static = 1.23.0
+Obsoletes:	gail-static
 
 %description static
 GTK+ static libraries.
@@ -184,6 +188,8 @@ Summary:	GTK+ API documentation
 Summary(pl.UTF-8):	Dokumentacja API GTK+
 Group:		Documentation
 Requires:	gtk-doc-common
+Provides:	gail-static = 1.23.0
+Obsoletes:	gail-apidocs
 
 %description apidocs
 GTK+ API documentation.
@@ -218,8 +224,7 @@ Moduł GTK+ do drukowania przez CUPS.
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
-%{?with_macmenu:%patch1 -p0}
-%patch2 -p1
+#%%patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
@@ -276,7 +281,7 @@ mv $RPM_BUILD_ROOT%{_bindir}/gtk-query-immodules-2.0{,%{pqext}}
 # for various GTK+2 modules
 install -d $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules
 
-rm -r $RPM_BUILD_ROOT%{_datadir}/locale/az_IR
+rm -r $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,ca@valencia}
 [ -d $RPM_BUILD_ROOT%{_datadir}/locale/sr@latin ] || \
 	mv -f $RPM_BUILD_ROOT%{_datadir}/locale/sr@{Latn,latin}
 
@@ -318,6 +323,8 @@ exit 0
 %attr(755,root,root) %{_bindir}/gtk-demo
 %attr(755,root,root) %{_bindir}/gtk-query-immodules-2.0%{pqext}
 %attr(755,root,root) %{_bindir}/gtk-update-icon-cache
+%attr(755,root,root) %{_libdir}/libgailutil.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libgailutil.so.18
 %attr(755,root,root) %{_libdir}/libgdk-x11-2.0.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libgdk-x11-2.0.so.0
 %attr(755,root,root) %{_libdir}/libgdk_pixbuf-2.0.so.*.*.*
@@ -335,6 +342,8 @@ exit 0
 %dir %{_libdir}/gtk-2.0/%{abivers}/immodules
 %dir %{_libdir}/gtk-2.0/%{abivers}/loaders
 %dir %{_libdir}/gtk-2.0/%{abivers}/printbackends
+%attr(755,root,root) %{_libdir}/gtk-2.0/modules/libferret.so
+%attr(755,root,root) %{_libdir}/gtk-2.0/modules/libgail.so
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/engines/libpixmap.so
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/immodules/im-*.so
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/loaders/libpixbufloader-*.so
@@ -365,18 +374,22 @@ exit 0
 %doc ChangeLog
 %attr(755,root,root) %{_bindir}/gdk-pixbuf-csource
 %attr(755,root,root) %{_bindir}/gtk-builder-convert
+%attr(755,root,root) %{_libdir}/libgailutil.so
 %attr(755,root,root) %{_libdir}/libgdk-x11-2.0.so
 %attr(755,root,root) %{_libdir}/libgdk_pixbuf-2.0.so
 %attr(755,root,root) %{_libdir}/libgdk_pixbuf_xlib-2.0.so
 %attr(755,root,root) %{_libdir}/libgtk-x11-2.0.so
+%{_libdir}/libgailutil.la
 %{_libdir}/libgdk-x11-2.0.la
 %{_libdir}/libgdk_pixbuf-2.0.la
 %{_libdir}/libgdk_pixbuf_xlib-2.0.la
 %{_libdir}/libgtk-x11-2.0.la
+%{_includedir}/gail-1.0
 %{_includedir}/gtk-2.0
 %{_includedir}/gtk-unix-print-2.0
 %{_aclocaldir}/gtk-2.0.m4
 %{_libdir}/gtk-2.0/include
+%{_pkgconfigdir}/gail.pc
 %{_pkgconfigdir}/gdk-2.0.pc
 %{_pkgconfigdir}/gdk-pixbuf-2.0.pc
 %{_pkgconfigdir}/gdk-pixbuf-xlib-2.0.pc
@@ -390,6 +403,7 @@ exit 0
 %if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
+%{_libdir}/libgailutil.a
 %{_libdir}/libgdk-x11-2.0.a
 %{_libdir}/libgdk_pixbuf-2.0.a
 %{_libdir}/libgdk_pixbuf_xlib-2.0.a
@@ -399,6 +413,7 @@ exit 0
 %if %{with apidocs}
 %files apidocs
 %defattr(644,root,root,755)
+%{_gtkdocdir}/gail-libgail-util
 %{_gtkdocdir}/gdk
 %{_gtkdocdir}/gdk-pixbuf
 %{_gtkdocdir}/gtk
