@@ -27,6 +27,7 @@ Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.14/gtk+-%{version}.tar.bz2
 # Source0-md5:	c6e66ffe92724d83391187f0af016b23
 Patch3:		%{name}-objective-c++.patch
+# http://bugzilla.gnome.org/show_bug.cgi?id=552107
 Patch6:		%{name}-lt.patch
 Patch7:		%{name}-arch_confdir.patch
 URL:		http://www.gtk.org/
