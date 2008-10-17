@@ -19,17 +19,17 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.14.3
+Version:	2.14.4
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.14/gtk+-%{version}.tar.bz2
-# Source0-md5:	359e44c8e47dfe04a09ac09b8e015e58
+# Source0-md5:	72bf65a54d2d29a6644dc0d28313ee67
 Patch0:		%{name}-objective-c++.patch
 Patch1:		%{name}-arch_confdir.patch
 URL:		http://www.gtk.org/
-BuildRequires:	atk-devel >= 1:1.22.0
+BuildRequires:	atk-devel >= 1:1.24.0
 BuildRequires:	autoconf >= 2.54
 BuildRequires:	automake >= 1:1.7
 BuildRequires:	cairo-devel >= 1.6.0
@@ -47,7 +47,7 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs >= 1:2.6.31
 BuildRequires:	libxslt-progs >= 1.1.20
-BuildRequires:	pango-devel >= 1:1.20.0
+BuildRequires:	pango-devel >= 1:1.22.0
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-pythonprov
@@ -60,10 +60,10 @@ BuildRequires:	xorg-lib-libXi-devel
 BuildRequires:	xorg-lib-libXinerama-devel
 BuildRequires:	xorg-lib-libXrandr-devel
 BuildRequires:	xorg-lib-libXrender-devel
-Requires:	atk >= 1:1.22.0
+Requires:	atk >= 1:1.24.0
 Requires:	cairo >= 1.6.0
 Requires:	glib2 >= 1:2.18.0
-Requires:	pango >= 1:1.20.0
+Requires:	pango >= 1:1.22.0
 %if %{with cups}
 # cups is used by default if gtk+ is built with cups
 Suggests:	%{name}-cups = %{epoch}:%{version}-%{release}
@@ -143,9 +143,9 @@ Summary(pl.UTF-8):	Pliki nagłówkowe i dokumentacja do GTK+
 Summary(tr.UTF-8):	GIMP araç takımı ve çizim takımı
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	atk-devel >= 1:1.22.0
+Requires:	atk-devel >= 1:1.24.0
 Requires:	glib2-devel >= 1:2.18.0
-Requires:	pango-devel >= 1:1.20.0
+Requires:	pango-devel >= 1:1.22.0
 Requires:	xorg-lib-libX11-devel
 Requires:	xorg-lib-libXcursor-devel
 Requires:	xorg-lib-libXext-devel
@@ -183,7 +183,7 @@ Summary:	GTK+ API documentation
 Summary(pl.UTF-8):	Dokumentacja API GTK+
 Group:		Documentation
 Requires:	gtk-doc-common
-Provides:	gail-static = 1.23.0
+Provides:	gail-apidocs = 1.23.0
 Obsoletes:	gail-apidocs
 
 %description apidocs
