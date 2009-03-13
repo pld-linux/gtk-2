@@ -19,13 +19,13 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.15.5
+Version:	2.16.0
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.15/gtk+-%{version}.tar.bz2
-# Source0-md5:	aa010d3fa57cba96f32db352eb35754f
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.16/gtk+-%{version}.tar.bz2
+# Source0-md5:	139528802794287427fd4d18875b5cf5
 Patch0:		%{name}-objective-c++.patch
 Patch1:		%{name}-arch_confdir.patch
 URL:		http://www.gtk.org/
@@ -37,7 +37,7 @@ BuildRequires:	cairo-devel >= 1.6.0
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
-BuildRequires:	glib2-devel >= 1:2.19.7
+BuildRequires:	glib2-devel >= 1:2.20.0
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.8}
 BuildRequires:	gtk-doc-automake >= 1.8
 BuildRequires:	jasper-devel
@@ -62,7 +62,7 @@ BuildRequires:	xorg-lib-libXrandr-devel
 BuildRequires:	xorg-lib-libXrender-devel
 Requires:	atk >= 1:1.25.0
 Requires:	cairo >= 1.6.0
-Requires:	glib2 >= 1:2.19.7
+Requires:	glib2 >= 1:2.20.0
 Requires:	pango >= 1:1.23.0
 %if %{with cups}
 # cups is used by default if gtk+ is built with cups
@@ -144,7 +144,7 @@ Summary(tr.UTF-8):	GIMP araç takımı ve çizim takımı
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1:1.25.0
-Requires:	glib2-devel >= 1:2.19.7
+Requires:	glib2-devel >= 1:2.20.0
 Requires:	pango-devel >= 1:1.23.0
 Requires:	xorg-lib-libX11-devel
 Requires:	xorg-lib-libXcursor-devel
@@ -256,8 +256,6 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk.immodules
 
 cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
-# remove unsupported locale scheme
-rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/{en@IPA,io}
 # shut up check-files (static modules and *.la for modules)
 rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules/*.{a,la}
 rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/*/*.{a,la}
@@ -272,11 +270,7 @@ mv $RPM_BUILD_ROOT%{_bindir}/gtk-query-immodules-2.0{,%{pqext}}
 # for various GTK+2 modules
 install -d $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules
 
-rm -r $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,ca@valencia}
-[ -d $RPM_BUILD_ROOT%{_datadir}/locale/sr@latin ] || \
-	mv -f $RPM_BUILD_ROOT%{_datadir}/locale/sr@{Latn,latin}
-
-rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/ca@valencia
+rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,ca@valencia,io}
 
 %find_lang %{name} --all-name
 
