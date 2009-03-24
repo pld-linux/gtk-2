@@ -54,16 +54,20 @@ BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.197
 BuildRequires:	xorg-lib-libX11-devel
 BuildRequires:	xorg-lib-libXcursor-devel
+BuildRequires:	xorg-lib-libXcomposite-devel
+BuildRequires:	xorg-lib-libXdamage-devel
 BuildRequires:	xorg-lib-libXext-devel
+BuildRequires:	xorg-lib-libXfixes-devel
 BuildRequires:	xorg-lib-libXft-devel
 BuildRequires:	xorg-lib-libXi-devel
 BuildRequires:	xorg-lib-libXinerama-devel
-BuildRequires:	xorg-lib-libXrandr-devel
+BuildRequires:	xorg-lib-libXrandr-devel >= 1.3.0
 BuildRequires:	xorg-lib-libXrender-devel
 Requires:	atk >= 1:1.25.0
 Requires:	cairo >= 1.6.0
 Requires:	glib2 >= 1:2.20.0
 Requires:	pango >= 1:1.23.0
+Requires:	xorg-lib-libXrandr >= 1.3.0
 %if %{with cups}
 # cups is used by default if gtk+ is built with cups
 Suggests:	%{name}-cups = %{epoch}:%{version}-%{release}
@@ -148,11 +152,14 @@ Requires:	glib2-devel >= 1:2.20.0
 Requires:	pango-devel >= 1:1.23.0
 Requires:	xorg-lib-libX11-devel
 Requires:	xorg-lib-libXcursor-devel
+Requires:	xorg-lib-libXcomposite-devel
+Requires:	xorg-lib-libXdamage-devel
 Requires:	xorg-lib-libXext-devel
+Requires:	xorg-lib-libXfixes-devel
 Requires:	xorg-lib-libXft-devel
 Requires:	xorg-lib-libXi-devel
 Requires:	xorg-lib-libXinerama-devel
-Requires:	xorg-lib-libXrandr-devel
+Requires:	xorg-lib-libXrandr-devel >= 1.3.0
 Requires:	xorg-lib-libXrender-devel
 Provides:	gail-devel = 1.23.0
 Obsoletes:	gail-devel
