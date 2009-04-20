@@ -73,6 +73,7 @@ Requires:	xorg-lib-libXrandr >= 1.3.0
 Suggests:	%{name}-cups = %{epoch}:%{version}-%{release}
 %endif
 Provides:	gail = 1.23.0
+Provides:	gtk2 = %{version}
 Obsoletes:	gail
 Obsoletes:	gtk2
 # sr@Latn vs. sr@latin
