@@ -19,13 +19,13 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.16.1
+Version:	2.16.2
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.16/gtk+-%{version}.tar.bz2
-# Source0-md5:	74e35ff3e6e02c960fe2117a4b6b102f
+# Source0-md5:	396e98df15f6e4005e360b5710660ce3
 Patch0:		%{name}-objective-c++.patch
 Patch1:		%{name}-arch_confdir.patch
 URL:		http://www.gtk.org/
