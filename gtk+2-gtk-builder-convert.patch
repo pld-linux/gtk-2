@@ -1,0 +1,33 @@
+--- gtk+-2.16.5-orig/gtk/gtk-builder-convert	2009-07-18 05:53:24.000000000 +0200
++++ gtk+-2.16.5/gtk/gtk-builder-convert	2009-08-12 13:00:04.462760324 +0200
+@@ -229,18 +229,18 @@
+         return obj
+ 
+     def _parse(self):
+-        glade_iface = self._dom.getElementsByTagName("glade-interface")
+-        assert glade_iface, ("Badly formed XML, there is "
+-                             "no <glade-interface> tag.")
+-        # Rename glade-interface to interface
+-        glade_iface[0].tagName = 'interface'
+-        self._interface = glade_iface[0]
+-
+-        # Remove glade-interface doc type
+-        for node in self._dom.childNodes:
+-            if node.nodeType == Node.DOCUMENT_TYPE_NODE:
+-                if node.name == 'glade-interface':
+-                    self._dom.removeChild(node)
++#        glade_iface = self._dom.getElementsByTagName("glade-interface")
++#        assert glade_iface, ("Badly formed XML, there is "
++#                             "no <glade-interface> tag.")
++#        # Rename glade-interface to interface
++#        glade_iface[0].tagName = 'interface'
++#        self._interface = glade_iface[0]
++#
++#        # Remove glade-interface doc type
++#        for node in self._dom.childNodes:
++#            if node.nodeType == Node.DOCUMENT_TYPE_NODE:
++#                if node.name == 'glade-interface':
++#                    self._dom.removeChild(node)
+ 
+         # Strip unsupported tags
+         for tag in ['requires', 'requires-version']:
