@@ -20,7 +20,7 @@ Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.16.5
-Release:	1.1
+Release:	2
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
@@ -300,8 +300,13 @@ exit 0
 /sbin/ldconfig
 if [ "$1" != "0" ]; then
 	umask 022
-	%{_bindir}/gdk-pixbuf-query-loaders%{pqext} > %{_sysconfdir}/gdk-pixbuf.loaders
-	%{_bindir}/gtk-query-immodules-2.0%{pqext} > %{_sysconfdir}/gtk.immodules
+	# we need to check for dir existence for multilib installs as the $1 is 1
+	# if we remove the other arch pkg will be still present.
+	# i.e we have installed gtk+2-2.16.5-1.x86_64 and gtk+2-2.16.5-1.i686, and remove gtk+2-2.16.5-1.i686
+	if [ -d %{_sysconfdir} ]; then
+		%{_bindir}/gdk-pixbuf-query-loaders%{pqext} > %{_sysconfdir}/gdk-pixbuf.loaders
+		%{_bindir}/gtk-query-immodules-2.0%{pqext} > %{_sysconfdir}/gtk.immodules
+	fi
 fi
 exit 0
 
