@@ -19,13 +19,13 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.16.5
-Release:	2
+Version:	2.16.6
+Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
-Source0:	http://ftp.gnome.org/pub/gnome/sources/gtk+/2.16/gtk+-%{version}.tar.bz2
-# Source0-md5:	8d1ea0b9b0400224d25b0cc2750b438d
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.16/gtk+-%{version}.tar.bz2
+# Source0-md5:	416412b336d9f3b6b78ca887395d1726
 Patch0:		%{name}-objective-c++.patch
 Patch1:		%{name}-arch_confdir.patch
 Patch2:		%{name}-gtk-builder-convert.patch
@@ -54,8 +54,8 @@ BuildRequires:	pkgconfig
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.197
 BuildRequires:	xorg-lib-libX11-devel
-BuildRequires:	xorg-lib-libXcursor-devel
 BuildRequires:	xorg-lib-libXcomposite-devel
+BuildRequires:	xorg-lib-libXcursor-devel
 BuildRequires:	xorg-lib-libXdamage-devel
 BuildRequires:	xorg-lib-libXext-devel
 BuildRequires:	xorg-lib-libXfixes-devel
@@ -153,8 +153,8 @@ Requires:	atk-devel >= 1:1.25.0
 Requires:	glib2-devel >= 1:2.20.0
 Requires:	pango-devel >= 1:1.23.0
 Requires:	xorg-lib-libX11-devel
-Requires:	xorg-lib-libXcursor-devel
 Requires:	xorg-lib-libXcomposite-devel
+Requires:	xorg-lib-libXcursor-devel
 Requires:	xorg-lib-libXdamage-devel
 Requires:	xorg-lib-libXext-devel
 Requires:	xorg-lib-libXfixes-devel
