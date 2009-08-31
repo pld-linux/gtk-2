@@ -24,7 +24,7 @@ Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
-Source0:	http://ftp.gnome.org/pub/gnome/sources/gtk+/2.16/gtk+-%{version}.tar.bz2
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.16/gtk+-%{version}.tar.bz2
 # Source0-md5:	416412b336d9f3b6b78ca887395d1726
 Patch0:		%{name}-objective-c++.patch
 Patch1:		%{name}-arch_confdir.patch
