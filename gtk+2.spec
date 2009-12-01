@@ -151,6 +151,7 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1:1.25.0
 Requires:	glib2-devel >= 1:2.22.0
 Requires:	pango-devel >= 1:1.23.0
+Requires:	shared-mime-info
 Requires:	xorg-lib-libX11-devel
 Requires:	xorg-lib-libXcomposite-devel
 Requires:	xorg-lib-libXcursor-devel
