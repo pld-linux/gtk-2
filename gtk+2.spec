@@ -19,13 +19,13 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.19.1
+Version:	2.19.3
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.19/gtk+-%{version}.tar.bz2
-# Source0-md5:	d11e2044aedc49e155832c54dc9ac548
+# Source0-md5:	d5e74c3cff193e1e8e1ac8f0857ea1d4
 Patch1:		%{name}-arch_confdir.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.29.1
@@ -36,6 +36,7 @@ BuildRequires:	cairo-devel >= 1.6.0
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
+BuildRequires:	gir-repository-devel
 BuildRequires:	glib2-devel >= 1:2.22.0
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.8}
 BuildRequires:	gtk-doc-automake >= 1.8
