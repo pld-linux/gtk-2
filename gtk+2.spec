@@ -227,6 +227,8 @@ Moduł GTK+ do drukowania przez CUPS.
 
 %prep
 %setup -q -n gtk+-%{version}
+sed -i s#^my## po/LINGUAS
+rm po/my.po
 %patch1 -p1
 
 %build
