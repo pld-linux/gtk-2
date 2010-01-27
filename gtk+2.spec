@@ -19,13 +19,13 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.19.3
+Version:	2.19.4
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.19/gtk+-%{version}.tar.bz2
-# Source0-md5:	d5e74c3cff193e1e8e1ac8f0857ea1d4
+# Source0-md5:	c0bb9a753c37bf27aab118f085ad3de6
 Patch1:		%{name}-arch_confdir.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.29.1
@@ -38,6 +38,7 @@ BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
 BuildRequires:	gir-repository-devel
 BuildRequires:	glib2-devel >= 1:2.22.0
+BuildRequires:	gobject-introspection-devel >= 0.6.7
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.8}
 BuildRequires:	gtk-doc-automake >= 1.8
 BuildRequires:	jasper-devel
@@ -346,6 +347,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/loaders/libpixbufloader-*.so
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/libprintbackend-file.so
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/libprintbackend-lpr.so
+%{_libdir}/girepository-1.0/*.typelib
 
 # XXX: just demo data - move to examples?
 %{_datadir}/gtk-2.0
@@ -396,6 +398,7 @@ exit 0
 %{_pkgconfigdir}/gtk+-x11-2.0.pc
 %{_mandir}/man1/gdk-pixbuf-csource.1*
 %{_mandir}/man1/gtk-builder-convert.1*
+%{_datadir}/gir-1.0/*.gir
 
 %if %{with static_libs}
 %files static
