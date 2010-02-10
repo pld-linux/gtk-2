@@ -19,17 +19,17 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.19.4
+Version:	2.19.5
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.19/gtk+-%{version}.tar.bz2
-# Source0-md5:	c0bb9a753c37bf27aab118f085ad3de6
-Patch1:		%{name}-arch_confdir.patch
+# Source0-md5:	b4b84f53b2e2453ad084305d40573b8a
+Patch0:		%{name}-arch_confdir.patch
 URL:		http://www.gtk.org/
-BuildRequires:	atk-devel >= 1:1.29.1
-BuildRequires:	autoconf >= 2.54
+BuildRequires:	atk-devel >= 1:1.29.2
+BuildRequires:	autoconf >= 2.62
 BuildRequires:	automake >= 1:1.7
 BuildRequires:	cairo-devel >= 1.6.0
 %{?with_cups:BuildRequires:	cups-devel}
@@ -37,10 +37,10 @@ BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
 BuildRequires:	gir-repository-devel
-BuildRequires:	glib2-devel >= 1:2.22.0
+BuildRequires:	glib2-devel >= 1:2.23.0
 BuildRequires:	gobject-introspection-devel >= 0.6.7
-%{?with_apidocs:BuildRequires:	gtk-doc >= 1.8}
-BuildRequires:	gtk-doc-automake >= 1.8
+%{?with_apidocs:BuildRequires:	gtk-doc >= 1.11}
+BuildRequires:	gtk-doc-automake >= 1.11
 BuildRequires:	jasper-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
@@ -48,7 +48,7 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs >= 1:2.6.31
 BuildRequires:	libxslt-progs >= 1.1.20
-BuildRequires:	pango-devel >= 1:1.24.0
+BuildRequires:	pango-devel >= 1:1.26.0
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-pythonprov
@@ -64,10 +64,10 @@ BuildRequires:	xorg-lib-libXi-devel
 BuildRequires:	xorg-lib-libXinerama-devel
 BuildRequires:	xorg-lib-libXrandr-devel >= 1.3.0
 BuildRequires:	xorg-lib-libXrender-devel
-Requires:	atk >= 1:1.25.0
+Requires:	atk >= 1:1.29.2
 Requires:	cairo >= 1.6.0
-Requires:	glib2 >= 1:2.20.0
-Requires:	pango >= 1:1.23.0
+Requires:	glib2 >= 1:2.23.0
+Requires:	pango >= 1:1.26.0
 Requires:	xorg-lib-libXrandr >= 1.3.0
 %if %{with cups}
 # cups is used by default if gtk+ is built with cups
@@ -149,9 +149,9 @@ Summary(pl.UTF-8):	Pliki nagłówkowe i dokumentacja do GTK+
 Summary(tr.UTF-8):	GIMP araç takımı ve çizim takımı
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
-Requires:	atk-devel >= 1:1.25.0
-Requires:	glib2-devel >= 1:2.22.0
-Requires:	pango-devel >= 1:1.23.0
+Requires:	atk-devel >= 1:1.29.2
+Requires:	glib2-devel >= 1:2.23.0
+Requires:	pango-devel >= 1:1.26.0
 Requires:	xorg-lib-libX11-devel
 Requires:	xorg-lib-libXcomposite-devel
 Requires:	xorg-lib-libXcursor-devel
@@ -227,9 +227,9 @@ Moduł GTK+ do drukowania przez CUPS.
 
 %prep
 %setup -q -n gtk+-%{version}
+%patch0 -p1
 sed -i s#^my## po/LINGUAS
 rm po/my.po
-%patch1 -p1
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
@@ -280,7 +280,7 @@ mv $RPM_BUILD_ROOT%{_bindir}/gtk-query-immodules-2.0{,%{pqext}}
 # for various GTK+2 modules
 install -d $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules
 
-rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,ca@valencia,io}
+rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,io}
 
 %find_lang %{name} --all-name
 
