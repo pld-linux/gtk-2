@@ -19,13 +19,13 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.18.6
-Release:	2
+Version:	2.18.7
+Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.18/gtk+-%{version}.tar.bz2
-# Source0-md5:	3b32073cf1fad755f7c2b2db71aebe90
+# Source0-md5:	e38d0b6801789b5b4c598e84b28fb215
 Patch0:		%{name}-arch_confdir.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.26.0
@@ -277,7 +277,7 @@ mv $RPM_BUILD_ROOT%{_bindir}/gtk-query-immodules-2.0{,%{pqext}}
 # for various GTK+2 modules
 install -d $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules
 
-rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,ca@valencia,io}
+rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,io,my}
 
 %find_lang %{name} --all-name
 
