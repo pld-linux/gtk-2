@@ -20,7 +20,7 @@ Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.18.7
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
@@ -275,7 +275,8 @@ mv $RPM_BUILD_ROOT%{_bindir}/gtk-query-immodules-2.0{,%{pqext}}
 # for various GTK+2 modules
 install -d $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules
 
-rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,io,my}
+# unsupported by glibc
+rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,io}
 
 %find_lang %{name} --all-name
 
