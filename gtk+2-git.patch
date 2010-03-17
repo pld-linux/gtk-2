@@ -1,0 +1,114 @@
+From 4b529ade7bc94bf540affd48ef007344168ab152 Mon Sep 17 00:00:00 2001
+From: Tristan Van Berkom <tristan.van.berkom@gmail.com>
+Date: Sun, 14 Mar 2010 19:23:55 +0000
+Subject: Refixed patch for bug 612505.
+
+New patch makes sure to update the display even when
+the GtkEntry's buffer is set to NULL, it also breaks the
+reference to the buffer in ->dispose() instead of ->finalize().
+---
+diff --git a/gtk/gtkentry.c b/gtk/gtkentry.c
+index 0359fc8..4344449 100644
+--- a/gtk/gtkentry.c
++++ b/gtk/gtkentry.c
+@@ -2430,6 +2430,7 @@ gtk_entry_dispose (GObject *object)
+   gtk_entry_set_icon_tooltip_markup (entry, GTK_ENTRY_ICON_PRIMARY, NULL);
+   gtk_entry_set_icon_from_pixbuf (entry, GTK_ENTRY_ICON_SECONDARY, NULL);
+   gtk_entry_set_icon_tooltip_markup (entry, GTK_ENTRY_ICON_SECONDARY, NULL);
++  gtk_entry_set_buffer (entry, NULL);
+ 
+   G_OBJECT_CLASS (gtk_entry_parent_class)->dispose (object);
+ }
+@@ -2472,11 +2473,6 @@ gtk_entry_finalize (GObject *object)
+ 
+   g_free (priv->im_module);
+ 
+-  /* COMPAT: entry->text is a deprecated field, and the allocation 
+-     is owned by the buffer. */
+-
+-  gtk_entry_set_buffer (entry, NULL);
+-
+   G_OBJECT_CLASS (gtk_entry_parent_class)->finalize (object);
+ }
+ 
+@@ -6648,9 +6644,6 @@ gtk_entry_set_buffer (GtkEntry       *entry,
+     {
+        buffer_connect_signals (entry);
+ 
+-       gtk_editable_set_position (GTK_EDITABLE (entry), 0);
+-       gtk_entry_recompute (entry);
+-
+       /* COMPAT: Deprecated. Not used. Setting these fields no longer necessary in GTK 3.x */
+       entry->text = (char*)gtk_entry_buffer_get_text (priv->buffer);
+       entry->text_length = gtk_entry_buffer_get_length (priv->buffer);
+--
+cgit v0.8.3.1
+From a66aa434f933526663d62d202f9bd7841d52449e Mon Sep 17 00:00:00 2001
+From: Matthias Clasen <mclasen@redhat.com>
+Date: Tue, 16 Mar 2010 16:35:13 +0000
+Subject: Don't crash in DND when the X server doesn't support SHAPE
+
+Reported in bug 612768
+(cherry picked from commit 996541d096d4d59e9baa384e5d5359a10567433e)
+---
+diff --git a/gdk/x11/gdkwindow-x11.c b/gdk/x11/gdkwindow-x11.c
+index 1914258..58ff6a3 100644
+--- a/gdk/x11/gdkwindow-x11.c
++++ b/gdk/x11/gdkwindow-x11.c
+@@ -4606,14 +4606,18 @@ _xwindow_get_shape (Display *xdisplay,
+   gint rn, ord, i;
+ 
+   shape = NULL;
+-  
++  rn = 0;
++
+   xrl = XShapeGetRectangles (xdisplay,
+ 			     window,
+ 			     shape_type, &rn, &ord);
+-  
++
++  if (xrl == NULL)
++    return NULL; /* XShape not supported */
++
+   if (rn == 0)
+     return gdk_region_new (); /* Empty */
+-  
++
+   if (ord != YXBanded)
+     {
+       /* This really shouldn't happen with any xserver, as they
+@@ -4650,21 +4654,20 @@ _gdk_windowing_get_shape_for_mask (GdkBitmap *mask)
+   display = gdk_drawable_get_display (GDK_DRAWABLE (mask));
+ 
+   window = XCreateSimpleWindow (GDK_DISPLAY_XDISPLAY (display),
+-				GDK_SCREEN_XROOTWIN (gdk_display_get_default_screen (display)),
+-				-1, -1, 1, 1, 0,
+-				0, 0);
++                                GDK_SCREEN_XROOTWIN (gdk_display_get_default_screen (display)),
++                                -1, -1, 1, 1, 0,
++                                0, 0);
+   XShapeCombineMask (GDK_DISPLAY_XDISPLAY (display),
+-		     window,
+-		     ShapeBounding,
+-		     0, 0,
+-		     GDK_PIXMAP_XID (mask),
+-		     ShapeSet);
+-  
++                     window,
++                     ShapeBounding,
++                     0, 0,
++                     GDK_PIXMAP_XID (mask),
++                     ShapeSet);
++
+   region = _xwindow_get_shape (GDK_DISPLAY_XDISPLAY (display),
+-			      window, ShapeBounding);
++                               window, ShapeBounding);
+ 
+-  XDestroyWindow (GDK_DISPLAY_XDISPLAY (display),
+-		  window);
++  XDestroyWindow (GDK_DISPLAY_XDISPLAY (display), window);
+ 
+   return region;
+ }
+--
+cgit v0.8.3.1
