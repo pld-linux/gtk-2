@@ -37,8 +37,9 @@ BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.22.0
-%{?with_apidocs:BuildRequires:	gtk-doc >= 1.8}
+%{?with_apidocs:BuildRequires:	gtk-doc >= 1.11}
 BuildRequires:	gtk-doc-automake >= 1.8
+BuildRequires:	jasper-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtiff-devel
@@ -50,6 +51,7 @@ BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.197
+BuildRequires:	sed >= 4.0
 BuildRequires:	xorg-lib-libX11-devel
 BuildRequires:	xorg-lib-libXcomposite-devel
 BuildRequires:	xorg-lib-libXcursor-devel
@@ -245,6 +247,7 @@ sed -i -e 's#libpng12#libpng#g' configure.in
 	--%{?with_static_libs:en}%{!?with_static_libs:dis}able-static \
 	--with-gdktarget=x11 \
 	--with-html-dir=%{_gtkdocdir} \
+	--with-libjasper \
 	--with-xinput=yes
 %{__make}
 
