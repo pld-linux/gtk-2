@@ -336,20 +336,22 @@ exit 0
 
 %dir %{_libdir}/gtk-2.0
 %dir %{_libdir}/gtk-2.0/modules
-%dir %{_libdir}/gtk-2.0/%{abivers}
-%dir %{_libdir}/gtk-2.0/%{abivers}/engines
-%dir %{_libdir}/gtk-2.0/%{abivers}/filesystems
-%dir %{_libdir}/gtk-2.0/%{abivers}/immodules
-%dir %{_libdir}/gtk-2.0/%{abivers}/loaders
-%dir %{_libdir}/gtk-2.0/%{abivers}/printbackends
 %attr(755,root,root) %{_libdir}/gtk-2.0/modules/libferret.so
 %attr(755,root,root) %{_libdir}/gtk-2.0/modules/libgail.so
+%dir %{_libdir}/gtk-2.0/%{abivers}
+%dir %{_libdir}/gtk-2.0/%{abivers}/engines
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/engines/libpixmap.so
+%dir %{_libdir}/gtk-2.0/%{abivers}/filesystems
+%dir %{_libdir}/gtk-2.0/%{abivers}/immodules
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/immodules/im-*.so
+%dir %{_libdir}/gtk-2.0/%{abivers}/loaders
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/loaders/libpixbufloader-*.so
+%dir %{_libdir}/gtk-2.0/%{abivers}/printbackends
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/libprintbackend-file.so
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/libprintbackend-lpr.so
-%{_libdir}/girepository-1.0/*.typelib
+%{_libdir}/girepository-1.0/Gdk-2.0.typelib
+%{_libdir}/girepository-1.0/GdkPixbuf-2.0.typelib
+%{_libdir}/girepository-1.0/Gtk-2.0.typelib
 
 # XXX: just demo data - move to examples?
 %{_datadir}/gtk-2.0
@@ -398,9 +400,11 @@ exit 0
 %{_pkgconfigdir}/gtk+-2.0.pc
 %{_pkgconfigdir}/gtk+-unix-print-2.0.pc
 %{_pkgconfigdir}/gtk+-x11-2.0.pc
+%{_datadir}/gir-1.0/Gdk-2.0.gir
+%{_datadir}/gir-1.0/GdkPixbuf-2.0.gir
+%{_datadir}/gir-1.0/Gtk-2.0.gir
 %{_mandir}/man1/gdk-pixbuf-csource.1*
 %{_mandir}/man1/gtk-builder-convert.1*
-%{_datadir}/gir-1.0/*.gir
 
 %if %{with static_libs}
 %files static
