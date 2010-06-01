@@ -19,15 +19,15 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.21.0
+Version:	2.21.1
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.21/gtk+-%{version}.tar.bz2
-# Source0-md5:	1d1e52e1141a537d61b6bc98413fef74
+# Source0-md5:	d8243cf68ca2e2f192b233206b762fe9
 Patch0:		%{name}-arch_confdir.patch
-Patch1:		revert_64bit_fix.patch
+#Patch1:		revert_64bit_fix.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.30.0
 BuildRequires:	autoconf >= 2.62
@@ -229,7 +229,7 @@ Moduł GTK+ do drukowania przez CUPS.
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
-%patch1 -p1 -R
+#%%patch1 -p1 -R
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
