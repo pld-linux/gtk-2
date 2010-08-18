@@ -19,13 +19,13 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.21.4
+Version:	2.21.6
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.21/gtk+-%{version}.tar.bz2
-# Source0-md5:	71f15885add9dfab47659966acc7ef66
+# Source0-md5:	760f65144d6dc8a7653eba6c75f07e0e
 Patch0:		%{name}-arch_confdir.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.30.0
@@ -336,6 +336,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/libprintbackend-file.so
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/libprintbackend-lpr.so
 %{_libdir}/girepository-1.0/Gdk-2.0.typelib
+%{_libdir}/girepository-1.0/GdkX11-2.0.typelib
 %{_libdir}/girepository-1.0/Gtk-2.0.typelib
 
 # XXX: just demo data - move to examples?
@@ -377,6 +378,7 @@ exit 0
 %{_pkgconfigdir}/gtk+-unix-print-2.0.pc
 %{_pkgconfigdir}/gtk+-x11-2.0.pc
 %{_datadir}/gir-1.0/Gdk-2.0.gir
+%{_datadir}/gir-1.0/GdkX11-2.0.gir
 %{_datadir}/gir-1.0/Gtk-2.0.gir
 %{_mandir}/man1/gtk-builder-convert.1*
 
