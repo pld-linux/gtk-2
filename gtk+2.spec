@@ -20,7 +20,7 @@ Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.20.1
-Release:	4
+Release:	5
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
