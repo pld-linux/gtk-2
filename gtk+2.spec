@@ -19,32 +19,32 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.21.7
+Version:	2.21.8
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.21/gtk+-%{version}.tar.bz2
-# Source0-md5:	540f37a6f46ac02e4540e31f5881c94a
+# Source0-md5:	dc76450044b561f7d78d004ae28f7d18
 Patch0:		%{name}-arch_confdir.patch
 URL:		http://www.gtk.org/
-BuildRequires:	atk-devel >= 1:1.30.0
+BuildRequires:	atk-devel >= 1:1.30.0-3
 BuildRequires:	autoconf >= 2.62
 BuildRequires:	automake >= 1:1.7
 BuildRequires:	cairo-devel >= 1.6.0
 %{?with_cups:BuildRequires:	cups-devel}
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
-BuildRequires:	gdk-pixbuf2-devel >= 2.21.0
+BuildRequires:	gdk-pixbuf2-devel >= 2.22.0
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.25.8
-BuildRequires:	gobject-introspection-devel >= 0.6.7
+BuildRequires:	gobject-introspection-devel >= 0.9.5
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.11}
 BuildRequires:	gtk-doc-automake >= 1.11
 BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs >= 1:2.6.31
 BuildRequires:	libxslt-progs >= 1.1.20
-BuildRequires:	pango-devel >= 1:1.26.0
+BuildRequires:	pango-devel >= 1:1.28.1-4
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-pythonprov
