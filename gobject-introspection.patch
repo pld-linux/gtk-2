@@ -5,7 +5,7 @@
  
  GdkPixbuf-2.0.gir: libgdk_pixbuf-2.0.la Makefile
 -GdkPixbuf_2_0_gir_SCANNERFLAGS = --strip-prefix=Gdk
-+GdkPixbuf_2_0_gir_SCANNERFLAGS = --identifier-prefix=Gdk --symbol-prefix=gdk
++GdkPixbuf_2_0_gir_SCANNERFLAGS = --identifier-prefix=Gdk
  GdkPixbuf_2_0_gir_INCLUDES = GModule-2.0 Gio-2.0
  GdkPixbuf_2_0_gir_LIBS = libgdk_pixbuf-2.0.la
  GdkPixbuf_2_0_gir_CFLAGS = $(INCLUDES)
@@ -22,6 +22,15 @@
  		$(INCLUDES) \
 --- gtk+-2.20.1/gdk/Makefile.am~	2010-05-03 01:33:18.000000000 +0200
 +++ gtk+-2.20.1/gdk/Makefile.am	2010-09-22 21:46:40.213576696 +0200
+@@ -195,7 +195,7 @@
+ if HAVE_INTROSPECTION
+ 
+ introspection_files = \
+-		$(gdk_public_h_sources) \
++		$(filter-out gdkkeysyms.h, $(gdk_public_h_sources))	\
+ 		$(gdk_c_sources) \
+         gdkenumtypes.c \
+         gdkenumtypes.h \
 @@ -202,7 +202,7 @@
          $(srcdir)/x11/*.c
  
