@@ -20,7 +20,7 @@ Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.22.0
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
@@ -314,16 +314,15 @@ exit 0
 %files -f %{name}.lang
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README
-%attr(755,root,root) %{_bindir}/gtk-demo
 %attr(755,root,root) %{_bindir}/gtk-query-immodules-2.0%{pqext}
 %attr(755,root,root) %{_bindir}/gtk-update-icon-cache
+
 %attr(755,root,root) %{_libdir}/libgailutil.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libgailutil.so.18
 %attr(755,root,root) %{_libdir}/libgdk-x11-2.0.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libgdk-x11-2.0.so.0
 %attr(755,root,root) %{_libdir}/libgtk-x11-2.0.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libgtk-x11-2.0.so.0
-
 %dir %{_libdir}/gtk-2.0
 %dir %{_libdir}/gtk-2.0/modules
 %attr(755,root,root) %{_libdir}/gtk-2.0/modules/libferret.so
@@ -340,9 +339,6 @@ exit 0
 %{_libdir}/girepository-1.0/Gdk-2.0.typelib
 %{_libdir}/girepository-1.0/GdkX11-2.0.typelib
 %{_libdir}/girepository-1.0/Gtk-2.0.typelib
-
-# XXX: just demo data - move to examples?
-%{_datadir}/gtk-2.0
 
 %dir %{_sysconfdir}
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/im-multipress.conf
@@ -402,6 +398,8 @@ exit 0
 
 %files examples
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/gtk-demo
+%{_datadir}/gtk-2.0
 %{_examplesdir}/%{name}-%{version}
 
 %if %{with cups}
