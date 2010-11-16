@@ -20,7 +20,7 @@ Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.22.1
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
@@ -265,8 +265,8 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk.immodules
 cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 # shut up check-files (static modules and *.la for modules)
-rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules/*.{a,la}
-rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/*/*.{a,la}
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules/*.{a,la}
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/*/*.{a,la}
 
 %if "%{_lib}" != "lib"
 # We need to have 32-bit and 64-bit binaries as they have hardcoded LIBDIR.
@@ -278,7 +278,7 @@ mv $RPM_BUILD_ROOT%{_bindir}/gtk-query-immodules-2.0{,%{pqext}}
 install -d $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules
 
 # unsupported by glibc
-rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,io}
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,io,kg}
 
 %find_lang %{name} --all-name
 
