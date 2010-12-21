@@ -9,7 +9,7 @@
 %bcond_without	apidocs		# disable gtk-doc
 %bcond_without	cups		# disable CUPS support
 %bcond_without	static_libs	# don't build static library
-#
+
 Summary:	The GIMP Toolkit
 Summary(cs.UTF-8):	Sada nástrojů pro GIMP
 Summary(de.UTF-8):	Der GIMP-Toolkit
@@ -20,7 +20,7 @@ Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.22.1
-Release:	2
+Release:	3
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
@@ -49,7 +49,7 @@ BuildRequires:	pango-devel >= 1:1.28.1-4
 BuildRequires:	perl-base
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-pythonprov
-BuildRequires:	rpmbuild(macros) >= 1.197
+BuildRequires:	rpmbuild(macros) >= 1.311
 BuildRequires:	xorg-lib-libX11-devel
 BuildRequires:	xorg-lib-libXcomposite-devel
 BuildRequires:	xorg-lib-libXcursor-devel
@@ -310,6 +310,11 @@ exit 0
 umask 022
 %{_bindir}/gtk-query-immodules-2.0%{pqext} > %{_sysconfdir}/gtk.immodules
 exit 0
+
+%triggerin -- hicolor-icon-theme
+if [ "$1" = "1" ] && [ "$2" = "1" ]; then
+	%update_icon_cache hicolor
+fi
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
