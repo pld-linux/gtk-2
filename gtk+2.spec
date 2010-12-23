@@ -19,13 +19,13 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.23.2
+Version:	2.23.3
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.23/gtk+-%{version}.tar.bz2
-# Source0-md5:	6afece3667ca2763e83cc76dc03f556d
+# Source0-md5:	e5c443ee1b991ab6ca483d45db7e2e6d
 Patch0:		%{name}-arch_confdir.patch
 Patch1:		gobject-introspection.patch
 URL:		http://www.gtk.org/
@@ -267,8 +267,8 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk.immodules
 cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 # shut up check-files (static modules and *.la for modules)
-rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules/*.{a,la}
-rm -rf $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/*/*.{a,la}
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules/*.{a,la}
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/*/*.{a,la}
 
 %if "%{_lib}" != "lib"
 # We need to have 32-bit and 64-bit binaries as they have hardcoded LIBDIR.
@@ -280,7 +280,7 @@ mv $RPM_BUILD_ROOT%{_bindir}/gtk-query-immodules-2.0{,%{pqext}}
 install -d $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules
 
 # unsupported by glibc
-rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,io}
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,io}
 
 %find_lang %{name} --all-name
 
