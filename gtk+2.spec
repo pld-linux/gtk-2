@@ -280,7 +280,7 @@ mv $RPM_BUILD_ROOT%{_bindir}/gtk-query-immodules-2.0{,%{pqext}}
 install -d $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules
 
 # unsupported by glibc
-%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,io,kg}
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/locale/{az_IR,io}
 
 %find_lang %{name} --all-name
 
