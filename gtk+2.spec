@@ -20,7 +20,7 @@ Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.24.0
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
@@ -82,6 +82,7 @@ Conflicts:	glibc-misc < 6:2.7
 Conflicts:	gtk2-engines < 1:2.2.0-6
 # autopanog.exe crashes with gtk+2 2.8.x and libgdiplus 1.1.8
 Conflicts:	libgdiplus < 1.1.9
+Requires(post):	gtk-update-icon-cache
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		abivers	2.10.0
@@ -270,6 +271,9 @@ cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules/*.{a,la}
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/*/*.{a,la}
 
+# builded in gtk+3.spec
+%{__rm} $RPM_BUILD_ROOT%{_bindir}/gtk-update-icon-cache
+
 %if "%{_lib}" != "lib"
 # We need to have 32-bit and 64-bit binaries as they have hardcoded LIBDIR.
 # (needed when multilib is used)
@@ -322,7 +326,6 @@ fi
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README
 %attr(755,root,root) %{_bindir}/gtk-query-immodules-2.0%{pqext}
-%attr(755,root,root) %{_bindir}/gtk-update-icon-cache
 
 %attr(755,root,root) %{_libdir}/libgailutil.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libgailutil.so.18
@@ -359,7 +362,6 @@ fi
 %dir %{_datadir}/themes/Raleigh/gtk-*
 %{_datadir}/themes/Raleigh/gtk-*/gtkrc
 %{_mandir}/man1/gtk-query-immodules-2.0.1*
-%{_mandir}/man1/gtk-update-icon-cache.1*
 
 %files devel
 %defattr(644,root,root,755)
