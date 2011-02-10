@@ -1,4 +1,5 @@
 # TODO
+# - papi print backend?
 # - solve this:
 #| /tmp/gtk+2-2.12.8-root-glen $ find -type f|xargs file|grep -i python
 #| ./usr/bin/gtk-builder-convert:                                     a python script text executable
@@ -151,6 +152,7 @@ Summary(tr.UTF-8):	GIMP araç takımı ve çizim takımı
 Group:		X11/Development/Libraries
 Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1:1.30.0
+Requires:	cairo-devel >= 1.6.0
 Requires:	gdk-pixbuf2-devel >= 2.22.0
 Requires:	glib2-devel >= 1:2.27.3
 Requires:	pango-devel >= 1:1.26.0
