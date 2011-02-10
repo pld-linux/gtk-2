@@ -271,8 +271,9 @@ cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules/*.{a,la}
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/*/*.{a,la}
 
-# builded in gtk+3.spec
-%{__rm} $RPM_BUILD_ROOT%{_bindir}/gtk-update-icon-cache
+# built in gtk+3.spec
+%{__rm} $RPM_BUILD_ROOT%{_bindir}/gtk-update-icon-cache \
+	$RPM_BUILD_ROOT%{_mandir}/man1/gtk-update-icon-cache.1
 
 %if "%{_lib}" != "lib"
 # We need to have 32-bit and 64-bit binaries as they have hardcoded LIBDIR.
