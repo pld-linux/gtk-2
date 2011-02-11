@@ -1,10 +1,4 @@
-# TODO
-# - papi print backend?
-# - solve this:
-#| /tmp/gtk+2-2.12.8-root-glen $ find -type f|xargs file|grep -i python
-#| ./usr/bin/gtk-builder-convert:                                     a python script text executable
-#| /tmp/gtk+2-2.12.8-root-glen $ head -n 1 ./usr/bin/gtk-builder-convert
-#| !/usr/bin/env python
+# TODO: papi print backend?
 #
 # Conditional build:
 %bcond_without	apidocs		# disable gtk-doc
@@ -52,6 +46,7 @@ BuildRequires:	perl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.311
+BuildRequires:	sed >= 4.0
 BuildRequires:	sqlite3-devel
 BuildRequires:	xorg-lib-libX11-devel
 BuildRequires:	xorg-lib-libXcomposite-devel
@@ -234,6 +229,8 @@ Moduł GTK+ do drukowania przez CUPS.
 %setup -q -n gtk+-%{version}
 %patch0 -p1
 %patch1 -p1
+
+%{__sed} -i -e '1s,/usr/bin/env python,/usr/bin/python,' gtk/gtk-builder-convert
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
