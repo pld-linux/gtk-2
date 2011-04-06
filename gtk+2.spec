@@ -15,7 +15,7 @@ Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.24.4
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
@@ -269,6 +269,8 @@ cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 # shut up check-files (static modules and *.la for modules)
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules/*.{a,la}
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/*/*.{a,la}
+# remove libtool files
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/*.la
 
 # built in gtk+3.spec
 %{__rm} $RPM_BUILD_ROOT%{_bindir}/gtk-update-icon-cache \
@@ -370,9 +372,6 @@ fi
 %attr(755,root,root) %{_libdir}/libgailutil.so
 %attr(755,root,root) %{_libdir}/libgdk-x11-2.0.so
 %attr(755,root,root) %{_libdir}/libgtk-x11-2.0.so
-%{_libdir}/libgailutil.la
-%{_libdir}/libgdk-x11-2.0.la
-%{_libdir}/libgtk-x11-2.0.la
 %{_includedir}/gail-1.0
 %{_includedir}/gtk-2.0
 %{_includedir}/gtk-unix-print-2.0
