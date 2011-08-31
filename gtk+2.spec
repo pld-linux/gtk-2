@@ -14,13 +14,13 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.24.5
+Version:	2.24.6
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.24/gtk+-%{version}.tar.bz2
-# Source0-md5:	aebeb2e9efc2e541dc9631546aed7900
+Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.24/gtk+-%{version}.tar.xz
+# Source0-md5:	4d7efde4ac24dbaa720bc0744eee8235
 Patch0:		%{name}-arch_confdir.patch
 Patch1:		gobject-introspection.patch
 URL:		http://www.gtk.org/
@@ -48,6 +48,7 @@ BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.311
 BuildRequires:	sed >= 4.0
 BuildRequires:	sqlite3-devel
+BuildRequires:	tar >= 1:1.22
 BuildRequires:	xorg-lib-libX11-devel
 BuildRequires:	xorg-lib-libXcomposite-devel
 BuildRequires:	xorg-lib-libXcursor-devel
@@ -59,6 +60,7 @@ BuildRequires:	xorg-lib-libXi-devel
 BuildRequires:	xorg-lib-libXinerama-devel
 BuildRequires:	xorg-lib-libXrandr-devel >= 1.3.0
 BuildRequires:	xorg-lib-libXrender-devel
+BuildRequires:	xz
 Requires:	atk >= 1:1.30.0
 Requires:	cairo >= 1.6.0
 Requires:	gdk-pixbuf2 >= 2.22.0
@@ -231,8 +233,6 @@ Moduł GTK+ do drukowania przez CUPS.
 %patch1 -p1
 
 %{__sed} -i -e '1s,/usr/bin/env python,/usr/bin/python,' gtk/gtk-builder-convert
-
-mkdir m4
 
 %build
 %{?with_apidocs:%{__gtkdocize}}
