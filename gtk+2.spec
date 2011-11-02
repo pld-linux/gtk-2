@@ -15,7 +15,7 @@ Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.24.7
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
@@ -135,6 +135,20 @@ rodzaju kontrolek służących do tworzenia interfejsu użytkownika.
 %description -l tr.UTF-8
 Başlangıçta GIMP için yazılmış X kitaplıkları. Şu anda başka
 programlarca da kullanılmaktadır.
+
+%package -n gtk-update-icon-cache
+Summary:	Utility to update icon cache used by GTK+ library
+Summary(pl.UTF-8):	Narzędzie do uaktualniania cache'a ikon używanego przez bibliotekę GTK+
+Group:		Applications/System
+Requires:	gdk-pixbuf2 >= 2.22.0
+Requires:	glib2 >= 1:2.27.3
+
+%description -n gtk-update-icon-cache
+Utility to update icon cache used by GTK+ library.
+
+%description -n gtk-update-icon-cache -l pl.UTF-8
+Narzędzie do uaktualniania cache'a ikon używanego przez bibliotekę
+GTK+.
 
 %package devel
 Summary:	GTK+ header files and development documentation
@@ -274,10 +288,6 @@ cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 # remove libtool files
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/*.la
 
-# built in gtk+3.spec
-%{__rm} $RPM_BUILD_ROOT%{_bindir}/gtk-update-icon-cache \
-	$RPM_BUILD_ROOT%{_mandir}/man1/gtk-update-icon-cache.1
-
 %if "%{_lib}" != "lib"
 # We need to have 32-bit and 64-bit binaries as they have hardcoded LIBDIR.
 # (needed when multilib is used)
@@ -366,6 +376,11 @@ fi
 %dir %{_datadir}/themes/Raleigh/gtk-*
 %{_datadir}/themes/Raleigh/gtk-*/gtkrc
 %{_mandir}/man1/gtk-query-immodules-2.0.1*
+
+%files -n gtk-update-icon-cache
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/gtk-update-icon-cache
+%{_mandir}/man1/gtk-update-icon-cache.1*
 
 %files devel
 %defattr(644,root,root,755)
