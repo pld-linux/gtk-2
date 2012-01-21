@@ -1,0 +1,16 @@
+This reverts commit 5a03f4a6a50237d86959f596dda143dfc2f040d1.
+https://bugzilla.gnome.org/show_bug.cgi?id=663138
+---
+diff --git a/gtk/gtkiconview.c b/gtk/gtkiconview.c
+index 62877fa..54b3f3b 100644
+--- a/gtk/gtkiconview.c
++++ b/gtk/gtkiconview.c
+@@ -5423,7 +5423,7 @@ gtk_icon_view_set_model (GtkIconView *icon_view,
+ 
+       gtk_icon_view_build_items (icon_view);
+ 
+-      gtk_icon_view_layout (icon_view);
++      gtk_icon_view_queue_layout (icon_view);
+     }
+ 
+   g_object_notify (G_OBJECT (icon_view), "model");  
