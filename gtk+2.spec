@@ -1,8 +1,8 @@
-# TODO: papi print backend?
 #
 # Conditional build:
 %bcond_without	apidocs		# disable gtk-doc
 %bcond_without	cups		# disable CUPS support
+%bcond_without	papi		# disable PAPI support
 %bcond_without	static_libs	# don't build static library
 #
 Summary:	The GIMP Toolkit
@@ -23,12 +23,15 @@ Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.24/gtk+-%{version}.tar.xz
 # Source0-md5:	6d80261125b964aef2f2cbfbb1a9da2a
 Patch0:		%{name}-arch_confdir.patch
 Patch1:		gobject-introspection.patch
+Patch2:		%{name}-papi.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.30.0-3
 BuildRequires:	autoconf >= 2.62
 BuildRequires:	automake >= 1:1.7
 BuildRequires:	cairo-devel >= 1.6.0
-%{?with_cups:BuildRequires:	cups-devel}
+%if %{with cups} || %{with papi}
+BuildRequires:	cups-devel
+%endif
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gdk-pixbuf2-devel >= 2.22.0
@@ -41,6 +44,7 @@ BuildRequires:	libtool >= 1:1.4.2-9
 BuildRequires:	libxml2-progs >= 1:2.6.31
 BuildRequires:	libxslt-progs >= 1.1.20
 BuildRequires:	pango-devel >= 1:1.28.1-4
+%{?with_papi:BuildRequires:	papi-devel}
 BuildRequires:	perl-base
 BuildRequires:	perl-devel
 BuildRequires:	pkgconfig
@@ -227,10 +231,24 @@ CUPS printing module for GTK+.
 %description cups -l pl.UTF-8
 Moduł GTK+ do drukowania przez CUPS.
 
+%package papi
+Summary:	PAPI printing module for GTK+
+Summary(pl.UTF-8):	Moduł GTK+ do drukowania przez PAPI
+Group:		X11/Libraries
+Requires:	%{name} = %{version}-%{release}
+Requires:	papi
+
+%description papi
+PAPI printing module for GTK+.
+
+%description papi -l pl.UTF-8
+Moduł GTK+ do drukowania przez PAPI.
+
 %prep
 %setup -q -n gtk+-%{version}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %{__sed} -i -e '1s,/usr/bin/env python,/usr/bin/python,' gtk/gtk-builder-convert
 
@@ -242,11 +260,13 @@ Moduł GTK+ do drukowania przez CUPS.
 %{__autoheader}
 %{__autoconf}
 %{__automake}
+CPPFLAGS="%{rpmcppflags}%{?with_papi: -I/usr/include/papi}"
 %configure \
-	%{!?with_cups:ac_cv_path_CUPS_CONFIG=no} \
+	%{!?with_cups:--disable-cups} \
 	%{?debug:--enable-debug=yes} \
 	--%{?with_apidocs:en}%{!?with_apidocs:dis}able-gtk-doc \
 	--enable-man \
+	%{!?with_papi:--disable-papi} \
 	--enable-shm \
 	--%{?with_static_libs:en}%{!?with_static_libs:dis}able-static \
 	--with-gdktarget=x11 \
@@ -416,4 +436,10 @@ fi
 %files cups
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/libprintbackend-cups.so
+%endif
+
+%if %{with papi}
+%files papi
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/libprintbackend-papi.so
 %endif
