@@ -15,7 +15,7 @@ Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.24.10
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
@@ -235,7 +235,7 @@ Moduł GTK+ do drukowania przez CUPS.
 Summary:	PAPI printing module for GTK+
 Summary(pl.UTF-8):	Moduł GTK+ do drukowania przez PAPI
 Group:		X11/Libraries
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	papi
 
 %description papi
