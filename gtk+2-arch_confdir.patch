@@ -9,21 +9,6 @@
      }
  
    return result;
-#--- gtk+-2.8.12/gtk-zip.sh.in	2006-02-07 23:57:06.000000000 +0100
-#+++ gtk+-2.8.12.arch_confdir/gtk-zip.sh.in	2006-02-20 22:12:22.000000000 +0100
-#@@ -9,9 +9,9 @@
-# 
-# zip $ZIP -@ <<EOF
-# COPYING.LIB-2
-#-etc/gtk-2.0/gdk-pixbuf.loaders
-#-etc/gtk-2.0/gtkrc
-#-etc/gtk-2.0/gtk.immodules
-#+etc/gtk-2.0-@ARCH@/gdk-pixbuf.loaders
-#+etc/gtk-2.0-@ARCH@/gtkrc
-#+etc/gtk-2.0-@ARCH@/gtk.immodules
-# bin/libgdk_pixbuf-@GTK_API_VERSION@-@LT_CURRENT_MINUS_AGE@.dll
-# bin/libgdk-win32-@GTK_API_VERSION@-@LT_CURRENT_MINUS_AGE@.dll
-# bin/libgtk-win32-@GTK_API_VERSION@-@LT_CURRENT_MINUS_AGE@.dll
 --- gtk+-2.8.12/modules/input/Makefile.am	2005-06-05 00:08:50.000000000 +0200
 +++ gtk+-2.8.12.arch_confdir/modules/input/Makefile.am	2006-02-20 22:14:07.000000000 +0100
 @@ -101,10 +102,10 @@
@@ -70,3 +55,14 @@
  dist_imconffile_DATA = im-multipress.conf
  
  if CROSS_COMPILING
+--- gtk+-2.24.16/gtk/gtkrc.c~	2013-03-02 15:40:51.000000000 +0200
++++ gtk+-2.24.16/gtk/gtkrc.c	2013-03-02 15:56:13.321139207 +0200
+@@ -522,7 +522,7 @@
+   else
+     {
+       const gchar *home;
+-      str = g_build_filename (GTK_SYSCONFDIR, "gtk-2.0", "gtkrc", NULL);
++      str = g_build_filename (GTK_SYSCONFDIR, "gtkrc", NULL);
+ 
+       gtk_rc_add_default_file (str);
+       g_free (str);

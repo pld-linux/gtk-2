@@ -4,7 +4,7 @@
 %bcond_without	cups		# disable CUPS support
 %bcond_without	papi		# disable PAPI support
 %bcond_without	static_libs	# don't build static library
-#
+
 Summary:	The GIMP Toolkit
 Summary(cs.UTF-8):	Sada nástrojů pro GIMP
 Summary(de.UTF-8):	Der GIMP-Toolkit
@@ -15,7 +15,7 @@ Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
 Version:	2.24.16
-Release:	1
+Release:	2
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
