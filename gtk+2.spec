@@ -14,13 +14,13 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.24.19
+Version:	2.24.20
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.24/gtk+-%{version}.tar.xz
-# Source0-md5:	490236abeb0d9351b2a34e9aca70e1de
+# Source0-md5:	9d7833331d7accd80668e29d7f567ce5
 Patch0:		%{name}-arch_confdir.patch
 Patch1:		gobject-introspection.patch
 Patch2:		%{name}-papi.patch
@@ -284,7 +284,7 @@ install -d $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version} \
 	m4datadir=%{_aclocaldir} \
 	pkgconfigdir=%{_pkgconfigdir}
 
-touch $RPM_BUILD_ROOT%{_sysconfdir}/gtk.immodules
+touch $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/immodules.cache
 
 cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
@@ -321,7 +321,7 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /sbin/ldconfig
 umask 022
-%{_bindir}/gtk-query-immodules-2.0%{pqext} > %{_sysconfdir}/gtk.immodules
+%{_bindir}/gtk-query-immodules-2.0%{pqext} --update-cache
 exit 0
 
 %postun
@@ -332,14 +332,14 @@ if [ "$1" != "0" ]; then
 	# if we remove the other arch pkg will be still present.
 	# i.e we have installed gtk+2-2.16.5-1.x86_64 and gtk+2-2.16.5-1.i686, and remove gtk+2-2.16.5-1.i686
 	if [ -d %{_sysconfdir} ]; then
-		%{_bindir}/gtk-query-immodules-2.0%{pqext} > %{_sysconfdir}/gtk.immodules
+		%{_bindir}/gtk-query-immodules-2.0%{pqext} --update-cache
 	fi
 fi
 exit 0
 
 %triggerpostun -- gtk+2 < 2:2.4.0
 umask 022
-%{_bindir}/gtk-query-immodules-2.0%{pqext} > %{_sysconfdir}/gtk.immodules
+%{_bindir}/gtk-query-immodules-2.0%{pqext} --update-cache
 exit 0
 
 %triggerin -- hicolor-icon-theme
@@ -368,6 +368,7 @@ fi
 %dir %{_libdir}/gtk-2.0/%{abivers}/filesystems
 %dir %{_libdir}/gtk-2.0/%{abivers}/immodules
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/immodules/im-*.so
+%ghost %{_libdir}/gtk-2.0/%{abivers}/immodules.cache
 %dir %{_libdir}/gtk-2.0/%{abivers}/printbackends
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/libprintbackend-file.so
 %attr(755,root,root) %{_libdir}/gtk-2.0/%{abivers}/printbackends/libprintbackend-lpr.so
@@ -377,7 +378,6 @@ fi
 
 %dir %{_sysconfdir}
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/im-multipress.conf
-%ghost %{_sysconfdir}/gtk.immodules
 %dir %{_datadir}/themes/Default/gtk-*
 %{_datadir}/themes/Default/gtk-*/gtkrc
 %dir %{_datadir}/themes/Emacs
