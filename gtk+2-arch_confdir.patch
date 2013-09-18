@@ -1,49 +1,38 @@
---- gtk+-2.8.12/modules/input/Makefile.am	2005-06-05 00:08:50.000000000 +0200
-+++ gtk+-2.8.12.arch_confdir/modules/input/Makefile.am	2006-02-20 22:14:07.000000000 +0100
-@@ -101,10 +102,10 @@
- # after the libraries are installed in their final locations.
- install-data-hook:
- 	@if $(RUN_QUERY_IMMODULES_TEST) ; then \
--	  echo $(mkinstalldirs) $(DESTDIR)$(sysconfdir)/gtk-2.0 ; \
--	  $(mkinstalldirs) $(DESTDIR)$(sysconfdir)/gtk-2.0 ; \
--	  echo "$(top_builddir)/gtk/gtk-query-immodules-2.0 > $(DESTDIR)$(sysconfdir)/gtk-2.0/gtk.immodules" ; \
--	  $(top_builddir)/gtk/gtk-query-immodules-2.0 > $(DESTDIR)$(sysconfdir)/gtk-2.0/gtk.immodules ; \
-+	  echo $(mkinstalldirs) $(DESTDIR)$(sysconfdir); \
-+	  $(mkinstalldirs) $(DESTDIR)$(sysconfdir); \
-+	  echo "$(top_builddir)/gtk/gtk-query-immodules-2.0 > $(DESTDIR)$(sysconfdir)/gtk.immodules" ; \
-+	  $(top_builddir)/gtk/gtk-query-immodules-2.0 > $(DESTDIR)$(sysconfdir)/gtk.immodules ; \
- 	else \
- 	  echo "***" ; \
- 	  echo "*** Warning: gtk.immodules not built" ; \
-@@ -115,7 +116,7 @@
-         fi
- 
- uninstall-local:
--	rm -f $(DESTDIR)$(sysconfdir)/gtk-2.0/gtk.immodules
-+	rm -f $(DESTDIR)$(sysconfdir)/gtk.immodules
- 
- module_LTLIBRARIES =				\
- 	$(IM_XIM_MODULE)			\
---- gtk+-2.12.9/modules/input/Makefile.am~	2008-03-22 00:23:37.000000000 +0200
-+++ gtk+-2.12.9/modules/input/Makefile.am	2008-03-22 00:57:31.244698955 +0200
-@@ -91,7 +91,7 @@
- IM_IME_MODULE=im-ime.la 
+--- gtk+-2.24.21/modules/input/Makefile.am.orig	2013-07-30 02:54:43.000000000 +0200
++++ gtk+-2.24.21/modules/input/Makefile.am	2013-09-18 17:28:45.876189834 +0200
+@@ -167,7 +167,7 @@
+ endif
  endif
  
 -multipress_defs = -DMULTIPRESS_LOCALEDIR=\""$(mplocaledir)"\" -DMULTIPRESS_CONFDIR=\""$(sysconfdir)/gtk-2.0"\"
 +multipress_defs = -DMULTIPRESS_LOCALEDIR=\""$(mplocaledir)"\" -DMULTIPRESS_CONFDIR=\""$(sysconfdir)"\"
  im_multipress_la_CPPFLAGS = $(multipress_defs)
+ libstatic_im_multipress_la_CPPFLAGS = $(im_multipress_la_CPPFLAGS)
  im_multipress_la_LDFLAGS = -rpath $(moduledir) -avoid-version -module $(no_undefined)
- im_multipress_la_SOURCES =	\
-@@ -100,7 +100,7 @@
- 	immultipress.c
- im_multipress_la_LIBADD = $(LDADDS)
+@@ -183,7 +183,7 @@
+ MULTIPRESS_MODULE = im-multipress.la
+ endif
  
 -imconffiledir = $(sysconfdir)/gtk-2.0
 +imconffiledir = $(sysconfdir)
  dist_imconffile_DATA = im-multipress.conf
  
  if CROSS_COMPILING
+@@ -200,10 +200,10 @@
+ # after the libraries are installed in their final locations.
+ install-data-hook:
+ 	@if $(RUN_QUERY_IMMODULES_TEST) ; then \
+-	  echo $(mkinstalldirs) $(DESTDIR)$(sysconfdir)/gtk-2.0 ; \
+-	  $(mkinstalldirs) $(DESTDIR)$(sysconfdir)/gtk-2.0 ; \
+-	  echo "$(DESTDOR)$(bindir)/gtk-query-immodules-2.0 > $(DESTDIR)$(libdir)/gtk-2.0/$(GTK_BINARY_VERSION)/immodules.cache" ; \
+-	  $(DESTDIR)/$(bindir)/gtk-query-immodules-2.0 > $(DESTDIR)$(libdir)/gtk-2.0/$(GTK_BINARY_VERSION)/immodules.cache ; \
++	  echo $(mkinstalldirs) $(DESTDIR)$(sysconfdir) ; \
++	  $(mkinstalldirs) $(DESTDIR)$(sysconfdir) ; \
++	  echo "$(top_builddir)/gtk/gtk-query-immodules-2.0 > $(DESTDIR)$(libdir)/gtk-2.0/$(GTK_BINARY_VERSION)/immodules.cache" ; \
++	  $(top_builddir)/gtk/gtk-query-immodules-2.0 > $(DESTDIR)$(libdir)/gtk-2.0/$(GTK_BINARY_VERSION)/immodules.cache ; \
+ 	else \
+ 	  echo "***" ; \
+ 	  echo "*** Warning: immodules.cache not built" ; \
 --- gtk+-2.24.20/gtk/gtkrc.c.orig	2013-07-07 14:53:53.881925617 +0200
 +++ gtk+-2.24.20/gtk/gtkrc.c	2013-07-07 14:57:44.148582620 +0200
 @@ -533,7 +533,7 @@

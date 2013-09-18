@@ -14,13 +14,13 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.24.20
+Version:	2.24.21
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
 Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.24/gtk+-%{version}.tar.xz
-# Source0-md5:	9d7833331d7accd80668e29d7f567ce5
+# Source0-md5:	d7ba702e76236237f2667f3def591fe7
 Patch0:		%{name}-arch_confdir.patch
 Patch1:		gobject-introspection.patch
 Patch2:		%{name}-papi.patch
@@ -253,7 +253,6 @@ Moduł GTK+ do drukowania przez PAPI.
 %{__sed} -i -e '1s,/usr/bin/env python,/usr/bin/python,' gtk/gtk-builder-convert
 
 %build
-%{?with_apidocs:%{__gtkdocize}}
 %{__libtoolize}
 %{__glib_gettextize}
 %{__aclocal}
