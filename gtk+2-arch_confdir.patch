@@ -1,5 +1,5 @@
---- gtk+-2.24.21/modules/input/Makefile.am.orig	2013-07-30 02:54:43.000000000 +0200
-+++ gtk+-2.24.21/modules/input/Makefile.am	2013-09-18 17:28:45.876189834 +0200
+--- gtk+-2.24.25/modules/input/Makefile.am.orig	2014-09-29 22:02:17.000000000 +0200
++++ gtk+-2.24.25/modules/input/Makefile.am	2014-10-18 15:22:58.738715701 +0200
 @@ -167,7 +167,7 @@
  endif
  endif
@@ -25,7 +25,7 @@
 -	  echo $(mkinstalldirs) $(DESTDIR)$(sysconfdir)/gtk-2.0 ; \
 -	  $(mkinstalldirs) $(DESTDIR)$(sysconfdir)/gtk-2.0 ; \
 -	  echo "$(DESTDOR)$(bindir)/gtk-query-immodules-2.0 > $(DESTDIR)$(libdir)/gtk-2.0/$(GTK_BINARY_VERSION)/immodules.cache" ; \
--	  $(DESTDIR)/$(bindir)/gtk-query-immodules-2.0 > $(DESTDIR)$(libdir)/gtk-2.0/$(GTK_BINARY_VERSION)/immodules.cache ; \
+-	  $(DESTDIR)$(bindir)/gtk-query-immodules-2.0 > $(DESTDIR)$(libdir)/gtk-2.0/$(GTK_BINARY_VERSION)/immodules.cache ; \
 +	  echo $(mkinstalldirs) $(DESTDIR)$(sysconfdir) ; \
 +	  $(mkinstalldirs) $(DESTDIR)$(sysconfdir) ; \
 +	  echo "$(top_builddir)/gtk/gtk-query-immodules-2.0 > $(DESTDIR)$(libdir)/gtk-2.0/$(GTK_BINARY_VERSION)/immodules.cache" ; \
