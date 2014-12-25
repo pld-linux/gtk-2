@@ -24,6 +24,7 @@ Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.24/gtk+-%{version}.tar.xz
 Patch0:		%{name}-arch_confdir.patch
 Patch1:		gobject-introspection.patch
 Patch2:		%{name}-papi.patch
+Patch3:		gdk-GdkPixdata-deprecated.patch
 URL:		http://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.30.0-3
 BuildRequires:	autoconf >= 2.62
@@ -35,7 +36,7 @@ BuildRequires:	cups-devel
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gdk-pixbuf2-devel >= 2.22.0
-BuildRequires:	gettext-devel
+BuildRequires:	gettext-tools
 BuildRequires:	glib2-devel >= 1:2.27.3
 BuildRequires:	gobject-introspection-devel >= 0.10.0
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.17}
@@ -252,6 +253,7 @@ Moduł GTK+ do drukowania przez PAPI.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %{__sed} -i -e '1s,/usr/bin/env python,/usr/bin/python,' gtk/gtk-builder-convert
 
@@ -274,7 +276,8 @@ CPPFLAGS="%{rpmcppflags}%{?with_papi: -I/usr/include/papi}"
 	--with-gdktarget=x11 \
 	--with-html-dir=%{_gtkdocdir} \
 	--with-xinput=yes
-%{__make}
+
+%{__make} CC="%{__cc}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
