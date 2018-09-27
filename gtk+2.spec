@@ -35,7 +35,7 @@ BuildRequires:	docbook-dtd412-xml
 BuildRequires:	docbook-style-xsl
 BuildRequires:	gdk-pixbuf2-devel >= 2.22.0
 BuildRequires:	gettext-tools
-BuildRequires:	glib2-devel >= 1:2.27.3
+BuildRequires:	glib2-devel >= 1:2.28.0
 BuildRequires:	gobject-introspection-devel >= 0.10.0
 %{?with_apidocs:BuildRequires:	gtk-doc >= 1.17}
 BuildRequires:	gtk-doc-automake >= 1.11
@@ -67,7 +67,7 @@ BuildRequires:	xz
 Requires:	atk >= 1:1.30.0
 Requires:	cairo >= 1.6.0
 Requires:	gdk-pixbuf2 >= 2.22.0
-Requires:	glib2 >= 1:2.27.3
+Requires:	glib2 >= 1:2.28.0
 Requires:	pango >= 1:1.26.0
 Requires:	xorg-lib-libXrandr >= 1.3.0
 %if %{with cups}
@@ -154,7 +154,7 @@ Requires:	%{name} = %{epoch}:%{version}-%{release}
 Requires:	atk-devel >= 1:1.30.0
 Requires:	cairo-devel >= 1.6.0
 Requires:	gdk-pixbuf2-devel >= 2.22.0
-Requires:	glib2-devel >= 1:2.27.3
+Requires:	glib2-devel >= 1:2.28.0
 Requires:	pango-devel >= 1:1.26.0
 Requires:	shared-mime-info
 Requires:	xorg-lib-libX11-devel
