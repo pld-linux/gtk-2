@@ -290,8 +290,12 @@ touch $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/immodules.cache
 cp -r examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
 
 # shut up check-files (static modules and *.la for modules)
-%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules/*.{a,la}
-%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/*/*.{a,la}
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules/*.la
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/*/*.la
+%if %{with static_libs}
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/modules/*.a
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/gtk-2.0/%{abivers}/*/*.a
+%endif
 # remove libtool files
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/*.la
 
