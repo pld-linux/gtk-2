@@ -251,7 +251,7 @@ Moduł GTK+ do drukowania przez PAPI.
 %patch0 -p1
 %patch1 -p1
 
-%{__sed} -i -e '1s,/usr/bin/env python,/usr/bin/python,' gtk/gtk-builder-convert
+%{__sed} -i -e '1s,/usr/bin/env python,%{__python},' gtk/gtk-builder-convert
 
 %build
 %{__libtoolize}
