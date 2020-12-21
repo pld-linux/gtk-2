@@ -14,16 +14,16 @@ Summary(it.UTF-8):	Il toolkit per GIMP
 Summary(pl.UTF-8):	GIMP Toolkit
 Summary(tr.UTF-8):	GIMP ToolKit arayüz kitaplığı
 Name:		gtk+2
-Version:	2.24.32
+Version:	2.24.33
 Release:	1
 Epoch:		2
 License:	LGPL v2+
 Group:		X11/Libraries
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gtk+/2.24/gtk+-%{version}.tar.xz
-# Source0-md5:	d5742aa42275203a499b59b4c382a784
+Source0:	https://download.gnome.org/sources/gtk+/2.24/gtk+-%{version}.tar.xz
+# Source0-md5:	0118e98dbe0e4dab90ce475f9f0e6c0c
 Patch0:		%{name}-arch_confdir.patch
 Patch1:		%{name}-papi.patch
-URL:		http://www.gtk.org/
+URL:		https://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.30.0-3
 BuildRequires:	autoconf >= 2.62
 BuildRequires:	automake >= 1:1.7
@@ -48,7 +48,7 @@ BuildRequires:	perl-base
 BuildRequires:	perl-devel
 BuildRequires:	pkgconfig
 BuildRequires:	rpm-pythonprov
-BuildRequires:	rpmbuild(macros) >= 1.311
+BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	sed >= 4.0
 BuildRequires:	sqlite3-devel
 BuildRequires:	tar >= 1:1.22
@@ -76,10 +76,8 @@ Suggests:	%{name}-cups = %{epoch}:%{version}-%{release}
 %endif
 Provides:	gail = 1.23.0
 Provides:	gtk2 = %{version}
-Obsoletes:	gail
+Obsoletes:	gail < 1.23
 Obsoletes:	gtk2
-# sr@Latn vs. sr@latin
-Conflicts:	glibc-misc < 6:2.7
 Conflicts:	gtk2-engines < 1:2.2.0-6
 # autopanog.exe crashes with gtk+2 2.8.x and libgdiplus 1.1.8
 Conflicts:	libgdiplus < 1.1.9
@@ -169,7 +167,7 @@ Requires:	xorg-lib-libXinerama-devel
 Requires:	xorg-lib-libXrandr-devel >= 1.3.0
 Requires:	xorg-lib-libXrender-devel
 Provides:	gail-devel = 1.23.0
-Obsoletes:	gail-devel
+Obsoletes:	gail-devel < 1.23
 Obsoletes:	gtk2-devel
 
 %description devel
@@ -184,7 +182,7 @@ Summary(pl.UTF-8):	Biblioteki statyczne GTK+
 Group:		X11/Development/Libraries
 Requires:	%{name}-devel = %{epoch}:%{version}-%{release}
 Provides:	gail-static = 1.23.0
-Obsoletes:	gail-static
+Obsoletes:	gail-static < 1.23
 
 %description static
 GTK+ static libraries.
@@ -198,10 +196,8 @@ Summary(pl.UTF-8):	Dokumentacja API GTK+
 Group:		Documentation
 Requires:	gtk-doc-common
 Provides:	gail-apidocs = 1.23.0
-Obsoletes:	gail-apidocs
-%if "%{_rpmversion}" >= "5"
-BuildArch:	noarch
-%endif
+Obsoletes:	gail-apidocs < 1.23
+%{?noarchpackage}
 
 %description apidocs
 GTK+ API documentation.
