@@ -197,7 +197,7 @@ Group:		Documentation
 Requires:	gtk-doc-common
 Provides:	gail-apidocs = 1.23.0
 Obsoletes:	gail-apidocs < 1.23
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description apidocs
 GTK+ API documentation.
