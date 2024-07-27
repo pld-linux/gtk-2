@@ -23,6 +23,7 @@ Source0:	https://download.gnome.org/sources/gtk+/2.24/gtk+-%{version}.tar.xz
 # Source0-md5:	0118e98dbe0e4dab90ce475f9f0e6c0c
 Patch0:		%{name}-arch_confdir.patch
 Patch1:		%{name}-papi.patch
+Patch2:		gcc14.patch
 URL:		https://www.gtk.org/
 BuildRequires:	atk-devel >= 1:1.30.0-3
 BuildRequires:	autoconf >= 2.62
@@ -246,6 +247,7 @@ Moduł GTK+ do drukowania przez PAPI.
 %setup -q -n gtk+-%{version}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %{__sed} -i -e '1s,/usr/bin/env python,%{__python3},' gtk/gtk-builder-convert
 
